@@ -1,67 +1,67 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { Phone, Mail, MapPin, Apple, Play } from 'lucide-react';
 
 const Footer: React.FC = () => {
   const quickLinks = [
     { label: 'Home', href: '/' },
     { label: 'About Us', href: '/about' },
     { label: 'Services', href: '/services' },
-    { label: 'Project', href: '/project' },
+    { label: 'Our Works', href: '/projects' },
     { label: 'Blog', href: '/blog' },
     { label: 'Contact', href: '/contact' },
   ];
 
-  const socialIcons = [
-    { name: 'Facebook', icon: 'F' },
-    { name: 'Twitter', icon: 'T' },
-    { name: 'LinkedIn', icon: 'L' },
-    { name: 'Instagram', icon: 'I' },
+  const socialLinks = [
+    {
+      name: "X",
+      href: "",
+      svgPath: "M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z",
+    },
+    {
+      name: "Instagram",
+      href: "",
+      svgPath: "M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077",
+    },
+    {
+      name: "LinkedIn",
+      href: "",
+      svgPath: "M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z",
+    },
   ];
 
   return (
     <footer className="bg-[var(--primary-blue)] text-white">
       <div className="container">
         {/* Main Footer Content */}
-        <div className="py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Company Info */}
-          <div className="space-y-4">
+        <div className="py-16 flex flex-col lg:flex-row justify-between gap-8">
+          {/* Left Section - Company Info and Navigation */}
+          <div className="lg:max-w-md space-y-6">
+            {/* Company Logo and Name */}
             <div className="flex items-center gap-3">
               <Image
                 src="/moverse logo.png"
                 alt="Moverse Logo"
-                width={40}
-                height={40}
+                width={60}
+                height={60}
                 className="object-contain"
               />
-              <span className="text-xl font-bold">IT Company</span>
+              <span className="text-2xl font-bold">Moverse Technologies</span>
             </div>
-            <p className="text-white/80 text-sm leading-relaxed">
-              We transform ideas into digital reality with cutting-edge technology and creative solutions. 
-              Your success is our mission.
+            
+            {/* Company Description */}
+            <p className="text-white/80 text-lg leading-relaxed max-w-sm">
+              Design amazing digital experiences that create more happy in the world.
             </p>
-          </div>
 
-          {/* Contact Info */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Contact</h3>
-            <div className="space-y-2 text-sm text-white/80">
-              <p>123 Business Street</p>
-              <p>Tech City, TC 12345</p>
-              <p>Phone: 1-800-234-5678</p>
-              <p>Email: info@company.com</p>
-            </div>
-          </div>
-
-          {/* Quick Links */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Quick Links</h3>
-            <nav className="space-y-2">
+            {/* Navigation Links */}
+            <nav className="flex flex-wrap gap-4">
               {quickLinks.map((link) => (
                 <Link
                   key={link.label}
                   href={link.href}
-                  className="block text-white/80 hover:text-white transition-colors text-sm"
+                  className="text-white/80 hover:text-white transition-colors text-lg"
                 >
                   {link.label}
                 </Link>
@@ -69,44 +69,69 @@ const Footer: React.FC = () => {
             </nav>
           </div>
 
-          {/* Download App */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Download App</h3>
-            <div className="space-y-3">
-              <button className="w-full bg-black/20 hover:bg-black/30 transition-colors rounded-lg p-3 flex items-center gap-3">
-                <div className="w-8 h-8 bg-white/20 rounded flex items-center justify-center">
-                  <span className="text-xs font-bold">📱</span>
+          {/* Right Section - Contact and App Downloads */}
+          <div className="flex flex-col md:flex-row gap-8 lg:ml-auto">
+            {/* Middle Section - Contact Info */}
+            <div className="space-y-4">
+              <h3 className="text-xl font-semibold">Contact</h3>
+              <div className="space-y-3 text-lg text-white/80">
+                <div className="flex items-center gap-3">
+                  <Phone className="w-4 h-4" />
+                  <span>002-828-232</span>
                 </div>
-                <div className="text-left">
-                  <div className="text-xs text-white/60">Download on the</div>
-                  <div className="text-sm font-medium">App Store</div>
+                <div className="flex items-center gap-3">
+                  <Mail className="w-4 h-4" />
+                  <span>chasman937@gmail.com</span>
                 </div>
-              </button>
-              <button className="w-full bg-black/20 hover:bg-black/30 transition-colors rounded-lg p-3 flex items-center gap-3">
-                <div className="w-8 h-8 bg-white/20 rounded flex items-center justify-center">
-                  <span className="text-xs font-bold">📱</span>
+                <div className="flex items-center gap-3">
+                  <MapPin className="w-4 h-4" />
+                  <span>775 Rolling Green Rd</span>
                 </div>
-                <div className="text-left">
-                  <div className="text-xs text-white/60">GET IT ON</div>
-                  <div className="text-sm font-medium">Google Play</div>
-                </div>
-              </button>
+              </div>
+            </div>
+
+            {/* Right Section - App Downloads */}
+            <div className="space-y-4">
+              <h3 className="text-xl font-semibold">Get the app</h3>
+              <div className="space-y-3">
+                <button className="bg-black text-white rounded-lg p-3 flex items-center gap-3 hover:bg-gray-800 transition-colors">
+                  <Apple className="w-6 h-6" />
+                  <div className="text-left">
+                    <div className="text-sm text-gray-300">Download on the</div>
+                    <div className="text-lg font-medium">App Store</div>
+                  </div>
+                </button>
+                <button className="bg-black text-white rounded-lg p-3 flex items-center gap-3 hover:bg-gray-800 transition-colors">
+                  <Play className="w-6 h-6" />
+                  <div className="text-left">
+                    <div className="text-sm text-gray-300">GET IT ON</div>
+                    <div className="text-lg font-medium">Google Play</div>
+                  </div>
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Footer Bottom */}
         <div className="border-t border-white/20 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-white/60 text-sm">
-            Copyright © 2023 IT Company. All Rights Reserved.
+          <p className="text-white/60 text-lg">
+            © 2025 Moverse Hasta Limited. All rights reserved.
           </p>
           <div className="flex items-center gap-4">
-            {socialIcons.map((social) => (
+            {socialLinks.map((social) => (
               <button
                 key={social.name}
-                className="w-8 h-8 bg-white/20 hover:bg-white/30 transition-colors rounded-full flex items-center justify-center text-sm font-medium"
+                className="w-8 h-8 bg-white/20 hover:bg-white/30 transition-colors rounded-full flex items-center justify-center"
+                aria-label={social.name}
               >
-                {social.icon}
+                <svg
+                  className="w-4 h-4"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d={social.svgPath} />
+                </svg>
               </button>
             ))}
           </div>

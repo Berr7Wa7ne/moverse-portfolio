@@ -1,28 +1,30 @@
 import React from 'react';
 import ServicesBanner from '../ui/ServicesBanner';
+import Link from 'next/link';
+import { DollarSign, Zap, Shield, Target } from "lucide-react";
 
 const TrustSection: React.FC = () => {
   const features = [
     {
-      icon: '💰',
+      icon: DollarSign,
       title: 'Affordable Price',
-      description: 'We offer competitive pricing without compromising on quality. Get premium services at budget-friendly rates.'
+      description: 'We offer competitive pricing without compromising on quality. Get premium services at budget-friendly rates.',
     },
     {
-      icon: '⚡',
+      icon: Zap,
       title: 'Fast Delivery',
-      description: 'Our efficient workflow ensures quick turnaround times while maintaining the highest standards of quality.'
+      description: 'Our efficient workflow ensures quick turnaround times while maintaining the highest standards of quality.',
     },
     {
-      icon: '🛡️',
+      icon: Shield,
       title: 'Secure & Safe',
-      description: 'Your data and projects are protected with enterprise-grade security measures and best practices.'
+      description: 'Your data and projects are protected with enterprise-grade security measures and best practices.',
     },
     {
-      icon: '🎯',
+      icon: Target,
       title: 'Quality Work',
-      description: 'We deliver exceptional results that exceed expectations through attention to detail and expertise.'
-    }
+      description: 'We deliver exceptional results that exceed expectations through attention to detail and expertise.',
+    },
   ];
 
   return (
@@ -30,11 +32,21 @@ const TrustSection: React.FC = () => {
       <ServicesBanner />
       <section className="section-padding bg-[var(--primary-blue)]">
         <div className="container">
+          {/* Section Header */}
+          <div className='flex items-center justify-between'>
+            <p className="text-[16px] text-gray-50 tracking-wider flex items-center gap-3">
+              <span className="block w-20 h-[2px] bg-gray-50"></span>
+              Why Choose Us
+            </p>
+            <Link href="" className="btn-primary">
+              Get a Quote
+            </Link>
+          </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
             <div className="text-white space-y-8">
               <div className="space-y-4">
-                <span className="text-sm text-white/80 uppercase tracking-wider">Why Choose Us</span>
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
                   Why Trust Us For Your{' '}
                   <span className="text-[var(--accent-blue)]">IT Needs?</span>
@@ -53,21 +65,27 @@ const TrustSection: React.FC = () => {
 
             {/* Right Content - Features Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {features.map((feature, index) => (
-                <div key={index} className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/20 transition-all duration-300">
-                  <div className="space-y-4">
-                    <div className="w-12 h-12 bg-[var(--accent-blue)] rounded-full flex items-center justify-center text-white text-xl">
-                      {feature.icon}
+              {features.map((feature, index) => {
+                const Icon = feature.icon;
+                return (
+                  <div
+                    key={index}
+                    className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/20 transition-all duration-300"
+                  >
+                    <div className="space-y-4">
+                      <div className="w-12 h-12 bg-[var(--accent-blue)] rounded-full flex items-center justify-center text-white">
+                        <Icon className="w-6 h-6" />
+                      </div>
+                      <h3 className="text-lg font-bold text-white">
+                        {feature.title}
+                      </h3>
+                      <p className="text-white/80 text-sm leading-relaxed">
+                        {feature.description}
+                      </p>
                     </div>
-                    <h3 className="text-lg font-bold text-white">
-                      {feature.title}
-                    </h3>
-                    <p className="text-white/80 text-sm leading-relaxed">
-                      {feature.description}
-                    </p>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>

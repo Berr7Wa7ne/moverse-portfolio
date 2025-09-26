@@ -21,22 +21,22 @@ const HeroSection: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
             <div className="text-white">
-              <div className="mb-10">
-              <p className="text-sm text-white/80 uppercase tracking-wider flex items-center gap-3">
-                <span className="block w-20 h-[2px] bg-white/80"></span>
+              <div className="space-y-4 md:space-y-5">
+                <p className="text-[16px] text-gray-50 tracking-wider flex items-center gap-3">
+                  <span className="block w-20 h-[2px] bg-gray-50"></span>
                   Experience the best IT Solutions
-              </p>
+                </p>
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
                   Where Creativity Meets Cutting-Edge Technology
                 </h1>
-                <p className="text-lg text-white/90 leading-relaxed max-w-lg mt-5">
+                <p className="text-lg text-white/90 leading-relaxed max-w-lg">
                   We transform innovative ideas into powerful digital solutions that drive business growth. 
                   Our expert team delivers exceptional results through creative design and advanced technology.
                 </p>
               </div>
 
               {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 mt-5">
+              <div className="flex flex-col sm:flex-row gap-4 mt-8 md:mt-12">
                 <Link href="/services" className="btn-primary bg-[var(--accent-blue)] hover:bg-[#2952cc] text-center">
                   Explore More
                 </Link>

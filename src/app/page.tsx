@@ -9,7 +9,6 @@ import ShowcaseSection from '@/components/home/ShowcaseSection';
 import QuoteFormSection from '@/components/home/QuoteFormSection';
 import TestimonialsSection from '@/components/home/TestimonialsSection';
 import TeamSection from '@/components/home/TeamSection';
-import PricingSection from '@/components/home/PricingSection';
 import BlogSection from '@/components/home/BlogSection';
 import FAQSection from '@/components/home/FAQSection';
 import NewsletterSection from '@/components/home/NewsletterSection';
@@ -30,7 +29,6 @@ export default function Home() {
         <QuoteFormSection />
         <TestimonialsSection />
         <TeamSection />
-        <PricingSection />
         <BlogSection />
         <FAQSection />
         <NewsletterSection />

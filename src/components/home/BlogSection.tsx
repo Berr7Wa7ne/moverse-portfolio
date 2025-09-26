@@ -27,7 +27,10 @@ const BlogSection: React.FC = () => {
     <section className="section-padding bg-white">
       <div className="container">
         <div className="text-center mb-16">
-          <span className="text-sm text-[var(--gray-600)] uppercase tracking-wider">Our Blog</span>
+        <p className="text-[16px] text-[var(--gray-600)] tracking-wider flex items-center justify-center gap-3">
+            <span className="block w-20 h-[2px] bg-gray-500"></span>
+            News and Blogs
+          </p>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--primary-blue)] leading-tight mt-4">
             Our Latest{' '}
             <span className="text-[var(--accent-blue)]">News & Blogs</span>

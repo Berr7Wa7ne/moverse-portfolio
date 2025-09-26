@@ -19,14 +19,14 @@ const Header: React.FC = () => {
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
       <div className="container">
-        <div className="flex items-center justify-between py-4">
+        <div className="flex items-center justify-between py-8">
           {/* Logo */}
           <div className="flex items-center gap-3">
             <Image
               src="/moverse logo.png"
               alt="Moverse Logo"
-              width={100}
-              height={100}
+              width={120}
+              height={120}
               className="object-contain"
             />
           </div>
@@ -37,7 +37,7 @@ const Header: React.FC = () => {
               <Link
                 key={item.label}
                 href={item.href}
-                className="text-[var(--gray-700)] hover:text-[var(--accent-blue)] transition-colors font-medium"
+                className="text-[var(--gray-700)] text-2xl hover:text-[var(--accent-blue)] transition-colors font-medium"
               >
                 {item.label}
               </Link>
@@ -46,7 +46,7 @@ const Header: React.FC = () => {
 
           {/* CTA Button */}
           <div className="hidden lg:block">
-            <Link href="/quote" className="btn-primary">
+            <Link href="/quote" className="rounded-md bg-[var(--accent-blue)] text-white px-8 py-4">
               Get a Quote
             </Link>
           </div>

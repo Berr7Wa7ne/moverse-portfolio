@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "IT Company - Where Creativity Meets Cutting-Edge Technology",
+  title: "Moverse Technologies - Where Creativity Meets Cutting-Edge Technology",
   description: "Transform your ideas into digital reality with our comprehensive IT services including web design, application development, and UX/UI design.",
 };
 

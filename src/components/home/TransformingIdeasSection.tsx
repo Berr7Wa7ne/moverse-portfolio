@@ -15,7 +15,10 @@ const TransformingIdeasSection: React.FC = () => {
           {/* Left Content */}
           <div className="space-y-8">
             <div className="space-y-4">
-              <span className="text-sm text-[var(--gray-600)] uppercase tracking-wider">IT Company</span>
+            <p className="text-[16px] text-gray-500 tracking-wider flex items-center gap-3">
+                  <span className="block w-20 h-[2px] bg-gray-500"></span>
+                  Why Choose Us
+                </p>
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--primary-blue)] leading-tight">
                 Transforming ideas into{' '}
                 <span className="text-[var(--accent-blue)]">Digital Reality</span>
@@ -27,21 +30,20 @@ const TransformingIdeasSection: React.FC = () => {
               </p>
             </div>
 
-            <Link href="/about" className="btn-primary">
-              Read More
+            <div>
+            <Link href="/about" className='border border-gray-500 px-4 py-2'>
+              Learn More
             </Link>
+            </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-8 pt-8">
+            <div className="grid grid-cols-3 gap-4 bg-[var(--accent-blue)] px-8 py-4">
               {stats.map((stat, index) => (
                 <div key={index} className="text-center">
-                  <div className="text-3xl font-bold text-[var(--accent-blue)] mb-2">
+                  <div className="text-4xl font-bold text-white mb-2">
                     {stat.number}
                   </div>
-                  <div className="flex items-center justify-center gap-2 mb-1">
-                    <span className="text-lg">{stat.icon}</span>
-                  </div>
-                  <div className="text-sm text-[var(--gray-600)] font-medium">
+                  <div className="text-sm text-white font-medium">
                     {stat.label}
                   </div>
                 </div>
