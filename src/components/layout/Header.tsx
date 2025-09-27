@@ -3,9 +3,11 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname(); // ✅ get current route
 
   const navItems = [
     { label: 'Home', href: '/' },
@@ -33,15 +35,23 @@ const Header: React.FC = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-8">
-            {navItems.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="text-[var(--gray-700)] text-2xl hover:text-[var(--accent-blue)] transition-colors font-medium"
-              >
-                {item.label}
-              </Link>
-            ))}
+            {navItems.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className={`text-2xl font-medium transition-colors relative
+                    ${
+                      isActive
+                        ? 'text-[var(--accent-blue)] underline underline-offset-8 decoration-[3px] decoration-[var(--accent-blue)]'
+                        : 'text-[var(--gray-700)] hover:text-[var(--accent-blue)]'
+                    }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* CTA Button */}
@@ -56,9 +66,21 @@ const Header: React.FC = () => {
             className="lg:hidden flex flex-col gap-1 w-6 h-6"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            <span className={`w-full h-0.5 bg-[var(--gray-700)] transition-transform ${isMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></span>
-            <span className={`w-full h-0.5 bg-[var(--gray-700)] transition-opacity ${isMenuOpen ? 'opacity-0' : ''}`}></span>
-            <span className={`w-full h-0.5 bg-[var(--gray-700)] transition-transform ${isMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></span>
+            <span
+              className={`w-full h-0.5 bg-[var(--gray-700)] transition-transform ${
+                isMenuOpen ? 'rotate-45 translate-y-1.5' : ''
+              }`}
+            ></span>
+            <span
+              className={`w-full h-0.5 bg-[var(--gray-700)] transition-opacity ${
+                isMenuOpen ? 'opacity-0' : ''
+              }`}
+            ></span>
+            <span
+              className={`w-full h-0.5 bg-[var(--gray-700)] transition-transform ${
+                isMenuOpen ? '-rotate-45 -translate-y-1.5' : ''
+              }`}
+            ></span>
           </button>
         </div>
 
@@ -66,16 +88,23 @@ const Header: React.FC = () => {
         {isMenuOpen && (
           <div className="lg:hidden py-4 border-t">
             <nav className="flex flex-col gap-4">
-              {navItems.map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  className="text-[var(--gray-700)] hover:text-[var(--accent-blue)] transition-colors font-medium"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {navItems.map((item) => {
+                const isActive = pathname === item.href;
+                return (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    className={`font-medium transition-colors ${
+                      isActive
+                        ? 'text-[var(--accent-blue)] underline underline-offset-8 decoration-[3px] decoration-[var(--accent-blue)]'
+                        : 'text-[var(--gray-700)] hover:text-[var(--accent-blue)]'
+                    }`}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
               <Link href="/quote" className="btn-primary inline-block text-center mt-2">
                 Get a Quote
               </Link>
@@ -88,5 +117,3 @@ const Header: React.FC = () => {
 };
 
 export default Header;
-
-
