@@ -3,9 +3,9 @@ import Link from 'next/link';
 
 const AboutIntroSection: React.FC = () => {
   const stats = [
-    { number: '250+', label: 'Total Project' },
-    { number: '300+', label: 'Happy Clients' },
-    { number: '99%', label: 'Client Retention' },
+    { number: '250+', label: 'Projects Done', icon: '📊' },
+    { number: '300+', label: 'Happy Clients', icon: '😊' },
+    { number: '99%', label: 'Success Rate', icon: '🎯' },
   ];
 
   return (
@@ -15,36 +15,39 @@ const AboutIntroSection: React.FC = () => {
           {/* Left Content */}
           <div className="space-y-8">
             <div className="space-y-4">
-              <span className="text-sm text-[var(--gray-600)] uppercase tracking-wider">About Us</span>
+            <p className="text-[16px] text-gray-500 tracking-wider flex items-center gap-3">
+                  <span className="block w-20 h-[2px] bg-gray-500"></span>
+                  About Us
+                </p>
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--primary-blue)] leading-tight">
-                Transforming ideas into{' '}
-                <span className="text-[var(--accent-blue)]">Digital Reality</span>
+                Transforming{' '}
+                <span className="text-[var(--accent-blue)]">ideas into Digital Reality</span>
               </h2>
               <p className="text-lg text-[var(--gray-600)] leading-relaxed">
-                We are a leading IT company dedicated to transforming innovative ideas into powerful digital solutions. 
-                Our expert team combines creativity with cutting-edge technology to deliver exceptional results that 
-                drive business growth and success for our clients worldwide.
+                We specialize in turning your innovative concepts into powerful digital solutions. 
+                Our team combines creativity with cutting-edge technology to deliver exceptional 
+                results that drive business growth and success.
               </p>
             </div>
 
-            <Link href="/services" className="btn-secondary">
+            <div>
+            <Link href="/about" className='border border-gray-500 px-4 py-2'>
               Learn More
             </Link>
+            </div>
 
             {/* Stats */}
-            <div className="bg-[var(--primary-blue)] rounded-2xl p-8">
-              <div className="grid grid-cols-3 gap-8">
-                {stats.map((stat, index) => (
-                  <div key={index} className="text-center">
-                    <div className="text-3xl font-bold text-white mb-2">
-                      {stat.number}
-                    </div>
-                    <div className="text-sm text-white/80">
-                      {stat.label}
-                    </div>
+            <div className="grid grid-cols-3 gap-4 bg-[var(--accent-blue)] px-8 py-4">
+              {stats.map((stat, index) => (
+                <div key={index} className="text-center">
+                  <div className="text-4xl font-bold text-white mb-2">
+                    {stat.number}
                   </div>
-                ))}
-              </div>
+                  <div className="text-sm text-white font-medium">
+                    {stat.label}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -52,7 +55,7 @@ const AboutIntroSection: React.FC = () => {
           <div className="relative">
             <div className="relative z-10">
               <img
-                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+                src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
                 alt="Team collaboration"
                 className="w-full h-auto rounded-2xl shadow-2xl"
               />
@@ -66,16 +69,6 @@ const AboutIntroSection: React.FC = () => {
             <div className="absolute inset-0 border-4 border-[var(--accent-blue)] rounded-2xl transform rotate-2 opacity-30"></div>
             <div className="absolute inset-0 border-2 border-white rounded-2xl transform -rotate-1 shadow-lg"></div>
           </div>
-        </div>
-
-        {/* See Our Team Button */}
-        <div className="text-center mt-12">
-          <Link href="/team" className="btn-primary flex items-center gap-2 mx-auto">
-            See Our Team
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </Link>
         </div>
       </div>
     </section>

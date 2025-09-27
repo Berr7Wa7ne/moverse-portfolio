@@ -7,12 +7,8 @@ const AboutFAQSection: React.FC = () => {
 
   const faqs = [
     {
-      question: 'What services does your company provide?',
+      question: 'What services do you offer?',
       answer: 'We offer comprehensive IT services including web design and development, mobile app development, digital marketing, e-commerce solutions, and ongoing maintenance and support for all our projects.'
-    },
-    {
-      question: 'What industries do you serve?',
-      answer: 'We serve a wide range of industries including healthcare, education, finance, retail, technology, and more. Our solutions are tailored to meet the specific needs of each industry.'
     },
     {
       question: 'How long does a typical project take?',
@@ -25,6 +21,14 @@ const AboutFAQSection: React.FC = () => {
     {
       question: 'What technologies do you work with?',
       answer: 'We work with modern technologies including React, Next.js, Node.js, Python, PHP, WordPress, and various cloud platforms. We stay updated with the latest industry standards and best practices.'
+    },
+    {
+      question: 'Can you help with existing projects?',
+      answer: 'Absolutely! We can audit, improve, and maintain existing projects. Whether you need bug fixes, performance optimization, or feature additions, our team can help enhance your current digital solutions.'
+    },
+    {
+      question: 'Do you offer custom pricing for large projects?',
+      answer: 'Yes, for large-scale projects or enterprise clients, we provide custom pricing based on specific requirements. Contact us for a personalized quote tailored to your project needs.'
     }
   ];
 
@@ -33,10 +37,13 @@ const AboutFAQSection: React.FC = () => {
   };
 
   return (
-    <section className="section-padding bg-white">
+    <section className="section-padding bg-[var(--gray-100)]">
       <div className="container">
         <div className="text-center mb-16">
-          <span className="text-sm text-[var(--gray-600)] uppercase tracking-wider">FAQ</span>
+        <p className="text-[16px] text-[var(--gray-600)] tracking-wider flex items-center justify-center gap-3">
+            <span className="block w-20 h-[2px] bg-gray-500"></span>
+            FAQs
+          </p>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--primary-blue)] leading-tight mt-4">
             Questions?{' '}
             <span className="text-[var(--accent-blue)]">Look here</span>

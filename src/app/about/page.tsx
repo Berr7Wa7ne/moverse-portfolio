@@ -7,7 +7,6 @@ import AboutTrustSection from '@/components/about/AboutTrustSection';
 import AboutQuoteSection from '@/components/about/AboutQuoteSection';
 import AboutTestimonialsSection from '@/components/about/AboutTestimonialsSection';
 import AboutTeamSection from '@/components/about/AboutTeamSection';
-import AboutPricingSection from '@/components/about/AboutPricingSection';
 import AboutBlogsSection from '@/components/about/AboutBlogsSection';
 import AboutFAQSection from '@/components/about/AboutFAQSection';
 import AboutNewsletterSection from '@/components/about/AboutNewsletterSection';
@@ -26,7 +25,6 @@ export default function AboutPage() {
         <AboutQuoteSection />
         <AboutTestimonialsSection />
         <AboutTeamSection />
-        <AboutPricingSection />
         <AboutBlogsSection />
         <AboutFAQSection />
         <AboutNewsletterSection />

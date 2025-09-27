@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { Mail } from 'lucide-react';
 import ServicesBanner from '../ui/ServicesBanner';
 
 const AboutNewsletterSection: React.FC = () => {
@@ -15,37 +16,52 @@ const AboutNewsletterSection: React.FC = () => {
 
   return (
     <>
-      <ServicesBanner />
-      <section className="section-padding bg-white">
-        <div className="container">
-          <div className="text-center max-w-4xl mx-auto">
-            <div className="space-y-4 mb-8">
-              <span className="text-sm text-[var(--gray-600)] uppercase tracking-wider">Newsletter</span>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--primary-blue)] leading-tight">
-                Subscribe For Expert{' '}
-                <span className="text-[var(--accent-blue)]">IT Tips And Social Offer</span>
-              </h2>
+    <ServicesBanner />
+    <section className="section-padding bg-white">
+      <div className="container">
+        <div className="text-center max-w-4xl mx-auto">
+          {/* Subtitle with line */}
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="w-20 h-[2px] bg-[var(--gray-600)]"></div>
+            <span className="text-[16px] text-[var(--gray-600)] tracking-wider">Our Newsletter</span>
+          </div>
+          
+          {/* Main heading with mixed colors */}
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-8">
+            <span className="text-[var(--primary-blue)]">Subscribe</span>{' '}
+            <span className="text-[var(--accent-blue)]">For Expert IT</span>
+            <br />
+            <span className="text-[var(--accent-blue)]">Tips And Social Offer</span>
+          </h2>
+
+          {/* Email form */}
+          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
+            <div className="relative flex-1">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <div className="w-8 h-8 rounded-full border border-gray-400 flex items-center justify-center">
+              <Mail className="w-5 h-5 text-[var(--accent-blue)]" />
             </div>
-            
-            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+          </div>
+
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter Your Email"
-                className="flex-1 px-6 py-4 rounded-lg border border-[var(--gray-300)] focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-transparent text-[var(--gray-800)]"
+                className="w-full pl-10 ml-2 pr-4 py-4 rounded-lg border border-[var(--gray-300)] focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-transparent text-[var(--gray-800)]"
                 required
               />
-              <button
-                type="submit"
-                className="btn-primary bg-[var(--accent-blue)] hover:bg-[#2952cc] whitespace-nowrap"
-              >
-                Subscribe Now
-              </button>
-            </form>
-          </div>
+            </div>
+            <button
+              type="submit"
+              className="btn-primary bg-[var(--accent-blue)] hover:bg-[#2952cc] whitespace-nowrap px-8 py-4"
+            >
+              Subscribe
+            </button>
+          </form>
         </div>
-      </section>
+      </div>
+    </section>
     </>
   );
 };
