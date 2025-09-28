@@ -6,10 +6,10 @@ const ServicesSection: React.FC = () => {
   const services = [
     {
       icon: Palette,
-      title: "Web Design",
+      title: "Web Development",
       description:
         "Create stunning, responsive websites that captivate your audience and deliver exceptional user experiences across all devices.",
-      href: "/services/web-design",
+      href: "/services/website-development",
     },
     {
       icon: Smartphone,

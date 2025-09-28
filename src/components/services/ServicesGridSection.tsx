@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import {
   Monitor,
   Smartphone,
@@ -15,42 +16,50 @@ const ServicesGridSection: React.FC = () => {
     {
       icon: <Monitor className="w-8 h-8" />, // Website Design
       title: 'Website Design',
-      description: 'Create stunning, responsive websites that captivate your audience and deliver exceptional user experiences across all devices.'
+      description: 'Create stunning, responsive websites that captivate your audience and deliver exceptional user experiences across all devices.',
+      slug: 'website-development'
     },
     {
       icon: <Smartphone className="w-8 h-8" />, // Mobile Application
       title: 'Mobile Application',
-      description: 'Build powerful mobile applications for iOS and Android that engage users and drive business growth with modern technology.'
+      description: 'Build powerful mobile applications for iOS and Android that engage users and drive business growth with modern technology.',
+      slug: 'application-development'
     },
     {
       icon: <Palette className="w-8 h-8" />, // UX/UI Design
       title: 'UX/UI Design',
-      description: 'Design intuitive and beautiful user interfaces that provide seamless experiences and enhance user engagement.'
+      description: 'Design intuitive and beautiful user interfaces that provide seamless experiences and enhance user engagement.',
+      slug: 'ui-ux-design'
     },
     {
       icon: <Megaphone className="w-8 h-8" />, // Brand Identity
       title: 'Brand Identity',
-      description: 'Develop strong brand identities that resonate with your audience and differentiate you from competitors.'
+      description: 'Develop strong brand identities that resonate with your audience and differentiate you from competitors.',
+      slug: 'brand-identity'
     },
     {
       icon: <ShoppingCart className="w-8 h-8" />, // E-commerce
       title: 'E-commerce Solutions',
-      description: 'Build robust online stores with secure payment systems and comprehensive inventory management features.'
+      description: 'Build robust online stores with secure payment systems and comprehensive inventory management features.',
+      slug: 'ecommerce-solutions'
     },
     {
       icon: <Search className="w-8 h-8" />, // SEO
       title: 'SEO Optimization',
-      description: 'Improve your search engine rankings and drive organic traffic with our comprehensive SEO strategies.'
+      description: 'Improve your search engine rankings and drive organic traffic with our comprehensive SEO strategies.',
+      slug: 'seo-optimization'
     },
     {
       icon: <BarChart3 className="w-8 h-8" />, // Digital Marketing
       title: 'Digital Marketing',
-      description: 'Boost your online presence with strategic digital marketing campaigns that reach your target audience effectively.'
+      description: 'Boost your online presence with strategic digital marketing campaigns that reach your target audience effectively.',
+      slug: 'digital-marketing'
     },
     {
       icon: <Target className="w-8 h-8" />, // Graphic Design
       title: 'Graphic Design',
-      description: 'Create visually stunning graphics and marketing materials that communicate your message effectively.'
+      description: 'Create visually stunning graphics and marketing materials that communicate your message effectively.',
+      slug: 'graphic-design'
     }
   ];
 
@@ -91,12 +100,15 @@ const ServicesGridSection: React.FC = () => {
                 </div>
                 
                 {/* Learn More Button */}
-                <button className="text-[var(--accent-blue)] hover:text-[#2952cc] font-semibold transition-colors flex items-center gap-2 group">
+                <Link 
+                  href={`/services/${service.slug}`}
+                  className="text-[var(--accent-blue)] hover:text-[#2952cc] font-semibold transition-colors flex items-center gap-2 group"
+                >
                   Learn More
                   <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
-                </button>
+                </Link>
               </div>
             </div>
           ))}

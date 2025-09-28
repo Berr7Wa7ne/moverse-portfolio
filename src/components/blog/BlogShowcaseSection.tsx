@@ -23,6 +23,7 @@ const BlogShowcaseSection: React.FC = () => {
       description:
         'Explore the latest trends in web development that will shape the industry in 2025 and beyond.',
       featured: true,
+      slug: 'future-web-development-trends'
     },
     {
       id: 2,
@@ -37,6 +38,7 @@ const BlogShowcaseSection: React.FC = () => {
       description:
         'Learn the essential principles for creating intuitive and engaging mobile app interfaces.',
       featured: false,
+      slug: 'mobile-app-design-best-practices'
     },
     {
       id: 3,
@@ -51,6 +53,7 @@ const BlogShowcaseSection: React.FC = () => {
       description:
         'Discover proven strategies to boost your social media engagement and grow your audience.',
       featured: false,
+      slug: 'social-media-engagement-tips'
     },
     {
       id: 4,
@@ -65,6 +68,7 @@ const BlogShowcaseSection: React.FC = () => {
       description:
         'Learn effective techniques to enhance your social media presence and drive meaningful interactions.',
       featured: false,
+      slug: 'social-media-presence-tips'
     },
     {
       id: 5,
@@ -80,6 +84,7 @@ const BlogShowcaseSection: React.FC = () => {
       description:
         'Understand how super apps are revolutionizing the digital landscape and what this means for businesses.',
       featured: false,
+      slug: 'rise-super-apps-business-consumers'
     },
   ];
 
@@ -127,86 +132,87 @@ const BlogShowcaseSection: React.FC = () => {
           <div className="space-y-8 mb-12">
             {/* Featured Post (Large Rectangle) */}
             {filteredPosts.length > 0 && (
-              <article className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-[var(--gray-200)]">
-                <div className="relative overflow-hidden">
-                  <img
-                    src={filteredPosts[0].image}
-                    alt={filteredPosts[0].title}
-                    className="w-full h-64 lg:h-full object-cover"
-                  />
-                  {/* Text Overlay */}
-                  <div className="absolute inset-0 bg-black/40 flex items-end justify-center">
-                    <div className="p-8 text-white text-center w-full">
-                      <div className="flex items-center justify-center gap-4 text-lg text-gray-300 mb-2">
-                        <span>{filteredPosts[0].date}</span>
-                        <span className="text-white">•</span>
-                        <span className="text-white px-3 py-1 rounded-full text-lg">
-                          {filteredPosts[0].category}
-                        </span>
-                      </div>
-
-                      <h3 className="text-3xl lg:text-4xl font-bold text-white leading-tight mb-4">
-                        {filteredPosts[0].title}
-                      </h3>
-
-                      <div className="flex flex-col items-center gap-2">
-                        <img
-                          src={filteredPosts[0].authorImage}
-                          alt={filteredPosts[0].author}
-                          className="w-20 h-20 rounded-full object-cover"
-                        />
-                        <p className="font-medium text-white">
-                          {filteredPosts[0].author}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </article>
-            )}
-
-            {/* 2x2 Grid of Smaller Posts */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {filteredPosts.slice(1, 5).map((post) => (
-                <article
-                  key={post.id}
-                  className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-[var(--gray-200)] aspect-square"
-                >
-                  <div className="relative overflow-hidden h-full">
+              <Link href={`/blog/${filteredPosts[0].slug}`} className="block">
+                <article className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-[var(--gray-200)]">
+                  <div className="relative overflow-hidden">
                     <img
-                      src={post.image}
-                      alt={post.title}
-                      className="w-full h-full object-cover"
+                      src={filteredPosts[0].image}
+                      alt={filteredPosts[0].title}
+                      className="w-full h-64 lg:h-full object-cover"
                     />
                     {/* Text Overlay */}
                     <div className="absolute inset-0 bg-black/40 flex items-end justify-center">
-                      <div className="p-6 text-white text-center w-full">
-                        <div className="flex items-center justify-center gap-3 text-lg text-gray-300 mb-2">
-                          <span>{post.date}</span>
+                      <div className="p-8 text-white text-center w-full">
+                        <div className="flex items-center justify-center gap-4 text-lg text-gray-300 mb-2">
+                          <span>{filteredPosts[0].date}</span>
                           <span className="text-white">•</span>
-                          <span className="text-white px-2 py-1 rounded-full text-sm">
-                            {post.category}
+                          <span className="text-white px-3 py-1 rounded-full text-lg">
+                            {filteredPosts[0].category}
                           </span>
                         </div>
 
-                        <h3 className="text-xl font-bold text-white leading-tight mb-3">
-                          {post.title}
+                        <h3 className="text-3xl lg:text-4xl font-bold text-white leading-tight mb-4">
+                          {filteredPosts[0].title}
                         </h3>
 
                         <div className="flex flex-col items-center gap-2">
                           <img
-                            src={post.authorImage}
-                            alt={post.author}
-                            className="w-16 h-16 rounded-full object-cover"
+                            src={filteredPosts[0].authorImage}
+                            alt={filteredPosts[0].author}
+                            className="w-20 h-20 rounded-full object-cover"
                           />
-                          <p className="text-lg font-medium text-white">
-                            {post.author}
+                          <p className="font-medium text-white">
+                            {filteredPosts[0].author}
                           </p>
                         </div>
                       </div>
                     </div>
                   </div>
                 </article>
+              </Link>
+            )}
+
+            {/* 2x2 Grid of Smaller Posts */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {filteredPosts.slice(1, 5).map((post) => (
+                <Link key={post.id} href={`/blog/${post.slug}`} className="block">
+                  <article className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-[var(--gray-200)] aspect-square">
+                    <div className="relative overflow-hidden h-full">
+                      <img
+                        src={post.image}
+                        alt={post.title}
+                        className="w-full h-full object-cover"
+                      />
+                      {/* Text Overlay */}
+                      <div className="absolute inset-0 bg-black/40 flex items-end justify-center">
+                        <div className="p-6 text-white text-center w-full">
+                          <div className="flex items-center justify-center gap-3 text-lg text-gray-300 mb-2">
+                            <span>{post.date}</span>
+                            <span className="text-white">•</span>
+                            <span className="text-white px-2 py-1 rounded-full text-sm">
+                              {post.category}
+                            </span>
+                          </div>
+
+                          <h3 className="text-xl font-bold text-white leading-tight mb-3">
+                            {post.title}
+                          </h3>
+
+                          <div className="flex flex-col items-center gap-2">
+                            <img
+                              src={post.authorImage}
+                              alt={post.author}
+                              className="w-16 h-16 rounded-full object-cover"
+                            />
+                            <p className="text-lg font-medium text-white">
+                              {post.author}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                </Link>
               ))}
             </div>
           </div>

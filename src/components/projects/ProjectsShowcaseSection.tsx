@@ -10,12 +10,14 @@ const ProjectsShowcaseSection: React.FC = () => {
       title:
         'Care Connect - Doctor appointment app<br />with booking features',
       tags: ['UX/UI Design', 'App Design', 'Wireframe'],
+      slug: 'doctor-appointment-app',
     },
     {
       image: '/dental.jpg',
       title:
         'Dental - Dentist and Dental Clinic<br />Website UIUX Design',
       tags: ['UX/UI Design', 'Web Design', 'Wireframe'],
+      slug: 'dental-clinic-website',
     },
     {
       image:
@@ -23,6 +25,7 @@ const ProjectsShowcaseSection: React.FC = () => {
       title:
         'Car Rental - Car Rental Booking<br />Mobile App',
       tags: ['UX/UI Design', 'App Design', 'Wireframe'],
+      slug: 'car-rental-app',
     },
     {
       image:
@@ -30,26 +33,31 @@ const ProjectsShowcaseSection: React.FC = () => {
       title:
         'Hotel Booking - Hotel Booking App<br />Landing Page UIUX Design',
       tags: ['UX/UI Design', 'Landing page', 'Wireframe'],
+      slug: 'hotel-booking-app',
     },
     {
       title: 'E-Learn - Online Learning Mobile App',
       image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
       tags: ['UX/UI Design', 'App Design', 'Wireframe'],
+      slug: 'e-learn-app',
     },
     {
       title: 'Car Wash - Car Wash Website UIUX Design',
       image: '/carWash.jpg',
       tags: ['UX/UI Design', 'Landing page', 'Wireframe'],
+      slug: 'car-wash-website',
     },
     {
       title: 'Laundry - Laundry Service Booking Mobile App',
       image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
       tags: ['UX/UI Design', 'App Design', 'Wireframe'],
+      slug: 'laundry-service-app',
     },
     {
       title: 'Real Estate - Real Estate Website UIUX Design',
       image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
       tags: ['UX/UI Design', 'Landing page', 'Wireframe'],
+      slug: 'real-estate-website',
     }
   ];
 
@@ -72,9 +80,10 @@ const ProjectsShowcaseSection: React.FC = () => {
         {/* Project Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           {projects.map((project, index) => (
-            <div
+            <Link
               key={index}
-              className="relative aspect-square rounded-2xl overflow-hidden group hover:shadow-lg transition-all duration-300"
+              href={`/projects/${project.slug}`}
+              className="relative aspect-square rounded-2xl overflow-hidden group hover:shadow-lg transition-all duration-300 block"
             >
               {/* Background Image */}
               <img
@@ -99,23 +108,22 @@ const ProjectsShowcaseSection: React.FC = () => {
                   {/* Tags */}
                   <div className="flex flex-wrap gap-2">
                     {project.tags.map((tag, tagIndex) => (
-                      <Link
+                      <span
                         key={tagIndex}
-                        href={`/tags/${tag.toLowerCase().replace(/\s+/g, '-')}`}
-                        className="px-3 py-1 bg-white/20 text-white rounded-full text-[14px] backdrop-blur-sm hover:bg-white/30 transition"
+                        className="px-3 py-1 bg-white/20 text-white rounded-full text-[14px] backdrop-blur-sm"
                       >
                         {tag}
-                      </Link>
+                      </span>
                     ))}
                   </div>
 
                   {/* Send Icon */}
-                  <button className="px-4 py-2 bg-[var(--primary-blue)] rounded-full flex items-center justify-center text-white hover:bg-[var(--accent-blue)] transition">
+                  <div className="px-4 py-2 bg-[var(--primary-blue)] rounded-full flex items-center justify-center text-white group-hover:bg-[var(--accent-blue)] transition">
                     <Send className="w-5 h-5" />
-                  </button>
+                  </div>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 
