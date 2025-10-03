@@ -16,7 +16,7 @@ const ServicesSection: React.FC = () => {
       title: "Mobile Development",
       description:
         "Build powerful mobile applications for iOS and Android that engage users and drive business growth.",
-      href: "/services/mobile-development",
+      href: "/services/application-development",
     },
     {
       icon: Zap,

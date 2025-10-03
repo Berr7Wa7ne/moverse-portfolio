@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Send } from 'lucide-react';
 
-const ShowcaseSection: React.FC = () => {
+const ProjectShowcaseDetails = () => {
   const projects = [
     {
       image:
@@ -19,50 +19,10 @@ const ShowcaseSection: React.FC = () => {
       tags: ['UX/UI Design', 'Web Design', 'Wireframe'],
       slug: 'dental-clinic-website',
     },
-    {
-      image:
-        'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      title:
-        'Car Rental - Car Rental Booking<br />Mobile App',
-      tags: ['UX/UI Design', 'App Design', 'Wireframe'],
-      slug: 'car-rental-app',
-    },
-    {
-      image:
-        'https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      title:
-        'Hotel Booking - Hotel Booking App<br />Landing Page UIUX Design',
-      tags: ['UX/UI Design', 'Landing page', 'Wireframe'],
-      slug: 'hotel-booking-app',
-    },
-    {
-      title: 'E-Learn - Online Learning Mobile App',
-      image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      tags: ['UX/UI Design', 'App Design', 'Wireframe'],
-      slug: 'e-learn-app',
-    },
-    {
-      title: 'Car Wash - Car Wash Website UIUX Design',
-      image: '/carWash.jpg',
-      tags: ['UX/UI Design', 'Landing page', 'Wireframe'],
-      slug: 'car-wash-website',
-    },
-    {
-      title: 'Laundry - Laundry Service Booking Mobile App',
-      image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      tags: ['UX/UI Design', 'App Design', 'Wireframe'],
-      slug: 'laundry-service-app',
-    },
-    {
-      title: 'Real Estate - Real Estate Website UIUX Design',
-      image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      tags: ['UX/UI Design', 'Landing page', 'Wireframe'],
-      slug: 'real-estate-website',
-    }
   ];
 
   return (
-    <section className="section-padding bg-white">
+    <section className="mt-10 bg-white">
       <div className="container">
         {/* Section Header */}
         <div className="text-center mb-16">
@@ -72,6 +32,7 @@ const ShowcaseSection: React.FC = () => {
           </p>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--primary-blue)] leading-tight mt-4">
             <span>Explore Our Showcase of</span>{' '}
+            <br />
             <span className="text-[var(--accent-blue)]">Featured Work</span>
           </h2>
         </div>
@@ -125,16 +86,9 @@ const ShowcaseSection: React.FC = () => {
             </Link>
           ))}
         </div>
-
-        {/* View All Works Button */}
-        <div className="text-center">
-          <Link href="/projects" className="btn-primary">
-            View All Works
-          </Link>
-        </div>
       </div>
     </section>
   );
 };
 
-export default ShowcaseSection;
+export default ProjectShowcaseDetails;

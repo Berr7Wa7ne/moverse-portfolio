@@ -3,7 +3,16 @@
 import React from 'react';
 import { useParams } from 'next/navigation';
 import ServicesBanner from '@/components/ui/ServicesBanner';
-
+import ProjectIntroSection from '@/components/projects/projectDetails/ProjectIntroSection';
+import ProjectChallengeServiceSection from '@/components/projects/projectDetails/ProjectChallengeServiceSection';
+import ProjectResultsSection from '@/components/projects/projectDetails/ProjectResultsSection';
+import ProjectHero from '@/components/projects/projectDetails/ProjectHero';
+import ProjectShowcaseDetails from '@/components/projects/projectDetails/ProjectShowcaseDetails';
+import ProjectsNewsletterSection from '@/components/projects/ProjectsNewsletterSection';
+import ProjectsQuoteSection from '@/components/projects/ProjectsQuoteSection';
+import Footer from '@/components/layout/Footer';
+import Header from '@/components/layout/Header';
+import TopBar from '@/components/layout/TopBar';
 const ProjectDetailPage: React.FC = () => {
   const params = useParams();
   const slug = params.slug as string;
@@ -122,201 +131,45 @@ const ProjectDetailPage: React.FC = () => {
 
   return (
     <>
-      {/* Hero Section */}
-      <section className="relative bg-[var(--primary-blue)] py-20 lg:py-32">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="container relative z-10">
-          <div className="text-center text-white">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
-              {project.title}
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-200 max-w-3xl mx-auto">
-              {project.description}
-            </p>
-          </div>
-        </div>
-      </section>
-
+      <TopBar />
+      <Header />
+      <ProjectHero
+        title="Our Work Details"
+        breadcrumb="Home / Our Works / Our Work Details"
+      />
+      <ProjectIntroSection
+        heroImage={project.images[0]}
+        title={project.title}
+        lead={project.description}
+        body={project.service}
+        info={{ client: project.client, service: project.category, location: project.location, year: project.year }}
+      />
+      <ProjectChallengeServiceSection
+        collageImage={project.images[1] || project.images[0]}
+        challengeTitle="The Challenge"
+        challengeText={project.challenge}
+        serviceTitle="The Service"
+        serviceText={project.service}
+        serviceBullets={project.features}
+      />
+      <ProjectResultsSection
+        title="The Results"
+        text={project.results}
+        wideImage={project.images[2] || project.images[0]}
+        testimonial={{
+          author: project.testimonial.author,
+          position: project.testimonial.position,
+          rating: project.testimonial.rating,
+          image: project.testimonial.image,
+          text: project.testimonial.text,
+        }}
+      />
       <ServicesBanner />
-
-      {/* Project Overview */}
-      <section className="section-padding bg-white">
-        <div className="container">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-[var(--primary-blue)] mb-6">
-                Project Overview
-              </h2>
-              <p className="text-[var(--gray-600)] text-lg leading-relaxed mb-8">
-                {project.description}
-              </p>
-              
-              <div className="grid grid-cols-2 gap-6">
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h3 className="font-semibold text-[var(--primary-blue)] mb-2">Client</h3>
-                  <p className="text-[var(--gray-600)]">{project.client}</p>
-                </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h3 className="font-semibold text-[var(--primary-blue)] mb-2">Category</h3>
-                  <p className="text-[var(--gray-600)]">{project.category}</p>
-                </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h3 className="font-semibold text-[var(--primary-blue)] mb-2">Location</h3>
-                  <p className="text-[var(--gray-600)]">{project.location}</p>
-                </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h3 className="font-semibold text-[var(--primary-blue)] mb-2">Year</h3>
-                  <p className="text-[var(--gray-600)]">{project.year}</p>
-                </div>
-              </div>
-            </div>
-            <div className="relative">
-              <img
-                src={project.images[0]}
-                alt={project.title}
-                className="w-full h-96 object-cover rounded-2xl shadow-lg"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Project Images */}
-      <section className="section-padding bg-gray-50">
-        <div className="container">
-          <h2 className="text-3xl md:text-4xl font-bold text-[var(--primary-blue)] text-center mb-12">
-            Project Screenshots
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {project.images.map((image, index) => (
-              <div key={index} className="relative group">
-                <img
-                  src={image}
-                  alt={`${project.title} screenshot ${index + 1}`}
-                  className="w-full h-64 object-cover rounded-2xl shadow-lg group-hover:shadow-xl transition-shadow"
-                />
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl flex items-center justify-center">
-                  <button className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
-                    <svg className="w-6 h-6 text-[var(--primary-blue)]" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* The Challenge */}
-      <section className="section-padding bg-white">
-        <div className="container">
-          <h2 className="text-3xl md:text-4xl font-bold text-[var(--primary-blue)] mb-6">
-            The Challenge
-          </h2>
-          <p className="text-[var(--gray-600)] text-lg leading-relaxed max-w-4xl">
-            {project.challenge}
-          </p>
-        </div>
-      </section>
-
-      {/* The Service */}
-      <section className="section-padding bg-gray-50">
-        <div className="container">
-          <h2 className="text-3xl md:text-4xl font-bold text-[var(--primary-blue)] mb-6">
-            The Service
-          </h2>
-          <p className="text-[var(--gray-600)] text-lg leading-relaxed max-w-4xl mb-8">
-            {project.service}
-          </p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <h3 className="text-xl font-semibold text-[var(--primary-blue)] mb-4">Key Features</h3>
-              <ul className="space-y-3">
-                {project.features.map((feature, index) => (
-                  <li key={index} className="flex items-center gap-3">
-                    <span className="w-6 h-6 bg-[var(--accent-blue)] text-white rounded-full flex items-center justify-center text-sm font-bold">
-                      ✓
-                    </span>
-                    <span className="text-[var(--gray-600)]">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold text-[var(--primary-blue)] mb-4">Technologies Used</h3>
-              <div className="flex flex-wrap gap-2">
-                {project.technologies.map((tech, index) => (
-                  <span key={index} className="bg-[var(--accent-blue)] text-white px-3 py-1 rounded-full text-sm">
-                    {tech}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* The Results */}
-      <section className="section-padding bg-white">
-        <div className="container">
-          <h2 className="text-3xl md:text-4xl font-bold text-[var(--primary-blue)] mb-6">
-            The Results
-          </h2>
-          <p className="text-[var(--gray-600)] text-lg leading-relaxed max-w-4xl mb-12">
-            {project.results}
-          </p>
-          
-          {/* Testimonial */}
-          <div className="bg-gray-50 p-8 rounded-2xl">
-            <div className="flex items-start gap-6">
-              <img
-                src={project.testimonial.image}
-                alt={project.testimonial.author}
-                className="w-16 h-16 rounded-full object-cover"
-              />
-              <div className="flex-1">
-                <div className="flex items-center gap-4 mb-4">
-                  <div>
-                    <h4 className="font-semibold text-[var(--primary-blue)]">{project.testimonial.author}</h4>
-                    <p className="text-[var(--gray-600)]">{project.testimonial.position}</p>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    {[...Array(5)].map((_, i) => (
-                      <span key={i} className="text-yellow-400">★</span>
-                    ))}
-                    <span className="text-[var(--gray-600)] ml-2">{project.testimonial.rating}</span>
-                  </div>
-                </div>
-                <p className="text-[var(--gray-600)] text-lg italic">"{project.testimonial.text}"</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="section-padding bg-[var(--primary-blue)]">
-        <div className="container text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            Ready to Start Your Project?
-          </h2>
-          <p className="text-xl text-gray-200 mb-8 max-w-2xl mx-auto">
-            Let's discuss your project requirements and create something amazing together.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="/contact" className="btn-primary bg-white text-[var(--primary-blue)] hover:bg-gray-100">
-              Get Free Quote
-            </a>
-            <a href="/projects" className="btn-secondary border-white text-white hover:bg-white hover:text-[var(--primary-blue)]">
-              View More Projects
-            </a>
-          </div>
-        </div>
-      </section>
-
+      <ProjectShowcaseDetails />
+      <ProjectsQuoteSection />
+      <ProjectsNewsletterSection />
       <ServicesBanner />
+      <Footer />
     </>
   );
 };

@@ -64,7 +64,7 @@ const TeamSection: React.FC = () => {
         </div>
 
         <div className="flex justify-center">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-48">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-20">
             {teamMembers.map((member, index) => (
               <div key={index} className="text-center group block">
                 {/* Profile link wrapper */}
