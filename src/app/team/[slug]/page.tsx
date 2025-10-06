@@ -5,6 +5,11 @@ import { useParams } from 'next/navigation';
 import ServicesBanner from '@/components/ui/ServicesBanner';
 import MemberHero from '@/components/team/teamDetails/MemberHero';
 import { MemberProfile, MemberSkills } from '@/components/team/teamDetails/MemberProfile';
+import QuoteFormSection from '@/components/home/QuoteFormSection';
+import NewsletterSection from '@/components/home/NewsletterSection';
+import Footer from '@/components/layout/Footer';
+import TopBar from '@/components/layout/TopBar';
+import Header from '@/components/layout/Header';
 
 const TeamDetailPage: React.FC = () => {
   const params = useParams();
@@ -122,31 +127,17 @@ const TeamDetailPage: React.FC = () => {
 
   return (
     <>
+      <TopBar/>
+      <Header/>
       <MemberHero name={member.name} position={member.position} />
       <ServicesBanner />
       <MemberProfile name={member.name} position={member.position} bio={member.bio} email={member.email} phone={member.phone} experience={member.experience} image={member.image} social={member.social} />
       <MemberSkills name={member.name} skills={member.skills} />
-      {/* CTA Section */}
-      <section className="section-padding bg-[var(--primary-blue)]">
-        <div className="container text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            Want to Work with Our Team?
-          </h2>
-          <p className="text-xl text-gray-200 mb-8 max-w-2xl mx-auto">
-            Our talented team is ready to bring your ideas to life. Let's discuss your project today.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="/contact" className="btn-primary bg-white text-[var(--primary-blue)] hover:bg-gray-100">
-              Get Free Quote
-            </a>
-            <a href="/about" className="btn-secondary border-white text-white hover:bg-white hover:text-[var(--primary-blue)]">
-              Meet Our Team
-            </a>
-          </div>
-        </div>
-      </section>
-
       <ServicesBanner />
+      <QuoteFormSection/>
+      <ServicesBanner />
+      <NewsletterSection />
+      <Footer />
     </>
   );
 };
