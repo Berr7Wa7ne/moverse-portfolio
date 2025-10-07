@@ -1,7 +1,5 @@
-'use client';
-
 import React from 'react';
-import { useParams } from 'next/navigation';
+import { fetchBlogPostBySlugFromCMS, fetchBlogSlugsFromCMS } from '@/lib/cms/sanity';
 import ServicesBanner from '@/components/ui/ServicesBanner';
 import BlogHero from '@/components/blog/blogDetails/BlogHero';
 import BlogContent from '@/components/blog/blogDetails/BlogContent';
@@ -11,11 +9,15 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import NewsletterSection from '@/components/home/NewsletterSection';
 
-const BlogDetailPage: React.FC = () => {
-  const params = useParams();
-  const slug = params.slug as string;
+export const revalidate = 300;
 
-  // Blog post data - in a real app, this would come from an API or CMS
+type PageProps = { params: Promise<{ slug: string }> };
+
+const BlogDetailPage = async ({ params }: PageProps) => {
+  const useParams = await params; // 👈 await params here
+  const slug = useParams.slug;
+
+  // Fallback static content if CMS has nothing yet
   const blogPosts = {
     'future-web-development-trends': {
       title: 'The Future of Web Development: Trends To Watch in 2025',
@@ -115,7 +117,28 @@ const BlogDetailPage: React.FC = () => {
     // ... keep your other blog posts (ai-cloud-computing-automation, rise-super-apps-business-consumers) the same
   };
 
-  const post = blogPosts[slug as keyof typeof blogPosts];
+  let post: any = null;
+  if (process.env.USE_CMS === 'true') {
+    const cms = await fetchBlogPostBySlugFromCMS(slug);
+    if (cms) {
+      console.log('[blog detail page] Source: Sanity CMS', { slug, found: true });
+      post = {
+        title: cms.title,
+        image: cms.coverImage?.asset?.url || '/next.svg',
+        tags: cms.tags || [],
+        author: cms.author?.name || 'Author',
+        authorImage: cms.author?.avatar?.asset?.url || '/next.svg',
+        date: cms.date?.slice(0, 10) || '',
+        readTime: '',
+        content: cms.content, // assumes your BlogContent can handle CMS content
+        relatedPosts: [],
+      };
+    }
+  }
+  if (!post) {
+    console.log('[blog detail page] Source: local static content', { slug });
+    post = (blogPosts as any)[slug];
+  }
 
   if (!post) {
     return (
@@ -163,3 +186,15 @@ const BlogDetailPage: React.FC = () => {
 };
 
 export default BlogDetailPage;
+
+export async function generateStaticParams() {
+  if (process.env.USE_CMS === 'true') {
+    const slugs = await fetchBlogSlugsFromCMS();
+    return slugs.map((slug) => ({ slug }));
+  }
+  return [
+    { slug: 'future-web-development-trends' },
+    { slug: 'ai-cloud-computing-automation' },
+    { slug: 'rise-super-apps-business-consumers' },
+  ];
+}

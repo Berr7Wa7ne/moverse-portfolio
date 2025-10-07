@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import ServicesBanner from '../ui/ServicesBanner';
 
@@ -9,7 +9,43 @@ const BlogShowcaseSection: React.FC = () => {
 
   const filters = ['All', 'UI/UX', 'Development', 'Marketing'];
 
-  const blogPosts = [
+  const [posts, setPosts] = useState<any[]>([]);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch('/api/blog', { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          const cms = Array.isArray(data?.posts) ? data.posts : [];
+          if (cms.length) {
+            console.log('[blog showcase] Source: Sanity CMS', { count: cms.length });
+            setPosts(
+              cms.map((p: any, i: number) => ({
+                id: i + 1,
+                title: p.title,
+                category: (p.tags && p.tags[0]) || 'Blog',
+                date: p.date?.slice(0, 10) || '',
+                author: p.author?.name || 'Author',
+                authorImage: p.author?.avatar?.asset?.url || '/next.svg',
+                image: p.coverImage?.asset?.url || '/next.svg',
+                description: p.excerpt || '',
+                featured: i === 0,
+                slug: p.slug?.current || '',
+              })).filter((p: any) => p.slug)
+            );
+            return;
+          }
+        }
+      } catch {}
+      // Fallback to existing static array when no CMS data
+      console.log('[blog showcase] Source: local static content');
+      setPosts(defaultStaticPosts);
+    };
+    load();
+  }, []);
+
+  const defaultStaticPosts = [
     {
       id: 1,
       title: 'The Future of Web Development: Trends To Watch in 2025',
@@ -90,8 +126,8 @@ const BlogShowcaseSection: React.FC = () => {
 
   const filteredPosts =
     activeFilter === 'All'
-      ? blogPosts
-      : blogPosts.filter((post) => post.category === activeFilter);
+      ? posts
+      : posts.filter((post) => post.category === activeFilter);
 
   return (
     <>

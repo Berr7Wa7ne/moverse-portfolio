@@ -1,65 +1,44 @@
 import React from 'react';
 import Link from 'next/link';
 import { Send } from 'lucide-react';
+import { listProjects } from '@/lib/content/projects';
+import { fetchProjectsFromCMS } from '@/lib/cms/sanity';
 
-const ProjectsShowcaseSection: React.FC = () => {
-  const projects = [
-    {
-      image:
-        'https://images.unsplash.com/photo-1551650975-87deedd944c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      title:
-        'Care Connect - Doctor appointment app<br />with booking features',
-      tags: ['UX/UI Design', 'App Design', 'Wireframe'],
-      slug: 'doctor-appointment-app',
-    },
-    {
-      image: '/dental.jpg',
-      title:
-        'Dental - Dentist and Dental Clinic<br />Website UIUX Design',
-      tags: ['UX/UI Design', 'Web Design', 'Wireframe'],
-      slug: 'dental-clinic-website',
-    },
-    {
-      image:
-        'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      title:
-        'Car Rental - Car Rental Booking<br />Mobile App',
-      tags: ['UX/UI Design', 'App Design', 'Wireframe'],
-      slug: 'car-rental-app',
-    },
-    {
-      image:
-        'https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      title:
-        'Hotel Booking - Hotel Booking App<br />Landing Page UIUX Design',
-      tags: ['UX/UI Design', 'Landing page', 'Wireframe'],
-      slug: 'hotel-booking-app',
-    },
-    {
-      title: 'E-Learn - Online Learning Mobile App',
-      image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      tags: ['UX/UI Design', 'App Design', 'Wireframe'],
-      slug: 'e-learn-app',
-    },
-    {
-      title: 'Car Wash - Car Wash Website UIUX Design',
-      image: '/carWash.jpg',
-      tags: ['UX/UI Design', 'Landing page', 'Wireframe'],
-      slug: 'car-wash-website',
-    },
-    {
-      title: 'Laundry - Laundry Service Booking Mobile App',
-      image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      tags: ['UX/UI Design', 'App Design', 'Wireframe'],
-      slug: 'laundry-service-app',
-    },
-    {
-      title: 'Real Estate - Real Estate Website UIUX Design',
-      image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      tags: ['UX/UI Design', 'Landing page', 'Wireframe'],
-      slug: 'real-estate-website',
-    }
-  ];
+type ShowcaseItem = {
+  image: string;
+  title: string; // may include <br /> for styling
+  tags: string[];
+  slug: string;
+};
+
+async function getShowcaseProjects(): Promise<ShowcaseItem[]> {
+  const useCMS = process.env.USE_CMS === 'true';
+  if (useCMS) {
+    const cmsProjects: any[] = await fetchProjectsFromCMS();
+    console.log('[projects showcase] Source: Sanity CMS', { count: cmsProjects?.length });
+    return (cmsProjects || []).map((p) => ({
+      image: p.images?.[0]?.asset?.url || '/next.svg',
+      title: p.title,
+      tags: (p.technologies && Array.isArray(p.technologies) && p.technologies.length > 0)
+        ? p.technologies.slice(0, 3)
+        : [p.category].filter(Boolean),
+      slug: p.slug?.current || '',
+    })).filter((p) => p.slug);
+  }
+  const staticProjects = listProjects();
+  console.log('[projects showcase] Source: local static content', { count: staticProjects?.length });
+  return staticProjects.map((p: any) => ({
+    image: p.images?.[0] || '/next.svg',
+    title: p.title,
+    tags: (p.technologies && Array.isArray(p.technologies) && p.technologies.length > 0)
+      ? p.technologies.slice(0, 3)
+      : [p.category].filter(Boolean),
+    slug: p.slug,
+  }));
+}
+
+const ProjectsShowcaseSection = async () => {
+  const projects = await getShowcaseProjects();
 
   return (
     <section className="section-padding bg-white">

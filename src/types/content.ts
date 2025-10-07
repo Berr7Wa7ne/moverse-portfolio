@@ -21,5 +21,29 @@ export type Service = {
   benefitsItems: string[];
 };
 
+export type Testimonial = {
+  text: string;
+  author: string;
+  position: string;
+  rating: number;
+  image: string;
+};
+
+export type Project = {
+  title: string;
+  description: string;
+  category: string;
+  client: string;
+  location: string;
+  year: string;
+  challenge: string;
+  service: string;
+  results: string;
+  features: string[];
+  technologies: string[];
+  images: string[];
+  testimonial: Testimonial;
+};
+
 
 
