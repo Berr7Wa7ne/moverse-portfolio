@@ -33,7 +33,7 @@ const TrustSection: React.FC = () => {
       <section className="section-padding bg-[var(--primary-blue)]">
         <div className="container">
           {/* Section Header */}
-          <div className='flex items-center justify-between'>
+          <div className='flex items-center justify-between mb-5'>
             <p className="text-[16px] text-gray-50 tracking-wider flex items-center gap-3">
               <span className="block w-20 h-[2px] bg-gray-50"></span>
               Why Choose Us

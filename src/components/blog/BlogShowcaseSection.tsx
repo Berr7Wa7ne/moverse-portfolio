@@ -3,126 +3,57 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import ServicesBanner from '../ui/ServicesBanner';
+import { fetchBlogPostsFromCMS } from "@/lib/cms/sanity";
+import { listBlogPosts } from '@/lib/content/blogs';
 
 const BlogShowcaseSection: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState('All');
+  const [posts, setPosts] = useState<any[]>([]);
 
   const filters = ['All', 'UI/UX', 'Development', 'Marketing'];
 
-  const [posts, setPosts] = useState<any[]>([]);
-
   useEffect(() => {
     const load = async () => {
-      try {
-        const res = await fetch('/api/blog', { cache: 'no-store' });
-        if (res.ok) {
-          const data = await res.json();
-          const cms = Array.isArray(data?.posts) ? data.posts : [];
-          if (cms.length) {
+      const useCMS = process.env.NEXT_PUBLIC_USE_CMS === 'true';
+  
+      if (useCMS) {
+        try {
+          console.log('[blog showcase] Attempting to load from Sanity CMS...');
+  
+          const data = await fetchBlogPostsFromCMS();
+          const cms = Array.isArray(data) ? data : [];
+  
+          if (cms.length > 0) {
             console.log('[blog showcase] Source: Sanity CMS', { count: cms.length });
             setPosts(
               cms.map((p: any, i: number) => ({
                 id: i + 1,
-                title: p.title,
-                category: (p.tags && p.tags[0]) || 'Blog',
-                date: p.date?.slice(0, 10) || '',
-                author: p.author?.name || 'Author',
-                authorImage: p.author?.avatar?.asset?.url || '/next.svg',
-                image: p.coverImage?.asset?.url || '/next.svg',
-                description: p.excerpt || '',
+                title: p.title || '',
+                category: p.category || 'Blog',
+                date: (p.date || '').slice(0, 10),
+                author: p.author || 'Author',
+                authorImage: p.authorImage || '/next.svg',
+                image: p.image || '/next.svg',
+                description: p.description || '',
                 featured: i === 0,
-                slug: p.slug?.current || '',
-              })).filter((p: any) => p.slug)
+                slug: p.slug || '',
+              }))
             );
             return;
           }
+        } catch (error) {
+          console.error('[blog showcase] CMS fetch failed:', error);
         }
-      } catch {}
-      // Fallback to existing static array when no CMS data
+      }
+  
+      // Fallback to static posts
       console.log('[blog showcase] Source: local static content');
-      setPosts(defaultStaticPosts);
+      const staticPosts = listBlogPosts();
+      setPosts(staticPosts);
     };
+  
     load();
   }, []);
-
-  const defaultStaticPosts = [
-    {
-      id: 1,
-      title: 'The Future of Web Development: Trends To Watch in 2025',
-      category: 'Marketing',
-      date: 'May 21, 2022',
-      author: 'Rakhool Muhammad',
-      authorImage:
-        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80',
-      image:
-        'https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      description:
-        'Explore the latest trends in web development that will shape the industry in 2025 and beyond.',
-      featured: true,
-      slug: 'future-web-development-trends'
-    },
-    {
-      id: 2,
-      title: 'Best Practices For Designing a User-Friendly Mobile App',
-      category: 'UI/UX',
-      date: 'June 21, 2022',
-      author: 'Yahya Man',
-      authorImage:
-        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80',
-      image:
-        'https://images.unsplash.com/photo-1551650975-87deedd944c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      description:
-        'Learn the essential principles for creating intuitive and engaging mobile app interfaces.',
-      featured: false,
-      slug: 'mobile-app-design-best-practices'
-    },
-    {
-      id: 3,
-      title: '3 Tips to Increase Engagement on Social Media',
-      category: 'Marketing',
-      date: 'June 21, 2022',
-      author: 'Yahya Man',
-      authorImage:
-        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80',
-      image:
-        'https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      description:
-        'Discover proven strategies to boost your social media engagement and grow your audience.',
-      featured: false,
-      slug: 'social-media-engagement-tips'
-    },
-    {
-      id: 4,
-      title: '3 Tips to Increase Engagement on Social Media',
-      category: 'Marketing',
-      date: 'June 21, 2022',
-      author: 'Yahya Man',
-      authorImage:
-        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80',
-      image:
-        'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      description:
-        'Learn effective techniques to enhance your social media presence and drive meaningful interactions.',
-      featured: false,
-      slug: 'social-media-presence-tips'
-    },
-    {
-      id: 5,
-      title:
-        'The Rise of Super Apps: What It Means for Business and Consumers',
-      category: 'Development',
-      date: 'June 21, 2022',
-      author: 'Yahya Man',
-      authorImage:
-        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80',
-      image:
-        'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      description:
-        'Understand how super apps are revolutionizing the digital landscape and what this means for businesses.',
-      featured: false,
-      slug: 'rise-super-apps-business-consumers'
-    },
-  ];
 
   const filteredPosts =
     activeFilter === 'All'

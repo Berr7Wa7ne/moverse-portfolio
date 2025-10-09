@@ -45,5 +45,21 @@ export type Project = {
   testimonial: Testimonial;
 };
 
-
-
+export type BlogPost = {
+  title: string;
+  category: string;
+  author: string;
+  authorImage: string;
+  date: string;
+  readTime: string;
+  image: string;
+  tags: string[];
+  content: string;
+  description: string;
+  relatedPosts: {
+    title: string;
+    image: string;
+    date: string;
+    slug: string;
+  }[];
+};
