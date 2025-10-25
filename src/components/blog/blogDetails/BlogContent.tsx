@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import parse, { domToReact, DOMNode } from "html-react-parser";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import { urlFor } from "@/sanity/lib/image";
@@ -27,6 +28,7 @@ type BlogContentProps = {
   readTime: string;
   content: any; // Portable Text blocks array or legacy HTML string
   relatedPosts?: RelatedPost[];
+  categories?: string[];
 };
 
 const BlogContent: React.FC<BlogContentProps> = ({
@@ -41,6 +43,7 @@ const BlogContent: React.FC<BlogContentProps> = ({
   readTime,
   content,
   relatedPosts,
+  categories = [],
 }) => {
   // Extract first two paragraphs (Portable Text aware with HTML fallback)
   const isPortable = Array.isArray(content);
@@ -412,33 +415,24 @@ const BlogContent: React.FC<BlogContentProps> = ({
               <div className="lg:col-span-1">
 			  <div className="space-y-6">
   {/* Categories */}
-  <div className="p-6 rounded-2xl">
-    <h3 className="text-base md:text-lg font-semibold text-[var(--primary-blue)] mb-4">
-      Filter by categories
-    </h3>
-    <div className="flex flex-wrap gap-2">
-      {[
-        "Web Design",
-        "Web Development",
-        "UI/UX Design",
-        "WordPress",
-        "Technology",
-        "Saas",
-        "E-Commerce",
-        "SEO",
-        "Hosting",
-        "Networking",
-        "Template",
-      ].map((category, index) => (
-        <button
-          key={index}
-          className="bg-gray-50 font-semibold px-3 py-1 text-xs md:text-sm text-black hover:bg-[var(--accent-blue)] hover:text-white rounded-lg transition-colors border border-gray-200"
-        >
-          {category}
-        </button>
-      ))}
+  {categories.length > 0 && (
+    <div className="p-6 rounded-2xl">
+      <h3 className="text-base md:text-lg font-semibold text-[var(--primary-blue)] mb-4">
+        Filter by categories
+      </h3>
+      <div className="flex flex-wrap gap-2">
+        {categories.map((category, index) => (
+          <Link
+            key={index}
+            href={`/blog?category=${encodeURIComponent(category)}`}
+            className="bg-gray-50 font-semibold px-3 py-1 text-xs md:text-sm text-black hover:bg-[var(--accent-blue)] hover:text-white rounded-lg transition-colors border border-gray-200"
+          >
+            {category}
+          </Link>
+        ))}
+      </div>
     </div>
-  </div>
+  )}
 
   {/* Table of Content */}
   <div className="p-6 rounded-2xl">

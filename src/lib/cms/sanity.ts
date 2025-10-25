@@ -90,6 +90,15 @@ export const queries = {
   }`,
   
   blogSlugs: `*[_type == "blogPost" && defined(slug.current)]{ "slug": slug.current }`,
+  
+  blogCategories: `*[_type == "blogPost" && defined(category)]{
+    "category": select(
+      defined(category->title) => category->title,
+      defined(category) => category,
+      defined(categories[0]->title) => categories[0]->title,
+      null
+    )
+  }`,
 };
 
 export async function fetchProjectsFromCMS() {
@@ -116,4 +125,13 @@ export async function fetchBlogPostBySlugFromCMS(slug: string) {
 export async function fetchBlogSlugsFromCMS(): Promise<string[]> {
   const data = await sanityClient.fetch<{ slug: string }[]>(queries.blogSlugs);
   return (data || []).map((d) => d.slug);
+}
+
+export async function fetchBlogCategoriesFromCMS(): Promise<string[]> {
+  const data = await sanityClient.fetch<{ category: string }[]>(queries.blogCategories);
+  const categories = (data || [])
+    .map((d) => d.category)
+    .filter((cat): cat is string => typeof cat === 'string' && cat.trim() !== '');
+  // Return unique categories
+  return Array.from(new Set(categories));
 }

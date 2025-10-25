@@ -2,13 +2,21 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import ServicesBanner from '../ui/ServicesBanner';
+import Pagination from '../ui/Pagination';
 import { fetchBlogPostsFromCMS } from "@/lib/cms/sanity";
 import { listBlogPosts } from '@/lib/content/blogs';
 
+const POSTS_PER_PAGE = 5; // 1 featured + 4 in grid
+
 const BlogShowcaseSection: React.FC = () => {
-  const [activeFilter, setActiveFilter] = useState('All');
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get('category');
+  
+  const [activeFilter, setActiveFilter] = useState(categoryParam || 'All');
   const [posts, setPosts] = useState<any[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const filters = ['All', 'UI/UX', 'Development', 'Marketing'];
 
@@ -68,10 +76,34 @@ const BlogShowcaseSection: React.FC = () => {
     load();
   }, []);
 
+  // Set activeFilter from URL parameter
+  useEffect(() => {
+    if (categoryParam) {
+      setActiveFilter(categoryParam);
+    }
+  }, [categoryParam]);
+
+  // Reset to page 1 when filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeFilter]);
+
   const filteredPosts =
     activeFilter === 'All'
       ? posts
       : posts.filter((post) => post.category === activeFilter);
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredPosts.length / POSTS_PER_PAGE);
+  const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
+  const endIndex = startIndex + POSTS_PER_PAGE;
+  const currentPosts = filteredPosts.slice(startIndex, endIndex);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // Scroll to top of section
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <>
@@ -109,40 +141,40 @@ const BlogShowcaseSection: React.FC = () => {
           </div>
 
           {/* Blog Posts Grid */}
-          <div className="space-y-8 mb-12">
+          <div className="space-y-8">
             {/* Featured Post (Large Rectangle) */}
-            {filteredPosts.length > 0 && (
-              <Link href={`/blog/${filteredPosts[0].slug}`} className="block">
+            {currentPosts.length > 0 && (
+              <Link href={`/blog/${currentPosts[0].slug}`} className="block">
                 <article className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-[var(--gray-200)]">
                   <div className="relative overflow-hidden">
                     <img
-                      src={filteredPosts[0].image}
-                      alt={filteredPosts[0].title}
+                      src={currentPosts[0].image}
+                      alt={currentPosts[0].title}
                       className="w-full h-64 lg:h-full object-cover"
                     />
                     {/* Text Overlay */}
                     <div className="absolute inset-0 bg-black/40 flex items-end justify-center">
                       <div className="p-8 text-white text-center w-full">
                         <div className="flex items-center justify-center gap-4 text-lg text-gray-300 mb-2">
-                          <span>{filteredPosts[0].date}</span>
+                          <span>{currentPosts[0].date}</span>
                           <span className="text-white">•</span>
                           <span className="text-white px-3 py-1 rounded-full text-lg">
-                            {filteredPosts[0].category}
+                            {currentPosts[0].category}
                           </span>
                         </div>
 
                         <h3 className="text-3xl lg:text-4xl font-bold text-white leading-tight mb-4">
-                          {filteredPosts[0].title}
+                          {currentPosts[0].title}
                         </h3>
 
                         <div className="flex flex-col items-center gap-2">
                           <img
-                            src={filteredPosts[0].authorImage}
-                            alt={filteredPosts[0].author}
+                            src={currentPosts[0].authorImage}
+                            alt={currentPosts[0].author}
                             className="w-20 h-20 rounded-full object-cover"
                           />
                           <p className="font-medium text-white">
-                            {filteredPosts[0].author}
+                            {currentPosts[0].author}
                           </p>
                         </div>
                       </div>
@@ -154,7 +186,7 @@ const BlogShowcaseSection: React.FC = () => {
 
             {/* 2x2 Grid of Smaller Posts */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {filteredPosts.slice(1, 5).map((post) => (
+              {currentPosts.slice(1, 5).map((post) => (
                 <Link key={post.id} href={`/blog/${post.slug}`} className="block">
                   <article className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-[var(--gray-200)] aspect-square">
                     <div className="relative overflow-hidden h-full">
@@ -197,12 +229,12 @@ const BlogShowcaseSection: React.FC = () => {
             </div>
           </div>
 
-          {/* View More Button */}
-          <div className="text-center">
-            <Link href="/blog/all" className="btn-primary">
-              View More
-            </Link>
-          </div>
+          {/* Pagination */}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         </div>
       </section>
 

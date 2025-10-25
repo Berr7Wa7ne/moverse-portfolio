@@ -1,6 +1,6 @@
 import React from 'react';
-import { fetchBlogPostBySlugFromCMS, fetchBlogSlugsFromCMS } from '@/lib/cms/sanity';
-import { getBlog, listBlogSlugs } from '@/lib/content/blogs';
+import { fetchBlogPostBySlugFromCMS, fetchBlogSlugsFromCMS, fetchBlogCategoriesFromCMS } from '@/lib/cms/sanity';
+import { getBlog, listBlogSlugs, listBlogPosts } from '@/lib/content/blogs';
 import ServicesBanner from '@/components/ui/ServicesBanner';
 import BlogHero from '@/components/blog/blogDetails/BlogHero';
 import BlogContent from '@/components/blog/blogDetails/BlogContent';
@@ -84,6 +84,30 @@ const BlogDetailPage = async ({ params }: PageProps) => {
     );
   }
 
+  // Fetch all categories for the sidebar
+  let categories: string[] = [];
+  if (useCMS) {
+    try {
+      categories = await fetchBlogCategoriesFromCMS();
+      console.log('[blog detail page] Categories from CMS', { count: categories.length });
+    } catch (error) {
+      console.error('[blog detail page] Categories fetch failed:', error);
+    }
+  }
+  
+  // Fallback: get categories from static posts
+  if (categories.length === 0) {
+    const staticPosts = listBlogPosts();
+    const categorySet = new Set<string>();
+    staticPosts.forEach((p: any) => {
+      if (p.category && typeof p.category === 'string') {
+        categorySet.add(p.category);
+      }
+    });
+    categories = Array.from(categorySet);
+    console.log('[blog detail page] Categories from static content', { count: categories.length });
+  }
+
   return (
     <>
       <TopBar />
@@ -103,6 +127,7 @@ const BlogDetailPage = async ({ params }: PageProps) => {
           readTime={post.readTime}
           content={post.content}
           relatedPosts={post.relatedPosts}
+          categories={categories}
         />
         <BlogSection />
         <ServicesBanner />

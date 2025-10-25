@@ -1,47 +1,79 @@
-import React from 'react';
-import Link from 'next/link';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import { listProjects } from '@/lib/content/projects';
 import { fetchProjectsFromCMS } from '@/lib/cms/sanity';
 import ProjectCard from './ProjectCard';
+import Pagination from '../ui/Pagination';
+
+const PROJECTS_PER_PAGE = 4;
 
 type ShowcaseItem = {
   image: string;
-  title: string; // may include <br /> for styling
+  title: string;
   tags: string[];
   slug: string;
   liveUrl?: string;
 };
 
-async function getShowcaseProjects(): Promise<ShowcaseItem[]> {
-  const useCMS = process.env.USE_CMS === 'true';
-  if (useCMS) {
-    const cmsProjects: any[] = await fetchProjectsFromCMS();
-    console.log('[projects showcase] Source: Sanity CMS', { count: cmsProjects?.length });
-    return (cmsProjects || []).map((p) => ({
-      image: p.images?.[0] || '/next.svg',
-      title: p.title,
-      tags: (p.technologies && Array.isArray(p.technologies) && p.technologies.length > 0)
-        ? p.technologies.slice(0, 3)
-        : [p.category].filter(Boolean),
-      slug: p.slug?.current || '',
-      liveUrl: p.liveUrl || '',
-    })).filter((p) => p.slug);
-  }
-  const staticProjects = listProjects();
-  console.log('[projects showcase] Source: local static content', { count: staticProjects?.length });
-  return staticProjects.map((p: any) => ({
-    image: p.images?.[0] || '/next.svg',
-    title: p.title,
-    tags: (p.technologies && Array.isArray(p.technologies) && p.technologies.length > 0)
-      ? p.technologies.slice(0, 3)
-      : [p.category].filter(Boolean),
-    slug: p.slug,
-    liveUrl: p.liveUrl || '',
-  }));
-}
+const ProjectsShowcaseSection: React.FC = () => {
+  const [projects, setProjects] = useState<ShowcaseItem[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
 
-const ProjectsShowcaseSection = async () => {
-  const projects = await getShowcaseProjects();
+  useEffect(() => {
+    const loadProjects = async () => {
+      const useCMS = process.env.NEXT_PUBLIC_USE_CMS === 'true';
+      
+      if (useCMS) {
+        try {
+          const cmsProjects: any[] = await fetchProjectsFromCMS();
+          console.log('[projects showcase] Source: Sanity CMS', { count: cmsProjects?.length });
+          const normalized = (cmsProjects || []).map((p) => ({
+            image: p.images?.[0] || '/next.svg',
+            title: p.title,
+            tags: (p.technologies && Array.isArray(p.technologies) && p.technologies.length > 0)
+              ? p.technologies.slice(0, 3)
+              : [p.category].filter(Boolean),
+            slug: p.slug?.current || '',
+            liveUrl: p.liveUrl || '',
+          })).filter((p) => p.slug);
+          
+          setProjects(normalized);
+          return;
+        } catch (error) {
+          console.error('[projects showcase] CMS fetch failed:', error);
+        }
+      }
+      
+      // Fallback to static content
+      console.log('[projects showcase] Source: local static content');
+      const staticProjects = listProjects();
+      const normalized = staticProjects.map((p: any) => ({
+        image: p.images?.[0] || '/next.svg',
+        title: p.title,
+        tags: (p.technologies && Array.isArray(p.technologies) && p.technologies.length > 0)
+          ? p.technologies.slice(0, 3)
+          : [p.category].filter(Boolean),
+        slug: p.slug,
+        liveUrl: p.liveUrl || '',
+      }));
+      
+      setProjects(normalized);
+    };
+
+    loadProjects();
+  }, []);
+
+  // Pagination logic
+  const totalPages = Math.ceil(projects.length / PROJECTS_PER_PAGE);
+  const startIndex = (currentPage - 1) * PROJECTS_PER_PAGE;
+  const endIndex = startIndex + PROJECTS_PER_PAGE;
+  const currentProjects = projects.slice(startIndex, endIndex);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <section className="section-padding bg-white">
@@ -60,18 +92,18 @@ const ProjectsShowcaseSection = async () => {
         </div>
 
         {/* Project Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-          {projects.map((project, index) => (
-            <ProjectCard key={index} project={project} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {currentProjects.map((project, index) => (
+            <ProjectCard key={project.slug || index} project={project} />
           ))}
         </div>
 
-        {/* View All Works Button */}
-        <div className="text-center">
-          <Link href="/projects" className="btn-primary">
-            View All Works
-          </Link>
-        </div>
+        {/* Pagination */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
       </div>
     </section>
   );

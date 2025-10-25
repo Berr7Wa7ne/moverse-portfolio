@@ -13,10 +13,12 @@ import BlogSection from '@/components/home/BlogSection';
 import FAQSection from '@/components/home/FAQSection';
 import NewsletterSection from '@/components/home/NewsletterSection';
 import Footer from '@/components/layout/Footer';
+import SplashScreenWrapper from '@/components/ui/SplashScreenWrapper';
 
 export default function Home() {
   return (
-    <div className="min-h-screen">
+    <SplashScreenWrapper>
+      <div className="min-h-screen">
       <TopBar />
       <Header />
       <main>
@@ -34,6 +36,7 @@ export default function Home() {
         <NewsletterSection />
       </main>
       <Footer />
-    </div>
+      </div>
+    </SplashScreenWrapper>
   );
 }

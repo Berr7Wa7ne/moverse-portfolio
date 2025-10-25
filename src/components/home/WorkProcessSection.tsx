@@ -1,5 +1,8 @@
+'use client';
+
 import React from "react";
 import { MessageSquare, ClipboardList, Rocket, Sparkles } from "lucide-react";
+import ScrollReveal from '../ui/ScrollReveal';
 
 const WorkProcessSection: React.FC = () => {
   const processes = [
@@ -58,22 +61,23 @@ const WorkProcessSection: React.FC = () => {
             {processes.map((process, index) => {
               const Icon = process.icon;
               return (
-                <div key={index} className="relative">
+                <ScrollReveal key={index} delay={index * 0.2} direction="up">
+                <div className="relative group cursor-pointer">
                   {/* Step Circle with Icon (centered) */}
                   <div className="relative mx-auto mb-6 w-24 h-24">
-                    <div className="w-24 h-24 bg-[var(--accent-blue)] rounded-full flex items-center justify-center text-white text-3xl relative z-10">
-                      <Icon className="w-8 h-8" />
+                    <div className="w-24 h-24 bg-[var(--accent-blue)] rounded-full flex items-center justify-center text-white text-3xl relative z-10 transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 group-hover:shadow-xl">
+                      <Icon className="w-8 h-8 transition-transform duration-300 group-hover:scale-110" />
                     </div>
 
                     {/* Step Badge */}
-                    <div className="absolute -right-3 top-1/2 transform -translate-y-1/2 w-10 h-10 rounded-full bg-[var(--primary-blue)] flex items-center justify-center text-white text-sm font-bold shadow-md z-20">
+                    <div className="absolute -right-3 top-1/2 transform -translate-y-1/2 w-10 h-10 rounded-full bg-[var(--primary-blue)] flex items-center justify-center text-white text-sm font-bold shadow-md z-20 transition-transform duration-300 group-hover:scale-110">
                       {process.step}
                     </div>
                   </div>
 
                   {/* Content (left-aligned now) */}
                   <div className="space-y-2 text-left ml-24">
-                    <h3 className="text-2xl font-bold text-[var(--primary-blue)]">
+                    <h3 className="text-2xl font-bold text-[var(--primary-blue)] transition-colors duration-300 group-hover:text-[var(--accent-blue)]">
                       {process.title}
                     </h3>
                     <p className="text-[16px] text-[var(--gray-600)] leading-relaxed">
@@ -81,6 +85,7 @@ const WorkProcessSection: React.FC = () => {
                     </p>
                   </div>
                 </div>
+                </ScrollReveal>
               );
             })}
           </div>
