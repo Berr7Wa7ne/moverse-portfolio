@@ -50,7 +50,7 @@ const ProjectIntroSection: React.FC<ProjectIntroSectionProps> = ({
             </h1>
 
             <div className="flex items-start gap-4 mb-5">
-            <span className="w-14 h-9 rounded-full bg-[var(--accent-blue)] text-white flex items-center justify-center text-lg font-semibold">
+            <span className="w-12 h-12 flex-shrink-0 rounded-full bg-[var(--accent-blue)] text-white flex items-center justify-center text-lg font-semibold">
                 {firstLetter}
               </span>
               <p className="text-[var(--gray-700)] leading-7">

@@ -2,6 +2,8 @@
 
 import React from "react";
 import parse, { domToReact, DOMNode } from "html-react-parser";
+import { PortableText, type PortableTextComponents } from "@portabletext/react";
+import { urlFor } from "@/sanity/lib/image";
 import { Check } from "lucide-react";
 import SocialShare from "@/components/ui/SocialShare";
 import ServicesBanner from "@/components/ui/ServicesBanner";
@@ -19,9 +21,11 @@ type BlogContentProps = {
   tags: string[];
   author: string;
   authorImage: string;
+  authorPosition?: string;
+  authorQuote?: string;
   date: string;
   readTime: string;
-  html: string;
+  content: any; // Portable Text blocks array or legacy HTML string
   relatedPosts?: RelatedPost[];
 };
 
@@ -31,45 +35,182 @@ const BlogContent: React.FC<BlogContentProps> = ({
   tags,
   author,
   authorImage,
+  authorPosition,
+  authorQuote,
   date,
   readTime,
-  html,
+  content,
   relatedPosts,
 }) => {
-  // Extract first two paragraphs
-  const extractLeadParagraphs = (htmlContent: string) => {
-    if (typeof window === "undefined") return { lead: "", second: "" };
-
-    const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = htmlContent;
-    const paragraphs = tempDiv.querySelectorAll("p");
-
-    const lead = paragraphs[0]?.textContent || "";
-    const second = paragraphs[1]?.textContent || "";
-
+  // Extract first two paragraphs (Portable Text aware with HTML fallback)
+  const isPortable = Array.isArray(content);
+  const extractLeadParagraphsFromPT = (blocks: any[]) => {
+    const normalBlocks = blocks.filter(
+      (b) => b?._type === "block" && (b?.style === "normal" || !b?.style)
+    );
+    const getText = (b: any) =>
+      (b?.children || [])
+        .map((c: any) => (typeof c?.text === "string" ? c.text : ""))
+        .join("")
+        .trim();
+    const lead = normalBlocks[0] ? getText(normalBlocks[0]) : "";
+    const second = normalBlocks[1] ? getText(normalBlocks[1]) : "";
     return { lead, second };
   };
 
-  const { lead, second } = extractLeadParagraphs(html);
-  const firstLetter = lead ? lead.charAt(0).toUpperCase() : "";
-
-  // Remove first two paragraphs
-  const getRemainingContent = (htmlContent: string) => {
-    if (typeof window === "undefined") return htmlContent;
-
+  const extractLeadParagraphsFromHTML = (htmlContent: string) => {
+    if (typeof window === "undefined") return { lead: "", second: "" };
     const tempDiv = document.createElement("div");
     tempDiv.innerHTML = htmlContent;
     const paragraphs = tempDiv.querySelectorAll("p");
-
-    if (paragraphs.length > 2) {
-      paragraphs[0]?.remove();
-      paragraphs[1]?.remove();
-    }
-
-    return tempDiv.innerHTML;
+    const lead = paragraphs[0]?.textContent || "";
+    const second = paragraphs[1]?.textContent || "";
+    return { lead, second };
   };
 
-  const remainingHtml = getRemainingContent(html);
+  const { lead, second } = isPortable
+    ? extractLeadParagraphsFromPT(content)
+    : extractLeadParagraphsFromHTML(content || "");
+  const firstLetter = lead ? lead.charAt(0).toUpperCase() : "";
+
+  // Compute remaining content
+  const remainingHtml = !isPortable
+    ? (() => {
+        const htmlContent = typeof content === "string" ? content : "";
+        if (typeof window === "undefined") return htmlContent;
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = htmlContent;
+        const paragraphs = tempDiv.querySelectorAll("p");
+        if (paragraphs.length > 2) {
+          paragraphs[0]?.remove();
+          paragraphs[1]?.remove();
+        }
+        return tempDiv.innerHTML;
+      })()
+    : null;
+
+  const remainingPortableBlocks = isPortable
+    ? (() => {
+        let removedNormals = 0;
+        return (content as any[]).filter((b) => {
+          const isNormalBlock = b?._type === "block" && (b?.style === "normal" || !b?.style);
+          if (isNormalBlock && removedNormals < 2) {
+            removedNormals += 1;
+            return false;
+          }
+          return true;
+        });
+      })()
+    : [];
+
+  const components: PortableTextComponents = {
+    block: {
+      h1: ({ children }) => (
+        <h1 className="text-4xl font-bold text-[var(--primary-blue)] mt-12 mb-6 leading-snug">
+          {children}
+        </h1>
+      ),
+      h2: ({ children }) => (
+        <h2 className="text-3xl font-bold text-[var(--primary-blue)] mt-10 mb-5 leading-snug">
+          {children}
+        </h2>
+      ),
+      h3: ({ children }) => (
+        <h3 className="text-2xl font-bold text-[var(--primary-blue)] mt-8 mb-4 leading-snug">
+          {children}
+        </h3>
+      ),
+      h4: ({ children }) => (
+        <h4 className="text-xl font-semibold text-[var(--primary-blue)] mt-6 mb-3 leading-snug">
+          {children}
+        </h4>
+      ),
+      normal: ({ children, value }) => {
+        const rawText = Array.isArray(value?.children)
+          ? value.children.map((c: any) => (typeof c?.text === 'string' ? c.text : '')).join('')
+          : '';
+        const looksLikeHTML = /<\/?(ul|ol|li|h[1-6]|p|strong|em|br|img)[^>]*>/i.test(rawText);
+        if (looksLikeHTML) {
+          return (
+            <div className="mb-5 text-[var(--gray-700)] text-base lg:text-lg leading-relaxed">
+              {parse(rawText, {
+                replace: (domNode) => {
+                  if (domNode.type === 'tag' && domNode.name === 'li') {
+                    return (
+                      <li className="flex items-start gap-3 mb-3 text-gray-700">
+                        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[var(--accent-blue)] flex items-center justify-center shadow-md">
+                          <Check className="w-4 h-4 text-white" />
+                        </span>
+                        <span>{domToReact(domNode.children as DOMNode[])}</span>
+                      </li>
+                    );
+                  }
+                },
+              })}
+            </div>
+          );
+        }
+        return (
+          <p className="mb-5 text-[var(--gray-700)] text-base lg:text-lg leading-relaxed">{children}</p>
+        );
+      },
+    },
+    list: {
+      bullet: ({ children }) => (
+        <ul className="my-6 pl-0 list-none space-y-2">{children}</ul>
+      ),
+      number: ({ children }) => (
+        <ol className="my-6 pl-5 list-decimal space-y-2">{children}</ol>
+      ),
+    },
+    listItem: ({ children }) => (
+      <li className="flex items-start gap-3 mb-3 text-gray-700">
+        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[var(--accent-blue)] flex items-center justify-center shadow-md">
+          <Check className="w-4 h-4 text-white" />
+        </span>
+        <span>{children}</span>
+      </li>
+    ),
+    types: {
+      // If a portable text block was pasted with inline HTML strings, render safely
+      // by parsing known-safe tags and applying our styles.
+      // Expect value.html string if an editor used a custom HTML block.
+      html: ({ value }) => {
+        const htmlString = value?.html;
+        if (typeof htmlString !== 'string' || htmlString.trim() === '') return null;
+        return (
+          <div className="prose prose-invert max-w-none">
+            {parse(htmlString)}
+          </div>
+        );
+      },
+      image: ({ value }) => {
+        try {
+          const src = urlFor(value).width(1200).fit("max").url();
+          return (
+            <img
+              src={src}
+              alt={value?.alt || ""}
+              className="w-full rounded-xl my-6"
+            />
+          );
+        } catch (_e) {
+          return null;
+        }
+      },
+      // Support a custom callout object if present in schema
+      callout: ({ value }) => (
+        <div className="bg-[var(--primary-blue)] text-white rounded-xl p-6 mb-6 shadow-md">
+          {value?.title ? <p className="text-lg !text-white">{value.title}</p> : null}
+          {value?.body ? (
+            <div className="font-semibold mt-2 text-lg leading-snug text-white [&_p]:!text-white [&_strong]:!text-white">
+              <PortableText value={value.body} components={components} />
+            </div>
+          ) : null}
+        </div>
+      ),
+    },
+  };
 
   return (
     <>
@@ -211,37 +352,40 @@ const BlogContent: React.FC<BlogContentProps> = ({
                 {/* Rest of Content */}
                 <div className="blog-content-wrapper max-w-none">
                   <div className="mb-8">
-				  {parse(remainingHtml, {
-  replace: (domNode) => {
-    // Custom bullet list
-    if (domNode.type === "tag" && domNode.name === "li") {
-      return (
-        <li className="flex items-start gap-3 mb-3 text-gray-700">
-          <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[var(--accent-blue)] flex items-center justify-center shadow-md">
-            <Check className="w-4 h-4 text-white" />
-          </span>
-          <span>{domToReact(domNode.children as DOMNode[])}</span>
-        </li>
-      );
-    }
-
-    // ✅ Handle custom <callout> tag
-    if (domNode.type === "tag" && domNode.name === "callout") {
-      return (
-        <>
-          <div className="bg-[var(--primary-blue)] text-white rounded-xl p-6 mb-6 shadow-md">
-            <p className="text-lg">Also Read —</p>
-            <p className="font-semibold mt-2 text-lg leading-snug">
-              {domToReact(domNode.children as DOMNode[])}
-            </p>
-          </div>
-          
-        </>
-      );
-    }
-  },
-})}
-
+                    {isPortable ? (
+                      remainingPortableBlocks && remainingPortableBlocks.length > 0 ? (
+                        <PortableText value={remainingPortableBlocks} components={components} />
+                      ) : (
+                        <p className="text-gray-500 italic">No additional content available.</p>
+                      )
+                    ) : typeof remainingHtml === "string" && remainingHtml.trim() !== "" ? (
+                      parse(remainingHtml, {
+                        replace: (domNode) => {
+                          if (domNode.type === "tag" && domNode.name === "li") {
+                            return (
+                              <li className="flex items-start gap-3 mb-3 text-gray-700">
+                                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[var(--accent-blue)] flex items-center justify-center shadow-md">
+                                  <Check className="w-4 h-4 text-white" />
+                                </span>
+                                <span>{domToReact(domNode.children as DOMNode[])}</span>
+                              </li>
+                            );
+                          }
+                          if (domNode.type === "tag" && domNode.name === "callout") {
+                            return (
+                              <div className="bg-[var(--primary-blue)] text-white rounded-xl p-6 mb-6 shadow-md">
+                                <p className="text-lg">Also Read —</p>
+                                <p className="font-semibold mt-2 text-lg leading-snug">
+                                  {domToReact(domNode.children as DOMNode[])}
+                                </p>
+                              </div>
+                            );
+                          }
+                        },
+                      })
+                    ) : (
+                      <p className="text-gray-500 italic">No additional content available.</p>
+                    )}
                   </div>
                 </div>
 
@@ -250,17 +394,15 @@ const BlogContent: React.FC<BlogContentProps> = ({
                   <img
                     src={authorImage}
                     alt={author}
-                    className="w-25 h-20 rounded-full object-cover"
+                    className="w-20 h-20 rounded-full object-cover"
                   />
                   <div>
                     <p className="text-white font-semibold">
                       {author}
                     </p>
-                    <p className="text-white text-sm">Senior Editor</p>
+                    <p className="text-white text-sm">{authorPosition || 'Senior Editor'}</p>
                     <p className="text-white mt-2 text-sm leading-7">
-                      {`"`}Great products are built at the intersection of user needs
-                      and engineering excellence. We share lessons that help teams
-                      ship faster with quality.{`"`}
+                      {authorQuote ? `"${authorQuote}"` : '"Great products are built at the intersection of user needs and engineering excellence. We share lessons that help teams ship faster with quality."'}
                     </p>
                   </div>
                 </div>

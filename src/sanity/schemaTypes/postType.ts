@@ -50,6 +50,21 @@ export const postType = defineType({
       options: { hotspot: true },
     }),
     defineField({
+      name: 'authorPosition',
+      title: 'Author Position',
+      type: 'string',
+      description: 'e.g., "Senior Editor", "Content Writer", "Technical Lead"',
+      placeholder: 'Senior Editor',
+    }),
+    defineField({
+      name: 'authorQuote',
+      title: 'Author Quote',
+      type: 'text',
+      rows: 3,
+      description: 'A quote or bio from the author displayed at the end of the article',
+      placeholder: 'Great products are built at the intersection of user needs and engineering excellence...',
+    }),
+    defineField({
       name: 'date',
       title: 'Date',
       type: 'date',
@@ -84,9 +99,13 @@ export const postType = defineType({
     defineField({
       name: 'content',
       title: 'Content',
-      type: 'text',
-      rows: 20,
-      description: 'HTML content for the blog post',
+      type: 'array',
+      of: [
+        { type: 'block' },
+        { type: 'image', options: { hotspot: true } },
+        { type: 'callout' },
+      ],
+      description: 'Portable Text content for the blog post',
     }),
     defineField({
       name: 'relatedPosts',

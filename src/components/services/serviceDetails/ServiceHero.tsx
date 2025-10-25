@@ -10,7 +10,7 @@ type ServiceHeroProps = {
 const ServiceHero: React.FC<ServiceHeroProps> = ({ title, breadcrumb }) => {
 	return (
 		<section className="relative min-h-[60vh] flex items-center bg-[var(--primary-blue)] overflow-hidden">
-			<div
+			{/* <div
 				className="absolute inset-0 bg-cover bg-center bg-no-repeat"
 				style={{
 					backgroundImage:
@@ -18,7 +18,7 @@ const ServiceHero: React.FC<ServiceHeroProps> = ({ title, breadcrumb }) => {
 				}}
 			>
 				<div className="absolute inset-0 bg-[var(--primary-blue)]/80"></div>
-			</div>
+			</div> */}
 
 			<div className="container relative z-10 text-center text-white">
 				<div className="space-y-4">

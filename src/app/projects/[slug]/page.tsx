@@ -72,7 +72,7 @@ const ProjectDetailPage = async ({ params }: PageProps) => {
         }}
       />
       <ServicesBanner />
-      <ProjectShowcaseDetails />
+      <ProjectShowcaseDetails currentSlug={useParams.slug} />
       <ProjectsQuoteSection />
       <ProjectsNewsletterSection />
       <ServicesBanner />

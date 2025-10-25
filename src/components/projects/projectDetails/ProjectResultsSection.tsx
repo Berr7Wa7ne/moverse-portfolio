@@ -19,6 +19,8 @@ type ProjectResultsSectionProps = {
 };
 
 const ProjectResultsSection: React.FC<ProjectResultsSectionProps> = ({ title, text, wideImage, testimonial }) => {
+  console.log('[ProjectResultsSection] testimonial.image:', testimonial.image);
+  
   return (
     <section className="bg-white">
       <div className="container py-10">
@@ -32,13 +34,13 @@ const ProjectResultsSection: React.FC<ProjectResultsSectionProps> = ({ title, te
         {/* Testimonial Card */}
 <div className="relative rounded-2xl border border-gray-200 bg-white shadow-sm p-6 md:p-7">
   {/* Rocket-like avatar wrapper (absolute to top-left) */}
-  <div className="absolute -top-0 -left-0">
-    <div className="relative w-30 h-30">
+  <div className="absolute top-0 left-0">
+    <div className="relative w-28 h-28">
       <div className="absolute inset-0 bg-[var(--accent-blue)] rounded-tr-full rounded-br-full"></div>
       <img
         src={testimonial.image}
         alt={testimonial.author}
-        className="absolute top-1/2 left-2 transform -translate-y-1/2 w-26 h-26 rounded-full object-cover border-2 border-white shadow-md"
+        className="absolute top-1/2 left-2 transform -translate-y-1/2 w-24 h-24 rounded-full object-cover border-2 border-white shadow-md"
       />
     </div>
   </div>

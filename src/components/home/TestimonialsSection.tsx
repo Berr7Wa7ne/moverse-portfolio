@@ -1,23 +1,59 @@
 import React from 'react';
 import ServicesBanner from '../ui/ServicesBanner';
+import { listProjects } from '@/lib/content/projects';
+import { fetchProjectsFromCMS } from '@/lib/cms/sanity';
 
-const TestimonialsSection: React.FC = () => {
-  const testimonials = [
-    {
-      name: 'Sarah Johnson',
-      title: 'CEO, TechStart Inc.',
-      image: '/sarah.jpg',
-      quote:
-        'The team exceeded our expectations with their innovative approach and attention to detail. Our project was delivered on time and within budget.',
-    },
-    {
-      name: 'Michael Chen',
-      title: 'Founder, Digital Solutions',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80',
-      quote:
-        'Professional, reliable, and creative. They transformed our vision into a stunning digital reality that has significantly boosted our business.',
-    },
-  ];
+type Testimonial = {
+  name: string;
+  title: string;
+  image: string;
+  quote: string;
+  rating: number;
+};
+
+async function getTestimonials(): Promise<Testimonial[]> {
+  const useCMS = process.env.USE_CMS === 'true';
+  
+  if (useCMS) {
+    const cmsProjects: any[] = await fetchProjectsFromCMS();
+    console.log('[testimonials section] Source: Sanity CMS', { count: cmsProjects?.length });
+    
+    // Extract testimonials from projects
+    return (cmsProjects || [])
+      .filter((p) => p.testimonial && p.testimonial.author && p.testimonial.text)
+      .map((p) => ({
+        name: p.testimonial.author,
+        title: p.testimonial.position || 'Client',
+        image: p.testimonial.image || '/next.svg',
+        quote: p.testimonial.text,
+        rating: p.testimonial.rating || 5.0,
+      }))
+      .slice(0, 2); // Show only 2 testimonials
+  }
+  
+  const staticProjects = listProjects();
+  console.log('[testimonials section] Source: local static content', { count: staticProjects?.length });
+  
+  // Extract testimonials from static projects
+  return staticProjects
+    .filter((p: any) => p.testimonial)
+    .map((p: any) => ({
+      name: p.testimonial.author,
+      title: p.testimonial.position,
+      image: p.testimonial.image,
+      quote: p.testimonial.text,
+      rating: p.testimonial.rating,
+    }))
+    .slice(0, 2);
+}
+
+const TestimonialsSection = async () => {
+  const testimonials = await getTestimonials();
+
+  // Don't render if no testimonials
+  if (testimonials.length === 0) {
+    return null;
+  }
 
   return (
     <>
@@ -38,7 +74,7 @@ const TestimonialsSection: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {testimonials.map((testimonial, index) => (
               <div
-                key={index}
+                key={`${testimonial.name}-${index}`}
                 className="bg-white rounded-2xl p-8 shadow-lg relative overflow-hidden"
               >
                 {/* Quote Icon in background */}
@@ -46,40 +82,41 @@ const TestimonialsSection: React.FC = () => {
                   &ldquo;
                 </span>
 
-                <div className="flex items-center gap-4 mb-4">
-                  {/* Rocket-like avatar wrapper */}
-                  <div className="relative w-30 h-30">
+                {/* Rocket-like avatar wrapper - positioned at top-left edge */}
+                <div className="absolute top-0 left-0">
+                  <div className="relative w-28 h-28">
                     <div className="absolute inset-0 bg-[var(--accent-blue)] rounded-tr-full rounded-br-full"></div>
                     <img
                       src={testimonial.image}
                       alt={testimonial.name}
-                      className="absolute top-1/2 left-2 transform -translate-y-1/2 w-26 h-26 rounded-full object-cover border-2 border-white shadow-md"
+                      className="absolute top-1/2 left-2 transform -translate-y-1/2 w-24 h-24 rounded-full object-cover border-2 border-white shadow-md"
                     />
-                  </div>
-
-                  <div>
-                    <h3 className="text-xl font-bold text-[var(--primary-blue)]">
-                      {testimonial.name}
-                    </h3>
-                    <p className="text-lg text-[var(--gray-600)]">
-                      {testimonial.title}
-                    </p>
-                    {/* Star Rating */}
-                    <div className="flex gap-1 mt-1">
-                      {[...Array(5)].map((_, i) => (
-                        <span key={i} className="text-yellow-400 text-sm">
-                          ★
-                        </span>
-                      ))}
-                      <span className="ml-1 text-lg text-gray-600 font-medium">
-                        5.0
-                      </span>
-                    </div>
                   </div>
                 </div>
 
-                {/* Quote Text */}
-                <blockquote className="text-[var(--gray-600)] leading-relaxed text-lg italic">
+                {/* Content with left margin to avoid overlap with avatar */}
+                <div className="ml-28">
+                  <h3 className="text-xl font-bold text-[var(--primary-blue)]">
+                    {testimonial.name}
+                  </h3>
+                  <p className="text-lg text-[var(--gray-600)]">
+                    {testimonial.title}
+                  </p>
+                  {/* Star Rating */}
+                  <div className="flex gap-1 mt-1">
+                    {[...Array(5)].map((_, i) => (
+                      <span key={i} className="text-yellow-400 text-sm">
+                        ★
+                      </span>
+                    ))}
+                    <span className="ml-1 text-lg text-gray-600 font-medium">
+                      {testimonial.rating.toFixed(1)}
+                    </span>
+                  </div>
+                </div>
+                
+                {/* Quote Text - starts closer to left edge */}
+                <blockquote className="text-[var(--gray-600)] leading-relaxed text-lg italic mt-4">
                   {testimonial.quote}
                 </blockquote>
               </div>

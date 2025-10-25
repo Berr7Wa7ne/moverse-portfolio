@@ -54,7 +54,8 @@ export type BlogPost = {
   readTime: string;
   image: string;
   tags: string[];
-  content: string;
+  // Portable Text blocks from Sanity or legacy HTML string
+  content: any;
   description: string;
   relatedPosts: {
     title: string;

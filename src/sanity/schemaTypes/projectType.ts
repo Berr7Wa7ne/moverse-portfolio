@@ -13,6 +13,12 @@ export const projectType = defineType({
     defineField({ name: 'client', type: 'string' }),
     defineField({ name: 'location', type: 'string' }),
     defineField({ name: 'year', type: 'string' }),
+    defineField({ 
+      name: 'liveUrl', 
+      title: 'Live Project URL',
+      type: 'url',
+      description: 'The URL where the live project can be viewed'
+    }),
     defineField({ name: 'description', type: 'text' }),
     defineField({ name: 'challenge', type: 'text' }),
     defineField({ name: 'service', type: 'text' }),

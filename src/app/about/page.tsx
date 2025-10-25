@@ -5,9 +5,9 @@ import AboutIntroSection from '@/components/about/AboutIntroSection';
 import AboutProcessSection from '@/components/about/AboutProcessSection';
 import AboutTrustSection from '@/components/about/AboutTrustSection';
 import AboutQuoteSection from '@/components/about/AboutQuoteSection';
-import AboutTestimonialsSection from '@/components/about/AboutTestimonialsSection';
-import AboutTeamSection from '@/components/about/AboutTeamSection';
-import AboutBlogsSection from '@/components/about/AboutBlogsSection';
+import TestimonialsSection from '@/components/home/TestimonialsSection';
+import TeamSection from '@/components/home/TeamSection';
+import BlogSection from '@/components/home/BlogSection';
 import AboutFAQSection from '@/components/about/AboutFAQSection';
 import AboutNewsletterSection from '@/components/about/AboutNewsletterSection';
 import Footer from '@/components/layout/Footer';
@@ -23,9 +23,9 @@ export default function AboutPage() {
         <AboutProcessSection />
         <AboutTrustSection />
         <AboutQuoteSection />
-        <AboutTestimonialsSection />
-        <AboutTeamSection />
-        <AboutBlogsSection />
+        <TestimonialsSection />
+        <TeamSection />
+        <BlogSection />
         <AboutFAQSection />
         <AboutNewsletterSection />
       </main>

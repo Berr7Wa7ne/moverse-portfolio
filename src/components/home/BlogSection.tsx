@@ -1,27 +1,57 @@
 import React from 'react';
 import Link from 'next/link';
+import { fetchBlogPostsFromCMS } from '@/lib/cms/sanity';
+import { listBlogPosts } from '@/lib/content/blogs';
 
-const BlogSection: React.FC = () => {
-  const blogPosts = [
-    {
-      title: 'The Future of Web Development: Trends to Watch',
-      image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      category: 'Web Development',
-      date: 'December 15, 2023'
-    },
-    {
-      title: 'Building Successful Remote Teams in Tech',
-      image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      category: 'Business',
-      date: 'December 10, 2023'
-    },
-    {
-      title: 'Mobile-First Design: Why It Matters in 2024',
-      image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      category: 'Design',
-      date: 'December 5, 2023'
-    }
-  ];
+type BlogPost = {
+  title: string;
+  image: string;
+  category: string;
+  date: string;
+  slug: string;
+};
+
+async function getBlogPosts(): Promise<BlogPost[]> {
+  const useCMS = process.env.USE_CMS === 'true';
+  
+  if (useCMS) {
+    const cmsPosts: any[] = await fetchBlogPostsFromCMS();
+    console.log('[blog section] Source: Sanity CMS', { count: cmsPosts?.length });
+    return (cmsPosts || [])
+      .slice(0, 3) // Get only 3 posts
+      .map((p) => ({
+        title: p.title || '',
+        image: p.image || '/next.svg',
+        category: p.category || 'Blog',
+        date: formatDate(p.date),
+        slug: p.slug || '',
+      }))
+      .filter((p) => p.slug);
+  }
+  
+  const staticPosts = listBlogPosts();
+  console.log('[blog section] Source: local static content', { count: staticPosts?.length });
+  return staticPosts.slice(0, 3).map((p: any) => ({
+    title: p.title,
+    image: p.image,
+    category: p.category,
+    date: p.date,
+    slug: p.slug,
+  }));
+}
+
+function formatDate(dateStr: string): string {
+  if (!dateStr) return '';
+  try {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  } catch {
+    return dateStr;
+  }
+}
+
+const BlogSection = async () => {
+  const blogPosts = await getBlogPosts();
 
   return (
     <section className="section-padding bg-white">
@@ -38,8 +68,8 @@ const BlogSection: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {blogPosts.map((post, index) => (
-            <article key={index} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 group">
+          {blogPosts.map((post) => (
+            <article key={post.slug} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 group">
               <div className="relative overflow-hidden">
                 <img
                   src={post.image}
@@ -64,7 +94,7 @@ const BlogSection: React.FC = () => {
                 </div>
                 
                 <Link 
-                  href="/blog" 
+                  href={`/blog/${post.slug}`}
                   className="inline-flex items-center text-[var(--accent-blue)] hover:text-[#2952cc] font-medium transition-colors"
                 >
                   Read More

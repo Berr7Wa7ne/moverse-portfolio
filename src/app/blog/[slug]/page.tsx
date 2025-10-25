@@ -33,6 +33,8 @@ const BlogDetailPage = async ({ params }: PageProps) => {
           category: cms.category || 'Blog',
           author: cms.author || 'Author',
           authorImage: cms.authorImage || '/next.svg',
+          authorPosition: cms.authorPosition,
+          authorQuote: cms.authorQuote,
           date: (cms.date || '').slice(0, 10),
           readTime: cms.readTime || '5 Min Read',
           image: cms.image || '/next.svg',
@@ -95,9 +97,11 @@ const BlogDetailPage = async ({ params }: PageProps) => {
           tags={post.tags}
           author={post.author}
           authorImage={post.authorImage}
+          authorPosition={post.authorPosition}
+          authorQuote={post.authorQuote}
           date={post.date}
           readTime={post.readTime}
-          html={post.content}
+          content={post.content}
           relatedPosts={post.relatedPosts}
         />
         <BlogSection />

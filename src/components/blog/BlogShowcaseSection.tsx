@@ -25,20 +25,33 @@ const BlogShowcaseSection: React.FC = () => {
   
           if (cms.length > 0) {
             console.log('[blog showcase] Source: Sanity CMS', { count: cms.length });
-            setPosts(
-              cms.map((p: any, i: number) => ({
-                id: i + 1,
+            const normalized = cms.map((p: any) => {
+              const dateRaw = p.date || p._createdAt || '';
+              const dateStr = typeof dateRaw === 'string' ? dateRaw : '';
+              return {
+                id: p.slug || p._id || Math.random().toString(36).slice(2),
                 title: p.title || '',
                 category: p.category || 'Blog',
-                date: (p.date || '').slice(0, 10),
+                date: dateStr.slice(0, 10),
+                sortDate: new Date(dateStr).getTime() || 0,
                 author: p.author || 'Author',
                 authorImage: p.authorImage || '/next.svg',
                 image: p.image || '/next.svg',
                 description: p.description || '',
-                featured: i === 0,
                 slug: p.slug || '',
-              }))
-            );
+              };
+            });
+            const sorted = normalized.sort((a: any, b: any) => b.sortDate - a.sortDate);
+            // Deduplicate by slug/title to avoid duplicates with different dates/categories
+            const seen = new Set<string>();
+            const deduped = sorted.filter((p: any) => {
+              const key = String(p.slug || p.title || p.id);
+              if (seen.has(key)) return false;
+              seen.add(key);
+              return true;
+            });
+            // ensure featured is always first item
+            setPosts(deduped.map((p: any, i: number) => ({ ...p, featured: i === 0 })));
             return;
           }
         } catch (error) {
@@ -70,7 +83,7 @@ const BlogShowcaseSection: React.FC = () => {
               News and Blogs
             </p>
             <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start mb-16 gap-8">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--primary-blue)] leading-tight">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--primary-blue)] leading-tight mb-7">
                 Our Latest{' '}
                 <span className="text-[var(--accent-blue)]">
                   News & Blogs

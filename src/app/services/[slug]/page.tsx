@@ -6,7 +6,7 @@ import ServiceAbout from '@/components/services/serviceDetails/ServiceAbout';
 import ServiceFeatures from '@/components/services/serviceDetails/ServiceFeatures';
 import ServiceBenefits from '@/components/services/serviceDetails/ServiceBenefits';
 import NewsletterCompact from '@/components/services/serviceDetails/NewsletterCompact';
-import ServicesDetailsTestimony from '@/components/services/serviceDetails/ServicesDetailsTestimony';
+import TestimonialsSection from '@/components/home/TestimonialsSection';
 import QuoteFormSection from '@/components/home/QuoteFormSection';
 import TopBar from '@/components/layout/TopBar';
 import Header from '@/components/layout/Header';
@@ -62,7 +62,7 @@ const ServiceDetailPage = async ({ params }: PageProps) => {
         items={service.expertiseItems}
       />
       <ServiceBenefits title={service.benefitsTitle} intro={service.benefitsIntro} items={service.benefitsItems} />
-      <ServicesDetailsTestimony />
+      <TestimonialsSection />
       <ServicesBanner />
       <QuoteFormSection />
       <NewsletterCompact />

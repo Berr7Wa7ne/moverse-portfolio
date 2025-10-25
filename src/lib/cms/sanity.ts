@@ -4,22 +4,22 @@ const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!;
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET!;
 const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2024-05-01';
 
-export const sanityClient = createClient({ projectId, dataset, apiVersion, useCdn: true });
+export const sanityClient = createClient({ projectId, dataset, apiVersion, useCdn: false });
 
 export const queries = {
   projects: `*[_type == "project"] | order(_createdAt desc){
     title, slug, category, client, location, year, description, challenge, service, results,
-    features, technologies, images[]{asset->{url}},
-    testimonial{author, position, rating, image{asset->{url}}, text}
+    features, technologies, "images": images[].asset->url, liveUrl,
+    testimonial{author, position, rating, "image": image.asset->url, text}
   }`,
   projectBySlug: `*[_type == "project" && slug.current == $slug][0]{
     title, slug, category, client, location, year, description, challenge, service, results,
-    features, technologies, images[]{asset->{url}},
-    testimonial{author, position, rating, image{asset->{url}}, text}
+    features, technologies, "images": images[].asset->url, liveUrl,
+    testimonial{author, position, rating, "image": image.asset->url, text}
   }`,
   projectSlugs: `*[_type == "project" && defined(slug.current)]{ "slug": slug.current }`,
   
-  blogPosts: `*[_type in ["blogPost", "post"]] | order(coalesce(date, _createdAt) desc){
+  blogPosts: `*[_type == "blogPost"] | order(coalesce(date, _createdAt) desc){
     title,
     "slug": slug.current,
     // dates
@@ -35,6 +35,8 @@ export const queries = {
     "author": select(defined(author->name) => author->name, defined(author) => author, null),
     // images from multiple possible fields
     "authorImage": coalesce(authorImage.asset->url, author->image.asset->url),
+    authorPosition,
+    authorQuote,
     "image": coalesce(image.asset->url, coverImage.asset->url, mainImage.asset->url),
     // tags/keywords
     tags,
@@ -49,7 +51,7 @@ export const queries = {
     readTime
   }`,
   
-  blogPostBySlug: `*[_type in ["blogPost", "post"] && slug.current == $slug][0]{
+  blogPostBySlug: `*[_type == "blogPost" && slug.current == $slug][0]{
     title,
     "slug": slug.current,
     // dates
@@ -64,6 +66,8 @@ export const queries = {
     "author": select(defined(author->name) => author->name, defined(author) => author, null),
     // images from multiple possible fields
     "authorImage": coalesce(authorImage.asset->url, author->image.asset->url),
+    authorPosition,
+    authorQuote,
     "image": coalesce(image.asset->url, coverImage.asset->url, mainImage.asset->url),
     tags,
     // description/excerpt
