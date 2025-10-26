@@ -20,13 +20,13 @@ export default function ProjectCard({ project }: ProjectCardProps) {
   return (
     <div
       onClick={() => router.push(`/projects/${project.slug}`)}
-      className="relative aspect-square rounded-2xl overflow-hidden group hover:shadow-lg transition-all duration-300 cursor-pointer"
+      className="relative aspect-square rounded-2xl overflow-hidden group card-hover cursor-pointer"
     >
       {/* Background Image */}
       <img
         src={project.image}
         alt={project.title}
-        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+        className="absolute inset-0 w-full h-full object-cover hover-scale"
       />
 
       {/* Overlay */}

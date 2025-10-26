@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
-import { Palette, Smartphone, Zap } from "lucide-react";
+import { Palette, Smartphone, Zap, ArrowRight } from "lucide-react";
+import ScrollReveal from '../ui/ScrollReveal';
 
 const ServicesSection: React.FC = () => {
   const services = [
@@ -31,6 +32,7 @@ const ServicesSection: React.FC = () => {
     <section className="section-padding bg-white">
       <div className="container">
         {/* Section Header */}
+        <ScrollReveal>
         <div className="flex justify-between items-center mb-16 mr-20">
           <div>
             <p className="text-[16px] text-gray-500 tracking-wider flex items-center gap-3">
@@ -45,10 +47,12 @@ const ServicesSection: React.FC = () => {
             </h2>
           </div>
 
-          <Link href="/services" className="btn-primary">
-            View All Services
+          <Link href="/services" className="btn-primary inline-flex items-center gap-2 hover:gap-3 transition-all">
+            <span>View All Services</span>
+            <ArrowRight className="w-5 h-5" />
           </Link>
         </div>
+        </ScrollReveal>
 
         {/* Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -58,7 +62,7 @@ const ServicesSection: React.FC = () => {
               <Link
                 key={index}
                 href={service.href}
-                className="bg-[var(--gray-100)] rounded-2xl p-8 hover:shadow-lg transition-all duration-300 group block"
+                className="bg-[var(--gray-100)] rounded-2xl p-8 card-hover group block"
               >
                 <div className="text-center space-y-4">
                   <div className="w-16 h-16 bg-[var(--accent-blue)] rounded-full flex items-center justify-center mx-auto text-2xl group-hover:scale-110 transition-transform duration-300">

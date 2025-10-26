@@ -1,8 +1,10 @@
 import React from 'react';
 import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
 import { listProjects } from '@/lib/content/projects';
 import { fetchProjectsFromCMS } from '@/lib/cms/sanity';
 import ProjectCard from '../projects/ProjectCard';
+import ScrollReveal from '../ui/ScrollReveal';
 
 type ShowcaseProject = {
   image: string;
@@ -52,6 +54,7 @@ const ShowcaseSection = async () => {
     <section className="section-padding bg-white">
       <div className="container">
         {/* Section Header */}
+        <ScrollReveal>
         <div className="text-center mb-16">
           <p className="text-[16px] text-[var(--gray-600)] tracking-wider flex items-center justify-center gap-3">
             <span className="block w-20 h-[2px] bg-gray-500"></span>
@@ -62,6 +65,7 @@ const ShowcaseSection = async () => {
             <span className="text-[var(--accent-blue)]">Featured Work</span>
           </h2>
         </div>
+        </ScrollReveal>
 
         {/* Project Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
@@ -72,8 +76,9 @@ const ShowcaseSection = async () => {
 
         {/* View All Works Button */}
         <div className="text-center">
-          <Link href="/projects" className="btn-primary">
-            View All Works
+          <Link href="/projects" className="btn-primary inline-flex items-center gap-2 hover:gap-3 transition-all">
+            <span>View All Works</span>
+            <ArrowRight className="w-5 h-5" />
           </Link>
         </div>
       </div>

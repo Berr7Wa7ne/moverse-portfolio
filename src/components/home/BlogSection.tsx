@@ -1,7 +1,9 @@
 import React from 'react';
 import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
 import { fetchBlogPostsFromCMS } from '@/lib/cms/sanity';
 import { listBlogPosts } from '@/lib/content/blogs';
+import ScrollReveal from '../ui/ScrollReveal';
 
 type BlogPost = {
   title: string;
@@ -56,6 +58,7 @@ const BlogSection = async () => {
   return (
     <section className="section-padding bg-white">
       <div className="container">
+        <ScrollReveal>
         <div className="text-center mb-16">
         <p className="text-[16px] text-[var(--gray-600)] tracking-wider flex items-center justify-center gap-3">
             <span className="block w-20 h-[2px] bg-gray-500"></span>
@@ -66,15 +69,16 @@ const BlogSection = async () => {
             <span className="text-[var(--accent-blue)]">News & Blogs</span>
           </h2>
         </div>
+        </ScrollReveal>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {blogPosts.map((post) => (
-            <article key={post.slug} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 group">
+            <article key={post.slug} className="bg-white rounded-2xl shadow-lg overflow-hidden card-hover cursor-pointer group">
               <div className="relative overflow-hidden">
                 <img
                   src={post.image}
                   alt={post.title}
-                  className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-48 object-cover hover-scale"
                 />
                 <div className="absolute top-4 left-4">
                   <span className="bg-[var(--accent-blue)] text-white px-3 py-1 rounded-full text-xs font-medium">
@@ -95,12 +99,10 @@ const BlogSection = async () => {
                 
                 <Link 
                   href={`/blog/${post.slug}`}
-                  className="inline-flex items-center text-[var(--accent-blue)] hover:text-[#2952cc] font-medium transition-colors"
+                  className="interactive-button text-[var(--accent-blue)] hover:text-[#2952cc] font-medium"
                 >
-                  Read More
-                  <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+                  <span>Read More</span>
+                  <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
             </article>

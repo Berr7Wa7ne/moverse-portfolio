@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import ServicesBanner from '../ui/ServicesBanner';
 import Pagination from '../ui/Pagination';
+import SkeletonLoader from '../ui/SkeletonLoader';
+import ScrollReveal from '../ui/ScrollReveal';
 import { fetchBlogPostsFromCMS } from "@/lib/cms/sanity";
 import { listBlogPosts } from '@/lib/content/blogs';
 
@@ -17,15 +19,17 @@ const BlogShowcaseSection: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState(categoryParam || 'All');
   const [posts, setPosts] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
 
   const filters = ['All', 'UI/UX', 'Development', 'Marketing'];
 
   useEffect(() => {
     const load = async () => {
+      setIsLoading(true);
       const useCMS = process.env.NEXT_PUBLIC_USE_CMS === 'true';
   
-      if (useCMS) {
-        try {
+      try {
+        if (useCMS) {
           console.log('[blog showcase] Attempting to load from Sanity CMS...');
   
           const data = await fetchBlogPostsFromCMS();
@@ -60,17 +64,23 @@ const BlogShowcaseSection: React.FC = () => {
             });
             // ensure featured is always first item
             setPosts(deduped.map((p: any, i: number) => ({ ...p, featured: i === 0 })));
+            setIsLoading(false);
             return;
           }
-        } catch (error) {
-          console.error('[blog showcase] CMS fetch failed:', error);
         }
+    
+        // Fallback to static posts
+        console.log('[blog showcase] Source: local static content');
+        const staticPosts = listBlogPosts();
+        setPosts(staticPosts);
+      } catch (error) {
+        console.error('[blog showcase] Error loading posts:', error);
+        // Fallback to static posts on error
+        const staticPosts = listBlogPosts();
+        setPosts(staticPosts);
+      } finally {
+        setIsLoading(false);
       }
-  
-      // Fallback to static posts
-      console.log('[blog showcase] Source: local static content');
-      const staticPosts = listBlogPosts();
-      setPosts(staticPosts);
     };
   
     load();
@@ -109,6 +119,7 @@ const BlogShowcaseSection: React.FC = () => {
     <>
       <section className="section-padding bg-white">
         <div className="container">
+          <ScrollReveal>
           <div className="space-y-4">
             <p className="text-[16px] text-[var(--gray-600)] tracking-wider flex items-center gap-3">
               <span className="block w-20 h-[2px] bg-gray-500"></span>
@@ -139,18 +150,28 @@ const BlogShowcaseSection: React.FC = () => {
               </div>
             </div>
           </div>
+          </ScrollReveal>
 
-          {/* Blog Posts Grid */}
+          {/* Loading State */}
+          {isLoading ? (
+            <div className="space-y-8">
+              <SkeletonLoader variant="card" count={1} className="h-64" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <SkeletonLoader variant="card" count={4} />
+              </div>
+            </div>
+          ) : (
+          /* Blog Posts Grid */
           <div className="space-y-8">
             {/* Featured Post (Large Rectangle) */}
             {currentPosts.length > 0 && (
               <Link href={`/blog/${currentPosts[0].slug}`} className="block">
-                <article className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-[var(--gray-200)]">
+                <article className="bg-white rounded-2xl shadow-lg overflow-hidden card-hover border border-[var(--gray-200)]">
                   <div className="relative overflow-hidden">
                     <img
                       src={currentPosts[0].image}
                       alt={currentPosts[0].title}
-                      className="w-full h-64 lg:h-full object-cover"
+                      className="w-full h-64 lg:h-full object-cover hover-scale"
                     />
                     {/* Text Overlay */}
                     <div className="absolute inset-0 bg-black/40 flex items-end justify-center">
@@ -188,12 +209,12 @@ const BlogShowcaseSection: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {currentPosts.slice(1, 5).map((post) => (
                 <Link key={post.id} href={`/blog/${post.slug}`} className="block">
-                  <article className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-[var(--gray-200)] aspect-square">
+                  <article className="bg-white rounded-2xl shadow-lg overflow-hidden card-hover border border-[var(--gray-200)] aspect-square">
                     <div className="relative overflow-hidden h-full">
                       <img
                         src={post.image}
                         alt={post.title}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover hover-scale"
                       />
                       {/* Text Overlay */}
                       <div className="absolute inset-0 bg-black/40 flex items-end justify-center">
@@ -228,13 +249,16 @@ const BlogShowcaseSection: React.FC = () => {
               ))}
             </div>
           </div>
+          )}
 
           {/* Pagination */}
+          {!isLoading && (
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={handlePageChange}
           />
+          )}
         </div>
       </section>
 

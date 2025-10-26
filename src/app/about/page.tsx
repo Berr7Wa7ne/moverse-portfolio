@@ -1,15 +1,15 @@
 import TopBar from '@/components/layout/TopBar';
 import Header from '@/components/layout/Header';
 import AboutHeroSection from '@/components/about/AboutHeroSection';
-import AboutIntroSection from '@/components/about/AboutIntroSection';
-import AboutProcessSection from '@/components/about/AboutProcessSection';
-import AboutTrustSection from '@/components/about/AboutTrustSection';
-import AboutQuoteSection from '@/components/about/AboutQuoteSection';
+import TransformingIdeasSection from '@/components/home/TransformingIdeasSection';
+import WorkProcessSection from '@/components/home/WorkProcessSection';
+import TrustSection from '@/components/home/TrustSection';
+import QuoteFormSection from '@/components/home/QuoteFormSection';
 import TestimonialsSection from '@/components/home/TestimonialsSection';
 import TeamSection from '@/components/home/TeamSection';
 import BlogSection from '@/components/home/BlogSection';
-import AboutFAQSection from '@/components/about/AboutFAQSection';
-import AboutNewsletterSection from '@/components/about/AboutNewsletterSection';
+import FAQSection from '@/components/home/FAQSection';
+import NewsletterSection from '@/components/home/NewsletterSection';
 import Footer from '@/components/layout/Footer';
 
 export default function AboutPage() {
@@ -19,15 +19,15 @@ export default function AboutPage() {
       <Header />
       <main>
         <AboutHeroSection />
-        <AboutIntroSection />
-        <AboutProcessSection />
-        <AboutTrustSection />
-        <AboutQuoteSection />
+        <TransformingIdeasSection />
+        <WorkProcessSection />
+        <TrustSection />
+        <QuoteFormSection />
         <TestimonialsSection />
         <TeamSection />
         <BlogSection />
-        <AboutFAQSection />
-        <AboutNewsletterSection />
+        <FAQSection />
+        <NewsletterSection />
       </main>
       <Footer />
     </div>

@@ -2,10 +2,10 @@ import TopBar from '@/components/layout/TopBar';
 import Header from '@/components/layout/Header';
 import ServicesHeroSection from '@/components/services/ServicesHeroSection';
 import ServicesGridSection from '@/components/services/ServicesGridSection';
-import ServicesTrustSection from '@/components/services/ServicesTrustSection';
-import ServicesQuoteSection from '@/components/services/ServicesQuoteSection';
-import ServicesFAQSection from '@/components/services/ServicesFAQSection';
-import ServicesNewsletterSection from '@/components/services/ServicesNewsletterSection';
+import TrustSection from '@/components/home/TrustSection';
+import QuoteFormSection from '@/components/home/QuoteFormSection';
+import FAQSection from '@/components/home/FAQSection';
+import NewsletterSection from '@/components/home/NewsletterSection';
 import Footer from '@/components/layout/Footer';
 
 export default function ServicesPage() {
@@ -16,10 +16,10 @@ export default function ServicesPage() {
       <main>
         <ServicesHeroSection />
         <ServicesGridSection />
-        <ServicesTrustSection />
-        <ServicesQuoteSection />
-        <ServicesFAQSection />
-        <ServicesNewsletterSection />
+        <TrustSection />
+        <QuoteFormSection />
+        <FAQSection />
+        <NewsletterSection />
       </main>
       <Footer />
     </div>

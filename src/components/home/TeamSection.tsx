@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import ScrollReveal from '../ui/ScrollReveal';
 
 const socialLinks = [
   {
@@ -50,6 +51,7 @@ const TeamSection: React.FC = () => {
   return (
     <section className="section-padding bg-white">
       <div className="container">
+        <ScrollReveal>
         <div className="flex justify-between items-start mb-4">
           <p className="text-[16px] text-gray-500 tracking-wider flex items-center gap-3">
             <span className="block w-20 h-[2px] bg-gray-500"></span>
@@ -62,6 +64,7 @@ const TeamSection: React.FC = () => {
             Meet Our <span className="text-[var(--accent-blue)]">Expert team</span>
           </h2>
         </div>
+        </ScrollReveal>
 
         <div className="flex justify-center">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-20">
@@ -69,11 +72,11 @@ const TeamSection: React.FC = () => {
               <div key={index} className="text-center group block">
                 {/* Profile link wrapper */}
                 <Link href={`/team/${member.slug}`} className="block">
-                  <div className="relative mb-4">
+                  <div className="relative mb-4 overflow-hidden rounded-full mx-auto w-32 h-32">
                     <img
                       src={member.image}
                       alt={member.name}
-                      className="w-32 h-32 rounded-full object-cover mx-auto shadow-lg group-hover:scale-105 transition-transform duration-300"
+                      className="w-32 h-32 rounded-full object-cover shadow-lg hover-scale"
                     />
                   </div>
 

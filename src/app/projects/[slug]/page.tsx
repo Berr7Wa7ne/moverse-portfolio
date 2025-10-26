@@ -7,8 +7,8 @@ import ProjectChallengeServiceSection from '@/components/projects/projectDetails
 import ProjectResultsSection from '@/components/projects/projectDetails/ProjectResultsSection';
 import ProjectHero from '@/components/projects/projectDetails/ProjectHero';
 import ProjectShowcaseDetails from '@/components/projects/projectDetails/ProjectShowcaseDetails';
-import ProjectsNewsletterSection from '@/components/projects/ProjectsNewsletterSection';
-import ProjectsQuoteSection from '@/components/projects/ProjectsQuoteSection';
+import NewsletterSection from '@/components/home/NewsletterSection';
+import QuoteFormSection from '@/components/home/QuoteFormSection';
 import Footer from '@/components/layout/Footer';
 import Header from '@/components/layout/Header';
 import TopBar from '@/components/layout/TopBar';
@@ -73,8 +73,8 @@ const ProjectDetailPage = async ({ params }: PageProps) => {
       />
       <ServicesBanner />
       <ProjectShowcaseDetails currentSlug={useParams.slug} />
-      <ProjectsQuoteSection />
-      <ProjectsNewsletterSection />
+      <QuoteFormSection />
+      <NewsletterSection />
       <ServicesBanner />
       <Footer />
     </>

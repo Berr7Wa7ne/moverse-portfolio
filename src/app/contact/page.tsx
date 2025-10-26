@@ -2,7 +2,7 @@ import TopBar from '@/components/layout/TopBar';
 import Header from '@/components/layout/Header';
 import ContactHeroSection from '@/components/contact/ContactHeroSection';
 import ContactFormSection from '@/components/contact/ContactFormSection';
-import ContactNewsletterSection from '@/components/contact/ContactNewsletterSection';
+import NewsletterSection from '@/components/home/NewsletterSection';
 import Footer from '@/components/layout/Footer';
 
 export default function ContactPage() {
@@ -13,7 +13,7 @@ export default function ContactPage() {
       <main>
         <ContactHeroSection />
         <ContactFormSection />
-        <ContactNewsletterSection />
+        <NewsletterSection />
       </main>
       <Footer />
     </div>

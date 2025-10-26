@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { Check } from "lucide-react"; 
+import { Check } from "lucide-react";
+import ScrollReveal from "../../ui/ScrollReveal";
 
 export type ServiceAboutProps = {
   title: string;
@@ -26,20 +27,31 @@ const ServiceAbout: React.FC<ServiceAboutProps> = ({
     <section className="py-16 bg-white">
       <div className="container mx-auto space-y-12">
         {/* Top media (image first) */}
-        <div className="relative">
-          <img
-            src={image}
-            alt={`${title} hero`}
-            className="w-full h-72 md:h-full object-cover rounded-2xl shadow-lg"
-          />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <button className="w-14 h-14 md:w-16 md:h-16 bg-white/90 backdrop-blur rounded-full flex items-center justify-center shadow-lg">
-              <svg className="w-6 h-6 text-[var(--primary-blue)]" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9 7.5v5l4-2.5-4-2.5z" clipRule="evenodd" />
-              </svg>
-            </button>
+        <ScrollReveal>
+          <div className="relative">
+            <img
+              src={image}
+              alt={`${title} hero`}
+              className="w-full h-72 md:h-full object-cover rounded-2xl shadow-lg"
+            />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <button className="w-14 h-14 md:w-16 md:h-16 bg-white/90 backdrop-blur rounded-full flex items-center justify-center shadow-lg">
+                <svg
+                  className="w-6 h-6 text-[var(--primary-blue)]"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM9 7.5v5l4-2.5-4-2.5z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
-        </div>
+        </ScrollReveal>
+
         {/* 1. About Section */}
         <div>
           {/* Heading */}

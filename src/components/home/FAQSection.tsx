@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import ScrollReveal from '../ui/ScrollReveal';
 
 const FAQSection: React.FC = () => {
   const [openIndex, setOpenIndex] = useState(0);
@@ -39,6 +40,7 @@ const FAQSection: React.FC = () => {
   return (
     <section className="section-padding bg-[var(--gray-100)]">
       <div className="container">
+        <ScrollReveal>
         <div className="text-center mb-16">
         <p className="text-[16px] text-[var(--gray-600)] tracking-wider flex items-center justify-center gap-3">
             <span className="block w-20 h-[2px] bg-gray-500"></span>
@@ -49,14 +51,15 @@ const FAQSection: React.FC = () => {
             <span className="text-[var(--accent-blue)]">Look here</span>
           </h2>
         </div>
+        </ScrollReveal>
 
         <div className="max-w-4xl mx-auto">
           <div className="space-y-4">
             {faqs.map((faq, index) => (
-              <div key={index} className="bg-[var(--gray-100)] rounded-lg overflow-hidden">
+              <div key={index} className="bg-white rounded-lg overflow-hidden card-hover border border-[var(--gray-200)]">
                 <button
                   onClick={() => toggleFAQ(index)}
-                  className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-[var(--gray-200)] transition-colors"
+                  className="w-full px-6 py-4 text-left flex justify-between items-center transition-colors"
                 >
                   <span className="font-semibold text-[var(--primary-blue)] pr-4">
                     {faq.question}

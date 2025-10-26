@@ -5,9 +5,11 @@ import Link from "next/link";
 import parse, { domToReact, DOMNode } from "html-react-parser";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import { urlFor } from "@/sanity/lib/image";
-import { Check } from "lucide-react";
+import { Check, ArrowRight } from "lucide-react";
 import SocialShare from "@/components/ui/SocialShare";
 import ServicesBanner from "@/components/ui/ServicesBanner";
+import ScrollReveal from '../../ui/ScrollReveal';
+import RippleButton from '../../ui/RippleButton';
 
 type RelatedPost = {
   title: string;

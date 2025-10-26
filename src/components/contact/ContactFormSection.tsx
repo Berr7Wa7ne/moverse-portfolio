@@ -1,6 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
+import { Loader2, Send } from 'lucide-react';
+import ScrollReveal from '../ui/ScrollReveal';
+import { useToast } from '../ui/Toast';
+import RippleButton from '../ui/RippleButton';
 
 const socialLinks = [
   {
@@ -21,6 +25,8 @@ const socialLinks = [
 ];
 
 const ContactFormSection: React.FC = () => {
+  const { showToast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -37,10 +43,29 @@ const ContactFormSection: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log('Form submitted:', formData);
+    setIsSubmitting(true);
+    
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      showToast('Message sent successfully! We\'ll get back to you soon.', 'success');
+      
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        service: '',
+        message: ''
+      });
+    } catch (error) {
+      showToast('Failed to send message. Please try again.', 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const services = [
@@ -59,6 +84,7 @@ const ContactFormSection: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Left Side - Form */}
           <div className="space-y-8">
+            <ScrollReveal>
             <div className="space-y-4">
             <p className="text-[16px] text-gray-500 tracking-wider flex items-center gap-3">
                   <span className="block w-20 h-[2px] bg-gray-500"></span>
@@ -69,6 +95,7 @@ const ContactFormSection: React.FC = () => {
                 <span className="text-[var(--accent-blue)]">Free Quote Today!</span>
               </h2>
             </div>
+            </ScrollReveal>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -152,9 +179,24 @@ const ContactFormSection: React.FC = () => {
                 />
               </div>
 
-              <button type="submit" className="btn-primary">
-                Send Message
-              </button>
+              <RippleButton 
+                type="submit" 
+                variant="primary"
+                disabled={isSubmitting}
+                className="inline-flex items-center gap-2"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <span>Sending...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Send Message</span>
+                    <Send className="w-5 h-5" />
+                  </>
+                )}
+              </RippleButton>
             </form>
           </div>
 

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import ServicesBanner from '../ui/ServicesBanner';
 import { listProjects } from '@/lib/content/projects';
 import { fetchProjectsFromCMS } from '@/lib/cms/sanity';
+import ScrollReveal from '../ui/ScrollReveal';
 
 type Testimonial = {
   name: string;
@@ -102,6 +103,7 @@ const TestimonialsSection: React.FC = () => {
       <ServicesBanner />
       <section className="section-padding bg-[var(--primary-blue)]">
         <div className="container">
+          <ScrollReveal>
           <div className="text-center mb-16">
             <p className="text-[16px] text-gray-50 tracking-wider flex items-center justify-center gap-3">
               <span className="block w-20 h-[2px] bg-gray-50"></span>
@@ -112,6 +114,7 @@ const TestimonialsSection: React.FC = () => {
               <span className="text-[var(--accent-blue)]">Clients Say</span>
             </h2>
           </div>
+          </ScrollReveal>
 
           <div className="relative overflow-hidden">
             <div 
@@ -124,7 +127,7 @@ const TestimonialsSection: React.FC = () => {
             {visibleTestimonials.map((testimonial, index) => (
               <div
                 key={`${testimonial.name}-${index}`}
-                className="bg-white rounded-2xl p-8 shadow-lg relative overflow-hidden"
+                className="bg-white rounded-2xl p-8 shadow-lg relative overflow-hidden card-hover"
               >
                 {/* Quote Icon in background */}
                 <span className="absolute top-6 right-6 text-[40px] text-[var(--accent-blue)] opacity-20">

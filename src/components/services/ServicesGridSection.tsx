@@ -8,8 +8,10 @@ import {
   ShoppingCart,
   Search,
   BarChart3,
-  Target
-} from "lucide-react"; // ✅ Import lucide icons
+  Target,
+  ArrowRight
+} from "lucide-react";
+import ScrollReveal from '../ui/ScrollReveal';
 
 const ServicesGridSection: React.FC = () => {
   const services = [
@@ -66,6 +68,7 @@ const ServicesGridSection: React.FC = () => {
   return (
     <section className="section-padding bg-white">
       <div className="container">
+        <ScrollReveal>
         <div className="text-center mb-16">
           <p className="text-[16px] text-[var(--gray-600)] tracking-wider flex items-center justify-center gap-3">
             <span className="block w-20 h-[2px] bg-gray-500"></span>
@@ -77,10 +80,11 @@ const ServicesGridSection: React.FC = () => {
             <span className="text-[var(--accent-blue)]">Elevate Your Business</span>
           </h2>
         </div>
+        </ScrollReveal>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {services.map((service, index) => (
-            <div key={index} className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 group border border-[var(--gray-200)]">
+            <div key={index} className="bg-white rounded-2xl p-8 shadow-lg card-hover group border border-[var(--gray-200)]">
               <div className="space-y-6">
                 {/* Icon Wrapper */}
                 <div className="w-16 h-16 bg-[var(--light-blue)] rounded-full flex items-center justify-center text-2xl group-hover:bg-[var(--accent-blue)] group-hover:scale-110 transition-all duration-300">
@@ -102,12 +106,10 @@ const ServicesGridSection: React.FC = () => {
                 {/* Learn More Button */}
                 <Link 
                   href={`/services/${service.slug}`}
-                  className="text-[var(--accent-blue)] hover:text-[#2952cc] font-semibold transition-colors flex items-center gap-2 group"
+                  className="interactive-button text-[var(--accent-blue)] hover:text-[#2952cc] font-semibold"
                 >
-                  Learn More
-                  <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+                  <span>Learn More</span>
+                  <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
             </div>

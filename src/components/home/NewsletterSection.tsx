@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Mail } from 'lucide-react';
+import ScrollReveal from '../ui/ScrollReveal';
 
 const NewsletterSection: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -15,6 +16,7 @@ const NewsletterSection: React.FC = () => {
 
   return (
     <section className="section-padding bg-white">
+      <ScrollReveal>
       <div className="container">
         <div className="text-center max-w-4xl mx-auto">
           {/* Subtitle with line */}
@@ -58,6 +60,7 @@ const NewsletterSection: React.FC = () => {
           </form>
         </div>
       </div>
+      </ScrollReveal>
     </section>
   );
 };

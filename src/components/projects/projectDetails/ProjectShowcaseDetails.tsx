@@ -2,6 +2,7 @@ import React from 'react';
 import { listProjects } from '@/lib/content/projects';
 import { fetchProjectsFromCMS } from '@/lib/cms/sanity';
 import ProjectCard from '../ProjectCard';
+import ScrollReveal from '../../ui/ScrollReveal';
 
 type ShowcaseItem = {
   image: string;
@@ -64,6 +65,7 @@ const ProjectShowcaseDetails = async ({ currentSlug }: ProjectShowcaseDetailsPro
     <section className="mt-10 bg-white">
       <div className="container">
         {/* Section Header */}
+        <ScrollReveal>
         <div className="text-center mb-16">
           <p className="text-[16px] text-[var(--gray-600)] tracking-wider flex items-center justify-center gap-3">
             <span className="block w-20 h-[2px] bg-gray-500"></span>
@@ -75,6 +77,7 @@ const ProjectShowcaseDetails = async ({ currentSlug }: ProjectShowcaseDetailsPro
             <span className="text-[var(--accent-blue)]">Featured Work</span>
           </h2>
         </div>
+        </ScrollReveal>
 
         {/* Project Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">

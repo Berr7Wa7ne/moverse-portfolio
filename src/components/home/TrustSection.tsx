@@ -1,7 +1,8 @@
 import React from 'react';
 import ServicesBanner from '../ui/ServicesBanner';
 import Link from 'next/link';
-import { DollarSign, Zap, Shield, Target } from "lucide-react";
+import { DollarSign, Zap, Shield, Target, ArrowRight } from "lucide-react";
+import ScrollReveal from '../ui/ScrollReveal';
 
 const TrustSection: React.FC = () => {
   const features = [
@@ -33,15 +34,18 @@ const TrustSection: React.FC = () => {
       <section className="section-padding bg-[var(--primary-blue)]">
         <div className="container">
           {/* Section Header */}
+          <ScrollReveal>
           <div className='flex items-center justify-between mb-5'>
             <p className="text-[16px] text-gray-50 tracking-wider flex items-center gap-3">
               <span className="block w-20 h-[2px] bg-gray-50"></span>
               Why Choose Us
             </p>
-            <Link href="" className="btn-primary">
-              Get a Quote
+            <Link href="/contact" className="btn-primary inline-flex items-center gap-2 hover:gap-3 transition-all">
+              <span>Get a Quote</span>
+              <ArrowRight className="w-5 h-5" />
             </Link>
           </div>
+          </ScrollReveal>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
@@ -54,11 +58,11 @@ const TrustSection: React.FC = () => {
               </div>
 
               {/* Team Image */}
-              <div className="relative">
+              <div className="relative overflow-hidden rounded-2xl">
                 <img
                   src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
                   alt="Team collaboration"
-                  className="w-full h-auto rounded-2xl shadow-2xl"
+                  className="w-full h-auto rounded-2xl shadow-2xl hover-scale"
                 />
               </div>
             </div>
@@ -70,7 +74,7 @@ const TrustSection: React.FC = () => {
                 return (
                   <div
                     key={index}
-                    className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/20 transition-all duration-300"
+                    className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 card-hover"
                   >
                     <div className="space-y-4">
                       <div className="w-12 h-12 bg-[var(--accent-blue)] rounded-full flex items-center justify-center text-white">

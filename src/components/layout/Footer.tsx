@@ -1,7 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Phone, Mail, MapPin, Apple, Play } from 'lucide-react';
+import { Phone, Mail, MapPin, Apple, Play, ArrowRight } from 'lucide-react';
+import RippleButton from '../ui/RippleButton';
 
 const Footer: React.FC = () => {
   const quickLinks = [
@@ -39,16 +40,16 @@ const Footer: React.FC = () => {
           {/* Left Section - Company Info and Navigation */}
           <div className="lg:max-w-md space-y-6">
             {/* Company Logo and Name */}
-            <div className="flex items-center gap-3">
+            <Link href="/" className="flex items-center gap-3 group">
               <Image
                 src="/moverse logo.png"
                 alt="Moverse Logo"
                 width={60}
                 height={60}
-                className="object-contain"
+                className="object-contain transition-transform duration-300 group-hover:scale-110"
               />
-              <span className="text-2xl font-bold">Moverse Technologies</span>
-            </div>
+              <span className="text-2xl font-bold transition-colors duration-300 group-hover:text-[var(--accent-blue)]">Moverse Technologies</span>
+            </Link>
             
             {/* Company Description */}
             <p className="text-white/80 text-lg leading-relaxed max-w-sm">
@@ -61,7 +62,7 @@ const Footer: React.FC = () => {
                 <Link
                   key={link.label}
                   href={link.href}
-                  className="text-white/80 hover:text-white transition-colors text-lg"
+                  className="text-white/80 hover:text-white transition-all duration-300 text-lg hover:scale-105 hover:text-[var(--accent-blue)]"
                 >
                   {link.label}
                 </Link>
@@ -75,17 +76,17 @@ const Footer: React.FC = () => {
             <div className="space-y-4">
               <h3 className="text-xl font-semibold">Contact</h3>
               <div className="space-y-3 text-lg text-white/80">
-                <div className="flex items-center gap-3">
-                  <Phone className="w-4 h-4" />
-                  <span>002-828-232</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Mail className="w-4 h-4" />
-                  <span>chasman937@gmail.com</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <MapPin className="w-4 h-4" />
-                  <span>775 Rolling Green Rd</span>
+                <a href="tel:002-828-232" className="flex items-center gap-3 hover:text-white transition-colors duration-300 group">
+                  <Phone className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
+                  <span className="group-hover:scale-105 transition-transform duration-300">002-828-232</span>
+                </a>
+                <a href="mailto:chasman937@gmail.com" className="flex items-center gap-3 hover:text-white transition-colors duration-300 group">
+                  <Mail className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
+                  <span className="group-hover:scale-105 transition-transform duration-300">chasman937@gmail.com</span>
+                </a>
+                <div className="flex items-center gap-3 hover:text-white transition-colors duration-300 group">
+                  <MapPin className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
+                  <span className="group-hover:scale-105 transition-transform duration-300">775 Rolling Green Rd</span>
                 </div>
               </div>
             </div>
@@ -94,20 +95,20 @@ const Footer: React.FC = () => {
             <div className="space-y-4">
               <h3 className="text-xl font-semibold">Get the app</h3>
               <div className="space-y-3">
-                <button className="bg-black text-white rounded-lg p-3 flex items-center gap-3 hover:bg-gray-800 transition-colors">
-                  <Apple className="w-6 h-6" />
+                <RippleButton variant="secondary" className="bg-black text-white rounded-lg p-3 flex items-center gap-3 hover:bg-gray-800 transition-colors group">
+                  <Apple className="w-6 h-6 transition-transform duration-300 group-hover:scale-110" />
                   <div className="text-left">
                     <div className="text-sm text-gray-300">Download on the</div>
                     <div className="text-lg font-medium">App Store</div>
                   </div>
-                </button>
-                <button className="bg-black text-white rounded-lg p-3 flex items-center gap-3 hover:bg-gray-800 transition-colors">
-                  <Play className="w-6 h-6" />
+                </RippleButton>
+                <RippleButton variant="secondary" className="bg-black text-white rounded-lg p-3 flex items-center gap-3 hover:bg-gray-800 transition-colors group">
+                  <Play className="w-6 h-6 transition-transform duration-300 group-hover:scale-110" />
                   <div className="text-left">
                     <div className="text-sm text-gray-300">GET IT ON</div>
                     <div className="text-lg font-medium">Google Play</div>
                   </div>
-                </button>
+                </RippleButton>
               </div>
             </div>
           </div>
@@ -122,11 +123,11 @@ const Footer: React.FC = () => {
             {socialLinks.map((social) => (
               <button
                 key={social.name}
-                className="w-8 h-8 bg-white/20 hover:bg-white/30 transition-colors rounded-full flex items-center justify-center"
+                className="w-8 h-8 bg-white/20 hover:bg-white/30 hover:scale-110 transition-all duration-300 rounded-full flex items-center justify-center group"
                 aria-label={social.name}
               >
                 <svg
-                  className="w-4 h-4"
+                  className="w-4 h-4 transition-transform duration-300 group-hover:scale-110"
                   viewBox="0 0 24 24"
                   fill="currentColor"
                 >

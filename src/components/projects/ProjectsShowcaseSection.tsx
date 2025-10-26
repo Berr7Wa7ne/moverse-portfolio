@@ -5,6 +5,7 @@ import { listProjects } from '@/lib/content/projects';
 import { fetchProjectsFromCMS } from '@/lib/cms/sanity';
 import ProjectCard from './ProjectCard';
 import Pagination from '../ui/Pagination';
+import ScrollReveal from '../ui/ScrollReveal';
 
 const PROJECTS_PER_PAGE = 4;
 
@@ -77,6 +78,7 @@ const ProjectsShowcaseSection: React.FC = () => {
 
   return (
     <section className="section-padding bg-white">
+      <ScrollReveal>
       <div className="container">
         {/* Section Header */}
         <div className="text-center mb-16">
@@ -105,6 +107,7 @@ const ProjectsShowcaseSection: React.FC = () => {
           onPageChange={handlePageChange}
         />
       </div>
+      </ScrollReveal>
     </section>
   );
 };

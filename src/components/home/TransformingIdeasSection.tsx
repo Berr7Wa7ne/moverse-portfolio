@@ -1,11 +1,14 @@
 import React from 'react';
 import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
+import CountUpAnimation from '../ui/CountUpAnimation';
+import ScrollReveal from '../ui/ScrollReveal';
 
 const TransformingIdeasSection: React.FC = () => {
   const stats = [
-    { number: '250+', label: 'Projects Done', icon: '📊' },
-    { number: '300+', label: 'Happy Clients', icon: '😊' },
-    { number: '99%', label: 'Success Rate', icon: '🎯' },
+    { number: 250, label: 'Projects Done', suffix: '+', icon: '📊' },
+    { number: 300, label: 'Happy Clients', suffix: '+', icon: '😊' },
+    { number: 99, label: 'Success Rate', suffix: '%', icon: '🎯' },
   ];
 
   return (
@@ -14,6 +17,7 @@ const TransformingIdeasSection: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
           <div className="space-y-8">
+            <ScrollReveal>
             <div className="space-y-4">
             <p className="text-[16px] text-gray-500 tracking-wider flex items-center gap-3">
                   <span className="block w-20 h-[2px] bg-gray-500"></span>
@@ -29,19 +33,21 @@ const TransformingIdeasSection: React.FC = () => {
                 results that drive business growth and success.
               </p>
             </div>
+            </ScrollReveal>
 
             <div>
-            <Link href="/about" className='border border-gray-500 px-4 py-2'>
-              Learn More
+            <Link href="/about" className='btn-secondary inline-flex items-center gap-2 hover:gap-3 transition-all'>
+              <span>Learn More</span>
+              <ArrowRight className="w-5 h-5" />
             </Link>
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-4 bg-[var(--accent-blue)] px-8 py-4">
+            <div className="grid grid-cols-3 gap-4 bg-[var(--accent-blue)] px-8 py-4 rounded-xl">
               {stats.map((stat, index) => (
                 <div key={index} className="text-center">
                   <div className="text-4xl font-bold text-white mb-2">
-                    {stat.number}
+                    <CountUpAnimation end={stat.number} suffix={stat.suffix} duration={2000} />
                   </div>
                   <div className="text-sm text-white font-medium">
                     {stat.label}
@@ -53,11 +59,11 @@ const TransformingIdeasSection: React.FC = () => {
 
           {/* Right Content - Image */}
           <div className="relative">
-            <div className="relative z-10">
+            <div className="relative z-10 overflow-hidden rounded-2xl">
               <img
                 src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
                 alt="Team collaboration"
-                className="w-full h-auto rounded-2xl shadow-2xl"
+                className="w-full h-auto rounded-2xl shadow-2xl hover-scale"
               />
             </div>
             

@@ -2,8 +2,8 @@ import TopBar from '@/components/layout/TopBar';
 import Header from '@/components/layout/Header';
 import ProjectsHeroSection from '@/components/projects/ProjectsHeroSection';
 import ProjectsShowcaseSection from '@/components/projects/ProjectsShowcaseSection';
-import ProjectsQuoteSection from '@/components/projects/ProjectsQuoteSection';
-import ProjectsNewsletterSection from '@/components/projects/ProjectsNewsletterSection';
+import QuoteFormSection from '@/components/home/QuoteFormSection';
+import NewsletterSection from '@/components/home/NewsletterSection';
 import Footer from '@/components/layout/Footer';
 
 export default function ProjectsPage() {
@@ -14,8 +14,8 @@ export default function ProjectsPage() {
       <main>
         <ProjectsHeroSection />
         <ProjectsShowcaseSection />
-        <ProjectsQuoteSection />
-        <ProjectsNewsletterSection />
+        <QuoteFormSection />
+        <NewsletterSection />
       </main>
       <Footer />
     </div>
