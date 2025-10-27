@@ -59,7 +59,7 @@ const ToastContainer: React.FC<{ toasts: Toast[]; removeToast: (id: string) => v
   removeToast,
 }) => {
   return (
-    <div className="fixed top-4 right-4 z-50 space-y-4 pointer-events-none">
+    <div className="fixed top-4 right-4 z-[9999] space-y-4 pointer-events-none">
       {toasts.map((toast) => (
         <ToastItem key={toast.id} toast={toast} onRemove={() => removeToast(toast.id)} />
       ))}
@@ -107,18 +107,33 @@ const ToastItem: React.FC<{ toast: Toast; onRemove: () => void }> = ({ toast, on
     }
   };
 
+  const getTextColor = () => {
+    switch (toast.type) {
+      case 'success':
+        return 'text-green-800';
+      case 'error':
+        return 'text-red-800';
+      case 'warning':
+        return 'text-yellow-800';
+      case 'info':
+        return 'text-blue-800';
+    }
+  };
+
   return (
     <div
+      role="alert"
+      aria-live="polite"
       className={`pointer-events-auto flex items-center gap-3 min-w-[300px] max-w-[500px] p-4 rounded-lg border shadow-lg transition-all duration-300 ${getBgColor()} ${
         isExiting ? 'opacity-0 translate-x-full' : 'opacity-100 translate-x-0'
       }`}
     >
       {getIcon()}
-      <p className="flex-1 text-sm font-medium text-gray-800">{toast.message}</p>
+      <p className={`flex-1 text-sm font-medium ${getTextColor()}`}>{toast.message}</p>
       <button
         onClick={onRemove}
         className="text-gray-400 hover:text-gray-600 transition-colors"
-        aria-label="Close"
+        aria-label="Close notification"
       >
         <X className="w-4 h-4" />
       </button>
