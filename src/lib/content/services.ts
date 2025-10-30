@@ -1,11 +1,23 @@
 import { Service } from '@/types/content';
+import { 
+  Monitor, 
+  Smartphone, 
+  Palette, 
+  Megaphone, 
+  ShoppingCart, 
+  Search, 
+  BarChart3, 
+  Target,
+  Zap 
+} from "lucide-react";
 
 export const servicesBySlug: Record<string, Service> = {
   'website-development': {
+    icon: Monitor,
     image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-    title: 'Website Development',
+    title: 'Web Development',
     description:
-      'We create stunning, responsive websites that deliver exceptional user experiences and drive business growth.',
+      'Create stunning, responsive websites that captivate your audience and deliver exceptional user experiences across all devices.',
     longDescription:
       'Our website development services combine cutting-edge technology with user-centered design to create digital experiences that captivate your audience and achieve your business objectives.',
     extraDescription:
@@ -50,12 +62,14 @@ export const servicesBySlug: Record<string, Service> = {
       'Higher engagement and conversions thanks to thoughtful UX and clear content hierarchy.',
       'Reduced maintenance costs with clean code, documentation, and CI/CD automation.',
     ],
+    featured: true, // For homepage display
   },
   'ui-ux-design': {
+    icon: Palette,
     image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
     title: 'UI/UX Design',
     description:
-      'We craft intuitive and beautiful user interfaces that provide seamless experiences across all devices.',
+      'Design intuitive and beautiful user interfaces that provide seamless experiences and enhance user engagement.',
     longDescription:
       'Our UI/UX design services focus on creating user-centered digital experiences that not only look great but also function flawlessly.',
     extraDescription:
@@ -102,10 +116,11 @@ export const servicesBySlug: Record<string, Service> = {
     ],
   },
   'application-development': {
+    icon: Smartphone,
     image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-    title: 'Application Development',
+    title: 'Mobile Development',
     description:
-      'We build custom applications that solve complex business problems and streamline operations.',
+      'Build powerful mobile applications for iOS and Android that engage users and drive business growth with modern technology.',
     longDescription:
       'Our application development services cover everything from mobile apps to enterprise software solutions.',
     extraDescription:
@@ -150,6 +165,263 @@ export const servicesBySlug: Record<string, Service> = {
       'Improved security posture with best practices for auth, data protection, and audits.',
       'Easier integrations and future growth with stable APIs and documentation.',
     ],
+    featured: true, // For homepage display
+  },
+  'brand-identity': {
+    icon: Megaphone,
+    image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    title: 'Brand Identity',
+    description:
+      'Develop strong brand identities that resonate with your audience and differentiate you from competitors.',
+    longDescription:
+      'Our brand identity services help you create a memorable and cohesive brand presence that stands out in the market.',
+    extraDescription:
+      'From logo design to brand guidelines, we ensure your brand communicates your values effectively.',
+    bullets: [
+      'Logo Design',
+      'Brand Guidelines',
+      'Visual Identity',
+      'Brand Strategy',
+      'Market Positioning',
+      'Brand Assets',
+    ],
+    image1:
+      'https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    image2:
+      'https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    expertiseTitle: 'Our Expertise In Brand Identity',
+    expertiseDescription:
+      'We create distinctive brand identities that capture your essence and resonate with your target audience.',
+    expertiseItems: [
+      { title: 'Brand Strategy', description: 'Define your unique value proposition and market positioning.' },
+      { title: 'Visual Identity', description: 'Create cohesive visual systems including logos, colors, and typography.' },
+      { title: 'Brand Guidelines', description: 'Comprehensive documentation for consistent brand application.' },
+      { title: 'Market Research', description: 'Deep audience insights to inform brand decisions.' },
+      { title: 'Brand Assets', description: 'Complete suite of marketing materials and templates.' },
+      { title: 'Brand Evolution', description: 'Strategic updates to keep your brand relevant and fresh.' },
+    ],
+    benefits: [
+      'Strong Brand Recognition',
+      'Customer Loyalty',
+      'Market Differentiation',
+      'Professional Image',
+      'Consistent Messaging',
+      'Brand Value',
+    ],
+    benefitsTitle: 'Service benefits:',
+    benefitsIntro:
+      'A strong brand identity creates lasting impressions and builds trust with your audience.',
+    benefitsItems: [
+      'Increased brand recognition and recall in your target market.',
+      'Stronger emotional connections with your audience.',
+      'Clear differentiation from competitors.',
+      'Consistent brand experience across all touchpoints.',
+    ],
+  },
+  'ecommerce-solutions': {
+    icon: ShoppingCart,
+    image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    title: 'E-commerce Solutions',
+    description:
+      'Build robust online stores with secure payment systems and comprehensive inventory management features.',
+    longDescription:
+      'Our e-commerce solutions provide everything you need to sell online successfully and scale your business.',
+    extraDescription:
+      'From shopping cart functionality to payment processing, we build complete e-commerce experiences.',
+    bullets: [
+      'Shopping Cart',
+      'Payment Integration',
+      'Inventory Management',
+      'Order Processing',
+      'Customer Accounts',
+      'Analytics & Reporting',
+    ],
+    image1:
+      'https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    image2:
+      'https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    expertiseTitle: 'Our Expertise In E-commerce Solutions',
+    expertiseDescription:
+      'We build secure, scalable e-commerce platforms that drive sales and provide excellent shopping experiences.',
+    expertiseItems: [
+      { title: 'Platform Selection', description: 'Choose the right e-commerce platform for your business needs.' },
+      { title: 'Payment Processing', description: 'Secure payment gateways and multiple payment options.' },
+      { title: 'Inventory System', description: 'Real-time inventory tracking and automated stock management.' },
+      { title: 'User Experience', description: 'Intuitive shopping flows that maximize conversions.' },
+      { title: 'Mobile Commerce', description: 'Optimized mobile shopping experiences.' },
+      { title: 'Analytics', description: 'Comprehensive reporting on sales, customers, and performance.' },
+    ],
+    benefits: [
+      'Increased Sales',
+      'Better Customer Experience',
+      'Secure Transactions',
+      'Inventory Control',
+      'Scalable Platform',
+      'Marketing Integration',
+    ],
+    benefitsTitle: 'Service benefits:',
+    benefitsIntro:
+      'Our e-commerce solutions are designed to grow your online revenue and provide seamless shopping experiences.',
+    benefitsItems: [
+      'Higher conversion rates through optimized checkout flows.',
+      'Reduced cart abandonment with streamlined purchasing.',
+      'Better inventory management and order fulfillment.',
+      'Integrated marketing tools to drive more sales.',
+    ],
+  },
+  'seo-optimization': {
+    icon: Search,
+    image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    title: 'SEO Optimization',
+    description:
+      'Improve your search engine rankings and drive organic traffic with our comprehensive SEO strategies.',
+    longDescription:
+      'Our SEO services help you achieve higher rankings and increased visibility in search engines.',
+    extraDescription:
+      'From technical SEO to content optimization, we cover all aspects of search engine optimization.',
+    bullets: [
+      'Keyword Research',
+      'On-Page SEO',
+      'Technical SEO',
+      'Link Building',
+      'Content Strategy',
+      'Analytics & Reporting',
+    ],
+    image1:
+      'https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    image2:
+      'https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    expertiseTitle: 'Our Expertise In SEO Optimization',
+    expertiseDescription:
+      'We implement proven SEO strategies that improve your search visibility and drive qualified traffic.',
+    expertiseItems: [
+      { title: 'Technical Audit', description: 'Comprehensive site analysis to identify SEO issues.' },
+      { title: 'Keyword Strategy', description: 'Research and target the right keywords for your business.' },
+      { title: 'On-Page SEO', description: 'Optimize content, meta tags, and site structure.' },
+      { title: 'Link Building', description: 'Build high-quality backlinks to boost authority.' },
+      { title: 'Content Creation', description: 'SEO-optimized content that engages and converts.' },
+      { title: 'Performance Tracking', description: 'Monitor rankings, traffic, and ROI.' },
+    ],
+    benefits: [
+      'Higher Rankings',
+      'Increased Traffic',
+      'Better Visibility',
+      'Qualified Leads',
+      'Long-term Results',
+      'Cost-Effective Marketing',
+    ],
+    benefitsTitle: 'Service benefits:',
+    benefitsIntro:
+      'SEO delivers sustainable, long-term growth by connecting you with customers actively searching for your services.',
+    benefitsItems: [
+      'Increased organic traffic and qualified leads.',
+      'Better visibility for high-intent keywords.',
+      'Improved brand authority and trust.',
+      'Higher ROI compared to paid advertising.',
+    ],
+  },
+  'digital-marketing': {
+    icon: BarChart3,
+    image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    title: 'Digital Marketing',
+    description:
+      'Boost your online presence with strategic digital marketing campaigns that reach your target audience effectively.',
+    longDescription:
+      'Our digital marketing services help you reach and engage your target audience across multiple channels.',
+    extraDescription:
+      'From social media to email marketing, we create integrated campaigns that drive results.',
+    bullets: [
+      'Social Media Marketing',
+      'Email Campaigns',
+      'Content Marketing',
+      'PPC Advertising',
+      'Marketing Automation',
+      'Analytics & Optimization',
+    ],
+    image1:
+      'https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    image2:
+      'https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    expertiseTitle: 'Our Expertise In Digital Marketing',
+    expertiseDescription:
+      'We create data-driven marketing strategies that reach your audience and drive measurable business growth.',
+    expertiseItems: [
+      { title: 'Strategy Development', description: 'Comprehensive marketing plans aligned with business goals.' },
+      { title: 'Multi-Channel Campaigns', description: 'Integrated campaigns across social, email, and paid channels.' },
+      { title: 'Content Creation', description: 'Engaging content that resonates with your audience.' },
+      { title: 'Paid Advertising', description: 'Targeted PPC campaigns on Google, Facebook, and more.' },
+      { title: 'Marketing Automation', description: 'Streamlined workflows for efficient lead nurturing.' },
+      { title: 'Performance Analysis', description: 'Data-driven insights to optimize campaign performance.' },
+    ],
+    benefits: [
+      'Increased Brand Awareness',
+      'Higher Engagement',
+      'More Leads',
+      'Better ROI',
+      'Customer Insights',
+      'Scalable Growth',
+    ],
+    benefitsTitle: 'Service benefits:',
+    benefitsIntro:
+      'Our digital marketing strategies deliver measurable results and help you achieve your business objectives.',
+    benefitsItems: [
+      'Increased brand visibility across digital channels.',
+      'Higher quality leads and improved conversion rates.',
+      'Better customer engagement and loyalty.',
+      'Data-driven optimization for maximum ROI.',
+    ],
+    featured: true, // For homepage display
+  },
+  'graphic-design': {
+    icon: Target,
+    image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    title: 'Graphic Design',
+    description:
+      'Create visually stunning graphics and marketing materials that communicate your message effectively.',
+    longDescription:
+      'Our graphic design services bring your brand to life with compelling visual content.',
+    extraDescription:
+      'From print to digital, we create designs that capture attention and drive action.',
+    bullets: [
+      'Logo Design',
+      'Marketing Materials',
+      'Social Media Graphics',
+      'Print Design',
+      'Infographics',
+      'Brand Assets',
+    ],
+    image1:
+      'https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    image2:
+      'https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    expertiseTitle: 'Our Expertise In Graphic Design',
+    expertiseDescription:
+      'We create impactful visual designs that communicate your message and strengthen your brand identity.',
+    expertiseItems: [
+      { title: 'Brand Design', description: 'Logos, color schemes, and visual identity systems.' },
+      { title: 'Marketing Collateral', description: 'Brochures, flyers, and promotional materials.' },
+      { title: 'Digital Graphics', description: 'Social media posts, banners, and web graphics.' },
+      { title: 'Print Design', description: 'Business cards, letterheads, and packaging.' },
+      { title: 'Infographics', description: 'Data visualization and information design.' },
+      { title: 'Illustration', description: 'Custom illustrations and iconography.' },
+    ],
+    benefits: [
+      'Professional Appearance',
+      'Brand Consistency',
+      'Better Communication',
+      'Increased Engagement',
+      'Competitive Advantage',
+      'Versatile Assets',
+    ],
+    benefitsTitle: 'Service benefits:',
+    benefitsIntro:
+      'Great design captures attention, communicates effectively, and strengthens your brand presence.',
+    benefitsItems: [
+      'More professional and polished brand image.',
+      'Better visual communication of complex ideas.',
+      'Increased engagement across all marketing materials.',
+      'Consistent brand experience across all touchpoints.',
+    ],
   },
 };
 
@@ -165,5 +437,9 @@ export function listServiceSlugs(): string[] {
   return Object.keys(servicesBySlug);
 }
 
-
-
+// Get featured services for homepage
+export function getFeaturedServices() {
+  return Object.entries(servicesBySlug)
+    .filter(([_, service]) => service.featured)
+    .map(([slug, service]) => ({ slug, ...service }));
+}

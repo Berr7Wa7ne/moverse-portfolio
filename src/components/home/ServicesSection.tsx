@@ -1,57 +1,36 @@
 import React from "react";
 import Link from "next/link";
-import { Palette, Smartphone, Zap, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import ScrollReveal from '../ui/ScrollReveal';
+import { getFeaturedServices } from '@/lib/content/services';
 
 const ServicesSection: React.FC = () => {
-  const services = [
-    {
-      icon: Palette,
-      title: "Web Development",
-      description:
-        "Create stunning, responsive websites that captivate your audience and deliver exceptional user experiences across all devices.",
-      href: "/services/website-development",
-    },
-    {
-      icon: Smartphone,
-      title: "Mobile Development",
-      description:
-        "Build powerful mobile applications for iOS and Android that engage users and drive business growth.",
-      href: "/services/application-development",
-    },
-    {
-      icon: Zap,
-      title: "Digital Marketing",
-      description:
-        "Boost your online presence with strategic digital marketing campaigns that reach your target audience effectively.",
-      href: "/services/digital-marketing",
-    },
-  ];
+  const services = getFeaturedServices();
 
   return (
     <section className="section-padding bg-white">
       <div className="container">
         {/* Section Header */}
         <ScrollReveal>
-        <div className="flex justify-between items-center mb-16 mr-20">
-          <div>
-            <p className="text-[16px] text-gray-500 tracking-wider flex items-center gap-3">
-              <span className="block w-20 h-[2px] bg-gray-500"></span>
-              Our Services
-            </p>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--primary-blue)] leading-tight mb-6">
-              <span className="block">Services we provide to</span>
-              <span className="block text-[var(--accent-blue)]">
-                Elevate Your Business
-              </span>
-            </h2>
-          </div>
+          <div className="flex justify-between items-center mb-16 mr-20">
+            <div>
+              <p className="text-[16px] text-gray-500 tracking-wider flex items-center gap-3">
+                <span className="block w-20 h-[2px] bg-gray-500"></span>
+                Our Services
+              </p>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--primary-blue)] leading-tight mb-6">
+                <span className="block">Services we provide to</span>
+                <span className="block text-[var(--accent-blue)]">
+                  Elevate Your Business
+                </span>
+              </h2>
+            </div>
 
-          <Link href="/services" className="btn-primary inline-flex items-center gap-2 hover:gap-3 transition-all">
-            <span>View All Services</span>
-            <ArrowRight className="w-5 h-5" />
-          </Link>
-        </div>
+            <Link href="/services" className="btn-primary inline-flex items-center gap-2 hover:gap-3 transition-all">
+              <span>View All Services</span>
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+          </div>
         </ScrollReveal>
 
         {/* Services Grid */}
@@ -61,7 +40,7 @@ const ServicesSection: React.FC = () => {
             return (
               <Link
                 key={index}
-                href={service.href}
+                href={`/services/${service.slug}`}
                 className="bg-[var(--gray-100)] rounded-2xl p-8 card-hover group block"
               >
                 <div className="text-center space-y-4">

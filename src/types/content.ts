@@ -3,7 +3,10 @@ export type ServiceFeature = {
   description: string;
 };
 
-export type Service = {
+import { LucideIcon } from 'lucide-react';
+
+export interface Service {
+  icon: LucideIcon;
   image: string;
   title: string;
   description: string;
@@ -14,12 +17,16 @@ export type Service = {
   image2: string;
   expertiseTitle: string;
   expertiseDescription: string;
-  expertiseItems: ServiceFeature[];
+  expertiseItems: Array<{
+    title: string;
+    description: string;
+  }>;
   benefits: string[];
   benefitsTitle: string;
   benefitsIntro: string;
   benefitsItems: string[];
-};
+  featured?: boolean; // Optional: marks services to show on homepage
+}
 
 export type Testimonial = {
   text: string;
