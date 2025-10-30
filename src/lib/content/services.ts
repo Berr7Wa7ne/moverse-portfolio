@@ -1,4 +1,4 @@
-import { Service } from '@/types/content';
+import { LucideIcon } from 'lucide-react';
 import { 
   Monitor, 
   Smartphone, 
@@ -7,15 +7,39 @@ import {
   ShoppingCart, 
   Search, 
   BarChart3, 
-  Target,
-  Zap 
+  Target 
 } from "lucide-react";
 
-export const servicesBySlug: Record<string, Service> = {
+interface ExpertiseItem {
+  title: string;
+  description: string;
+}
+
+interface ServiceData {
+  icon: LucideIcon;
+  image: string;
+  title: string;
+  description: string;
+  longDescription: string;
+  extraDescription: string;
+  bullets: string[];
+  image1: string;
+  image2: string;
+  expertiseTitle: string;
+  expertiseDescription: string;
+  expertiseItems: ExpertiseItem[];
+  benefits: string[];
+  benefitsTitle: string;
+  benefitsIntro: string;
+  benefitsItems: string[];
+  featured?: boolean;
+}
+
+export const servicesBySlug: Record<string, ServiceData> = {
   'website-development': {
     icon: Monitor,
     image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-    title: 'Web Development',
+    title: 'Website Development',
     description:
       'Create stunning, responsive websites that captivate your audience and deliver exceptional user experiences across all devices.',
     longDescription:
@@ -62,7 +86,7 @@ export const servicesBySlug: Record<string, Service> = {
       'Higher engagement and conversions thanks to thoughtful UX and clear content hierarchy.',
       'Reduced maintenance costs with clean code, documentation, and CI/CD automation.',
     ],
-    featured: true, // For homepage display
+    featured: true,
   },
   'ui-ux-design': {
     icon: Palette,
@@ -118,7 +142,7 @@ export const servicesBySlug: Record<string, Service> = {
   'application-development': {
     icon: Smartphone,
     image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-    title: 'Mobile Development',
+    title: 'Application Development',
     description:
       'Build powerful mobile applications for iOS and Android that engage users and drive business growth with modern technology.',
     longDescription:
@@ -165,7 +189,7 @@ export const servicesBySlug: Record<string, Service> = {
       'Improved security posture with best practices for auth, data protection, and audits.',
       'Easier integrations and future growth with stable APIs and documentation.',
     ],
-    featured: true, // For homepage display
+    featured: true,
   },
   'brand-identity': {
     icon: Megaphone,
@@ -370,7 +394,7 @@ export const servicesBySlug: Record<string, Service> = {
       'Better customer engagement and loyalty.',
       'Data-driven optimization for maximum ROI.',
     ],
-    featured: true, // For homepage display
+    featured: true,
   },
   'graphic-design': {
     icon: Target,
@@ -437,7 +461,6 @@ export function listServiceSlugs(): string[] {
   return Object.keys(servicesBySlug);
 }
 
-// Get featured services for homepage
 export function getFeaturedServices() {
   return Object.entries(servicesBySlug)
     .filter(([_, service]) => service.featured)
