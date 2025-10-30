@@ -5,6 +5,8 @@ import BlogShowcaseSection from '@/components/blog/BlogShowcaseSection';
 import NewsletterSection from '@/components/home/NewsletterSection';
 import Footer from '@/components/layout/Footer';
 
+export const dynamic = 'force-dynamic';
+
 export default function BlogPage() {
   return (
     <div className="min-h-screen">
