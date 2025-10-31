@@ -31,9 +31,11 @@ const BlogShowcaseSection: React.FC = () => {
       try {
         if (useCMS) {
           console.log('[blog showcase] Attempting to load from Sanity CMS...');
-  
-          const data = await fetchBlogPostsFromCMS();
-          const cms = Array.isArray(data) ? data : [];
+
+          // Use server API to avoid browser CORS
+          const res = await fetch('/api/blog', { cache: 'no-store' });
+          const json = await res.json().catch(() => ({ posts: [] }));
+          const cms = Array.isArray(json.posts) ? json.posts : [];
   
           if (cms.length > 0) {
             console.log('[blog showcase] Source: Sanity CMS', { count: cms.length });

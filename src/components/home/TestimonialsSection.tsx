@@ -26,7 +26,10 @@ const TestimonialsSection: React.FC = () => {
       
       if (useCMS) {
         try {
-          const cmsProjects: any[] = await fetchProjectsFromCMS();
+          // Use server API to avoid browser CORS
+          const res = await fetch('/api/projects', { cache: 'no-store' });
+          const data = await res.json().catch(() => ({ projects: [] }));
+          const cmsProjects: any[] = Array.isArray(data.projects) ? data.projects : [];
           console.log('[testimonials section] Source: Sanity CMS', { count: cmsProjects?.length });
           
           const testimonialData = (cmsProjects || [])
