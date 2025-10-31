@@ -35,12 +35,14 @@ const ProjectsShowcaseSection: React.FC = () => {
             tags: (p.technologies && Array.isArray(p.technologies) && p.technologies.length > 0)
               ? p.technologies.slice(0, 3)
               : [p.category].filter(Boolean),
-            slug: p.slug?.current || '',
+            slug: p.slug?.current || p.slug || '',
             liveUrl: p.liveUrl || '',
           })).filter((p) => p.slug);
-          
-          setProjects(normalized);
-          return;
+
+          if (normalized.length > 0) {
+            setProjects(normalized);
+            return;
+          }
         } catch (error) {
           console.error('[projects showcase] CMS fetch failed:', error);
         }
@@ -66,7 +68,7 @@ const ProjectsShowcaseSection: React.FC = () => {
   }, []);
 
   // Pagination logic
-  const totalPages = Math.ceil(projects.length / PROJECTS_PER_PAGE);
+  const totalPages = Math.max(1, Math.ceil(projects.length / PROJECTS_PER_PAGE));
   const startIndex = (currentPage - 1) * PROJECTS_PER_PAGE;
   const endIndex = startIndex + PROJECTS_PER_PAGE;
   const currentProjects = projects.slice(startIndex, endIndex);

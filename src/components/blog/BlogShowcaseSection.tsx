@@ -41,7 +41,7 @@ const BlogShowcaseSection: React.FC = () => {
               const dateRaw = p.date || p._createdAt || '';
               const dateStr = typeof dateRaw === 'string' ? dateRaw : '';
               return {
-                id: p.slug || p._id || Math.random().toString(36).slice(2),
+                id: (p.slug?.current || p.slug || p._id || Math.random().toString(36).slice(2)) as string,
                 title: p.title || '',
                 category: p.category || 'Blog',
                 date: dateStr.slice(0, 10),
@@ -50,7 +50,7 @@ const BlogShowcaseSection: React.FC = () => {
                 authorImage: p.authorImage || '/next.svg',
                 image: p.image || '/next.svg',
                 description: p.description || '',
-                slug: p.slug || '',
+                slug: (p.slug?.current || p.slug || '') as string,
               };
             });
             const sorted = normalized.sort((a: any, b: any) => b.sortDate - a.sortDate);
@@ -63,9 +63,12 @@ const BlogShowcaseSection: React.FC = () => {
               return true;
             });
             // ensure featured is always first item
-            setPosts(deduped.map((p: any, i: number) => ({ ...p, featured: i === 0 })));
-            setIsLoading(false);
-            return;
+            const finalPosts = deduped.map((p: any, i: number) => ({ ...p, featured: i === 0 }));
+            if (finalPosts.length > 0) {
+              setPosts(finalPosts);
+              setIsLoading(false);
+              return;
+            }
           }
         }
     
@@ -104,7 +107,7 @@ const BlogShowcaseSection: React.FC = () => {
       : posts.filter((post) => post.category === activeFilter);
 
   // Pagination logic
-  const totalPages = Math.ceil(filteredPosts.length / POSTS_PER_PAGE);
+  const totalPages = Math.max(1, Math.ceil(filteredPosts.length / POSTS_PER_PAGE));
   const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
   const endIndex = startIndex + POSTS_PER_PAGE;
   const currentPosts = filteredPosts.slice(startIndex, endIndex);

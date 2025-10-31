@@ -40,8 +40,10 @@ const TestimonialsSection: React.FC = () => {
             }))
             .slice(0, 6); // Get 6 latest testimonials
           
-          setTestimonials(testimonialData);
-          return;
+          if (testimonialData.length > 0) {
+            setTestimonials(testimonialData);
+            return;
+          }
         } catch (error) {
           console.error('[testimonials section] CMS fetch failed:', error);
         }

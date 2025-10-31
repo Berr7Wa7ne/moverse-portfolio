@@ -12,6 +12,7 @@ import NewsletterSection from '@/components/home/NewsletterSection';
 import BlogSection from '@/components/home/BlogSection';
 
 export const revalidate = 300;
+export const dynamic = 'force-dynamic';
 
 type PageProps = { params: Promise<{ slug: string }> };
 

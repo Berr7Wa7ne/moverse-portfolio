@@ -13,14 +13,15 @@ import Footer from '@/components/layout/Footer';
 import Header from '@/components/layout/Header';
 import TopBar from '@/components/layout/TopBar';
 export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
 
 type PageProps = { params: Promise<{ slug: string }> };
 
 const ProjectDetailPage = async ({ params }: PageProps) => {
   const useParams = await params; // 👈 await params here
-  const useCMS = process.env.USE_CMS === 'true';
+  const useCMS = process.env.NEXT_PUBLIC_USE_CMS === 'true';
   const project = useCMS
-    ? await fetchProjectBySlugFromCMS(useParams.slug)
+    ? (await fetchProjectBySlugFromCMS(useParams.slug)) || getProject(useParams.slug)
     : getProject(useParams.slug);
   console.log('[projects page] Source:', useCMS ? 'Sanity CMS' : 'local static content', { slug: useParams.slug, found: !!project });
 
@@ -84,7 +85,7 @@ const ProjectDetailPage = async ({ params }: PageProps) => {
 export default ProjectDetailPage;
 
 export async function generateStaticParams() {
-  const useCMS = process.env.USE_CMS === 'true';
+  const useCMS = process.env.NEXT_PUBLIC_USE_CMS === 'true';
   const slugs = useCMS ? await fetchProjectSlugsFromCMS() : listProjectSlugs();
   return slugs.map((slug) => ({ slug }));
 }
