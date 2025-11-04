@@ -241,6 +241,7 @@ export const servicesBySlug: Record<string, ServiceData> = {
       'Clear differentiation from competitors.',
       'Consistent brand experience across all touchpoints.',
     ],
+    featured: true,
   },
   'ecommerce-solutions': {
     icon: ShoppingCart,
@@ -394,7 +395,6 @@ export const servicesBySlug: Record<string, ServiceData> = {
       'Better customer engagement and loyalty.',
       'Data-driven optimization for maximum ROI.',
     ],
-    featured: true,
   },
   'graphic-design': {
     icon: Target,

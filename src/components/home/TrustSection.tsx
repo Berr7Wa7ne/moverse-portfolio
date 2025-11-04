@@ -60,7 +60,7 @@ const TrustSection: React.FC = () => {
               {/* Team Image */}
               <div className="relative overflow-hidden rounded-2xl">
                 <img
-                  src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+                  src="/trustImage.jpg"
                   alt="Team collaboration"
                   className="w-full h-auto rounded-2xl shadow-2xl hover-scale"
                 />

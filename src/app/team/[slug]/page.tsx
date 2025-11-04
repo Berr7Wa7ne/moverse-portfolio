@@ -40,13 +40,13 @@ const TeamDetailPage: React.FC = () => {
       },
       image: '/jasso.jpg'
     },
-    'sarah-johnson': {
-      name: 'Sarah Johnson',
+    'magdalene-garba': {
+      name: 'Magdalene',
       position: 'Lead UI/UX Designer',
-      email: 'sarah@company.com',
+      email: 'magdalene@company.com',
       phone: '+0123-458-790',
       experience: '6+ Years of Experience',
-      bio: 'Sarah is a creative designer with a passion for creating user-centered experiences. She has led the design of over 100 digital products and has a deep understanding of user psychology and design principles.',
+      bio: 'Magdalene is a creative designer with a passion for creating user-centered experiences. She has led the design of over 100 digital products and has a deep understanding of user psychology and design principles.',
       skills: [
         { name: 'UI/UX Design', percentage: 95 },
         { name: 'User Research', percentage: 90 },
@@ -61,15 +61,15 @@ const TeamDetailPage: React.FC = () => {
         instagram: '#',
         linkedin: '#'
       },
-      image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
+      image: '/Magdalene.jpg'
     },
-    'michael-chen': {
-      name: 'Michael Chen',
+    'sly-madueke': {
+      name: 'Sly Madueke',
       position: 'Senior Full-Stack Developer',
-      email: 'michael@company.com',
+      email: 'sly@company.com',
       phone: '+0123-458-791',
       experience: '7+ Years of Experience',
-      bio: 'Michael is a full-stack developer with expertise in modern web technologies. He has built scalable applications for startups and enterprise clients, with a focus on performance and security.',
+      bio: 'Sly is a full-stack developer with expertise in modern web technologies. He has built scalable applications for startups and enterprise clients, with a focus on performance and security.',
       skills: [
         { name: 'React/Next.js', percentage: 95 },
         { name: 'Node.js', percentage: 90 },
@@ -84,7 +84,7 @@ const TeamDetailPage: React.FC = () => {
         instagram: '#',
         linkedin: '#'
       },
-      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
+      image: '/Sly.jpg'
     },
     'emily-rodriguez': {
       name: 'Emily Rodriguez',

@@ -10,16 +10,16 @@ const socialLinks = [
       "M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z",
   },
   {
+    name: "Facebook",
+    href: "",
+    svgPath:
+      "M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z",
+  },
+  {
     name: "Instagram",
     href: "",
     svgPath:
       "M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077",
-  },
-  {
-    name: "LinkedIn",
-    href: "",
-    svgPath:
-      "M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z",
   },
 ];
 
@@ -28,23 +28,22 @@ const TeamSection: React.FC = () => {
     {
       name: 'Jasso',
       title: 'Chief Executive Officer',
-      image:
-        '/jasso.jpg',
+      image: '/jasso.jpg',
       slug: 'jasso',
     },
     {
-      name: 'Sarah Johnson',
+      name: 'Magdalene',
       title: 'Lead UI/UX Designer',
       image:
-        'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
-      slug: 'sarah-johnson',
+        '/Magdalene.jpg',
+      slug: 'magdalene-garba',
     },
     {
-      name: 'Michael Chen',
+      name: 'Sly Madueke',
       title: 'Senior Full-Stack Developer',
       image:
-        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
-      slug: 'michael-chen',
+        '/Sly.jpg',
+      slug: 'sly-madueke',
     },
   ];
 
@@ -52,64 +51,95 @@ const TeamSection: React.FC = () => {
     <section className="section-padding bg-white">
       <div className="container">
         <ScrollReveal>
-        <div className="flex justify-between items-start mb-4">
-          <p className="text-[16px] text-gray-500 tracking-wider flex items-center gap-3">
-            <span className="block w-20 h-[2px] bg-gray-500"></span>
-            Our Team
-          </p>
-        </div>
+          <div className="flex justify-between items-start mb-4">
+            <p className="text-[16px] text-gray-500 tracking-wider flex items-center gap-3">
+              <span className="block w-20 h-[2px] bg-gray-500"></span>
+              Our Team
+            </p>
+          </div>
 
-        <div className="text-start mb-16">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--primary-blue)] leading-tight">
-            Meet Our <span className="text-[var(--accent-blue)]">Expert team</span>
-          </h2>
-        </div>
+          <div className="text-start mb-16">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--primary-blue)] leading-tight">
+              Meet Our <span className="text-[var(--accent-blue)]">Expert team</span>
+            </h2>
+          </div>
         </ScrollReveal>
 
         <div className="flex justify-center">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-20">
             {teamMembers.map((member, index) => (
-              <div key={index} className="text-center group block">
-                {/* Profile link wrapper */}
-                <Link href={`/team/${member.slug}`} className="block">
-                  <div className="relative mb-4 overflow-hidden rounded-full mx-auto w-32 h-32">
-                    <img
-                      src={member.image}
-                      alt={member.name}
-                      className="w-32 h-32 rounded-full object-cover shadow-lg hover-scale"
-                    />
-                  </div>
+              <div key={index} className="group">
+                {/* Profile Image Container with Social Icons */}
+                <div className="relative w-96 h-96 mx-auto mb-14">
+                  {/* Main circular profile image with much wider white border and shadow */}
+                  <Link href={`/team/${member.slug}`} className="block">
+                    <div className="relative w-full h-full aspect-square rounded-full bg-white p-12 shadow-2xl group-hover:shadow-3xl group-hover:shadow-[var(--accent-blue)]/20 transition-all duration-300">
+                      <div className="w-full h-full aspect-square rounded-full overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
+                        <img
+                          src={member.image}
+                          alt={member.name}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        />
+                      </div>
+                    </div>
+                  </Link>
+                  
+                  {/* Social Media Icons - Positioned in curved arc on the right, following the circle edge */}
+                  <div className="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none">
+{/* X/Twitter Icon - Top, curved outward */}
+<a
+  href={socialLinks[0].href}
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label={socialLinks[0].name}
+  className="absolute w-10 h-10 rounded-full bg-[var(--accent-blue)] hover:bg-[var(--primary-blue)] transition-all duration-300 shadow-md hover:shadow-lg hover:shadow-[var(--accent-blue)]/30 hover:scale-110 flex items-center justify-center group-hover:translate-x-1 pointer-events-auto"
+  style={{ top: '-80px', right: '12px' }} // ⬅️ Increased from -60px to -80px
+>
+  <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" className="w-4 h-4 text-white">
+    <path d={socialLinks[0].svgPath} />
+  </svg>
+</a>
 
-                  <h3 className="text-xl font-bold text-[var(--primary-blue)] mb-1 group-hover:text-[var(--accent-blue)] transition-colors">
+{/* Facebook Icon - Middle */}
+<a
+  href={socialLinks[1].href}
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label={socialLinks[1].name}
+  className="absolute w-10 h-10 rounded-full bg-[var(--accent-blue)] hover:bg-[var(--primary-blue)] transition-all duration-300 shadow-md hover:shadow-lg hover:shadow-[var(--accent-blue)]/30 hover:scale-110 flex items-center justify-center group-hover:translate-x-1 pointer-events-auto"
+  style={{ top: '0px', right: '4px', transitionDelay: '50ms' }}
+>
+  <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" className="w-4 h-4 text-white">
+    <path d={socialLinks[1].svgPath} />
+  </svg>
+</a>
+
+{/* Instagram Icon - Bottom */}
+<a
+  href={socialLinks[2].href}
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label={socialLinks[2].name}
+  className="absolute w-10 h-10 rounded-full bg-[var(--accent-blue)] hover:bg-[var(--primary-blue)] transition-all duration-300 shadow-md hover:shadow-lg hover:shadow-[var(--accent-blue)]/30 hover:scale-110 flex items-center justify-center group-hover:translate-x-1 pointer-events-auto"
+  style={{ top: '80px', right: '12px', transitionDelay: '100ms' }} // ⬅️ Increased from 60px to 80px
+>
+  <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" className="w-4 h-4 text-white">
+    <path d={socialLinks[2].svgPath} />
+  </svg>
+</a>
+
+                  </div>
+                </div>
+
+                {/* Name and Title */}
+                <Link href={`/team/${member.slug}`} className="block text-center">
+                  <h3 className="text-2xl font-bold text-black mb-1 group-hover:text-[var(--primary-blue)] transition-colors duration-300">
                     {member.name}
                   </h3>
-                  <p className="text-lg text-[var(--gray-600)] mb-4">
+                  <p className="text-xl text-[var(--accent-blue)]">
                     {member.title}
                   </p>
                 </Link>
-
-                {/* Social links outside of Link */}
-                <div className="flex justify-center gap-3">
-                  {socialLinks.map((social, i) => (
-                    <a
-                      key={i}
-                      href={social.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={social.name}
-                      className="w-9 h-9 bg-[var(--gray-200)] hover:bg-[var(--accent-blue)] hover:text-white transition-colors rounded-full flex items-center justify-center"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                        className="w-4 h-4"
-                      >
-                        <path d={social.svgPath} />
-                      </svg>
-                    </a>
-                  ))}
-                </div>
               </div>
             ))}
           </div>
