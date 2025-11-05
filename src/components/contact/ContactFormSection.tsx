@@ -95,7 +95,7 @@ const ContactFormSection: React.FC = () => {
   };
 
   return (
-    <section className="section-padding bg-[var(--gray-100)]">
+    <section id="contact-section" className="section-padding bg-[var(--gray-100)]">
       <div className="container">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Left Side - Form */}

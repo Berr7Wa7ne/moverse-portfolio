@@ -7,6 +7,7 @@ import QuoteFormSection from '@/components/home/QuoteFormSection';
 import FAQSection from '@/components/home/FAQSection';
 import NewsletterSection from '@/components/home/NewsletterSection';
 import Footer from '@/components/layout/Footer';
+import ScrollToSectionClient from '@/components/util/ScrollToSectionClient';
 
 export default function ServicesPage() {
   return (
@@ -14,6 +15,7 @@ export default function ServicesPage() {
       <TopBar />
       <Header />
       <main>
+        <ScrollToSectionClient />
         <ServicesHeroSection />
         <ServicesGridSection />
         <TrustSection />

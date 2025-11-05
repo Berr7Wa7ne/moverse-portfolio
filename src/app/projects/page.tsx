@@ -5,6 +5,7 @@ import ProjectsShowcaseSection from '@/components/projects/ProjectsShowcaseSecti
 import QuoteFormSection from '@/components/home/QuoteFormSection';
 import NewsletterSection from '@/components/home/NewsletterSection';
 import Footer from '@/components/layout/Footer';
+import ScrollToSectionClient from '@/components/util/ScrollToSectionClient';
 
 export default function ProjectsPage() {
   return (
@@ -12,6 +13,7 @@ export default function ProjectsPage() {
       <TopBar />
       <Header />
       <main>
+        <ScrollToSectionClient />
         <ProjectsHeroSection />
         <ProjectsShowcaseSection />
         <QuoteFormSection />

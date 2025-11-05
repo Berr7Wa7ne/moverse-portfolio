@@ -3,13 +3,14 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { ArrowRight } from 'lucide-react';
 import RippleButton from '../ui/RippleButton';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const pathname = usePathname(); // ✅ get current route
+  const pathname = usePathname();
+  const router = useRouter();
 
   const navItems = [
     { label: 'Home', href: '/' },
@@ -19,6 +20,35 @@ const Header: React.FC = () => {
     { label: 'About Us', href: '/about' },
     { label: 'Contact', href: '/contact' },
   ];
+
+  // Pages that have QuoteFormSection
+  const pagesWithQuoteForm = ['/', '/services', '/projects', '/about'];
+  
+  // Pages that have ContactFormSection
+  const pagesWithContactForm = ['/contact'];
+
+  const handleGetQuoteClick = () => {
+    const currentPath = pathname;
+
+    // Check if current page has QuoteFormSection
+    if (pagesWithQuoteForm.includes(currentPath)) {
+      const quoteSection = document.getElementById('quote-section');
+      if (quoteSection) {
+        quoteSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    } 
+    // Check if current page has ContactFormSection (scroll to it instead)
+    else if (pagesWithContactForm.includes(currentPath)) {
+      const contactSection = document.getElementById('contact-section');
+      if (contactSection) {
+        contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+    // For pages without any form section (like Blog), navigate to home
+    else {
+      router.push('/#quote-section');
+    }
+  };
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
@@ -59,7 +89,11 @@ const Header: React.FC = () => {
 
           {/* CTA Button */}
           <div className="hidden lg:block">
-            <RippleButton variant="primary" className="inline-flex items-center gap-2">
+            <RippleButton 
+              variant="primary" 
+              className="inline-flex items-center gap-2"
+              onClick={handleGetQuoteClick}
+            >
               <span>Get a Quote</span>
               <ArrowRight className="w-5 h-5" />
             </RippleButton>
@@ -109,7 +143,14 @@ const Header: React.FC = () => {
                   </Link>
                 );
               })}
-              <RippleButton variant="primary" className="inline-flex items-center justify-center gap-2 mt-2">
+              <RippleButton 
+                variant="primary" 
+                className="inline-flex items-center justify-center gap-2 mt-2"
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  handleGetQuoteClick();
+                }}
+              >
                 <span>Get a Quote</span>
                 <ArrowRight className="w-5 h-5" />
               </RippleButton>

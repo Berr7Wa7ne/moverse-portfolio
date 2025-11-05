@@ -14,6 +14,7 @@ import FAQSection from '@/components/home/FAQSection';
 import NewsletterSection from '@/components/home/NewsletterSection';
 import Footer from '@/components/layout/Footer';
 import SplashScreenWrapper from '@/components/ui/SplashScreenWrapper';
+import ScrollToSectionClient from '@/components/util/ScrollToSectionClient';
 
 export default function Home() {
   return (
@@ -22,6 +23,7 @@ export default function Home() {
       <TopBar />
       <Header />
       <main>
+        <ScrollToSectionClient />
         <HeroSection />
         <TransformingIdeasSection />
         <ServicesSection />

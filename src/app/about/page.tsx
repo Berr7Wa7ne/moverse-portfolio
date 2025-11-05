@@ -11,6 +11,7 @@ import BlogSection from '@/components/home/BlogSection';
 import FAQSection from '@/components/home/FAQSection';
 import NewsletterSection from '@/components/home/NewsletterSection';
 import Footer from '@/components/layout/Footer';
+import ScrollToSectionClient from '@/components/util/ScrollToSectionClient';
 
 export default function AboutPage() {
   return (
@@ -18,6 +19,7 @@ export default function AboutPage() {
       <TopBar />
       <Header />
       <main>
+        <ScrollToSectionClient />
         <AboutHeroSection />
         <TransformingIdeasSection />
         <WorkProcessSection />

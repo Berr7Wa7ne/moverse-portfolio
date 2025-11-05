@@ -4,6 +4,7 @@ import ContactHeroSection from '@/components/contact/ContactHeroSection';
 import ContactFormSection from '@/components/contact/ContactFormSection';
 import NewsletterSection from '@/components/home/NewsletterSection';
 import Footer from '@/components/layout/Footer';
+import ScrollToSectionClient from '@/components/util/ScrollToSectionClient';
 
 export default function ContactPage() {
   return (
@@ -11,6 +12,7 @@ export default function ContactPage() {
       <TopBar />
       <Header />
       <main>
+        <ScrollToSectionClient />
         <ContactHeroSection />
         <ContactFormSection />
         <NewsletterSection />

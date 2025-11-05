@@ -12,9 +12,17 @@ const SplashScreenWrapper: React.FC<SplashScreenWrapperProps> = ({ children }) =
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // Skip splash on hash navigations (e.g., /#quote-section) to avoid white flash
+    const isHashNavigation = typeof window !== 'undefined' && window.location.hash;
+
+    if (isHashNavigation) {
+      setShowSplash(false);
+      setIsLoading(false);
+      return;
+    }
+
     // Check if splash has been shown in this session
     const hasSeenSplash = sessionStorage.getItem('hasSeenSplash');
-    
     if (hasSeenSplash === 'true') {
       setShowSplash(false);
       setIsLoading(false);
