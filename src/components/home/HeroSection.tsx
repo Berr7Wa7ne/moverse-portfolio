@@ -30,9 +30,10 @@ const HeroSection: React.FC = () => {
           style={{
             backgroundImage: "url('/homeHero.jpg')",
             transform: `translateY(${scrollY * 0.5}px)`,
+            filter: 'brightness(0.45) contrast(1.1)',
           }}
         >
-          <div className="absolute inset-0 bg-[var(--primary-blue)]/80"></div>
+          <div className="absolute inset-0 bg-[var(--primary-blue)]/70 mix-blend-multiply"></div>
         </div>
 
         {/* Floating Elements */}

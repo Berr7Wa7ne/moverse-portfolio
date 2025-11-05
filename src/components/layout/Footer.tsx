@@ -70,8 +70,6 @@ const Footer: React.FC = () => {
             </nav>
           </div>
 
-          {/* Right Section - Contact and App Downloads */}
-          <div className="flex flex-col md:flex-row gap-8 lg:ml-auto">
             {/* Middle Section - Contact Info */}
             <div className="space-y-4">
               <h3 className="text-xl font-semibold">Contact</h3>
@@ -90,28 +88,6 @@ const Footer: React.FC = () => {
                 </div>
               </div>
             </div>
-
-            {/* Right Section - App Downloads */}
-            <div className="space-y-4">
-              <h3 className="text-xl font-semibold">Get the app</h3>
-              <div className="space-y-3">
-                <RippleButton variant="secondary" className="bg-black text-white rounded-lg p-3 flex items-center gap-3 hover:bg-gray-800 transition-colors group">
-                  <Apple className="w-6 h-6 transition-transform duration-300 group-hover:scale-110" />
-                  <div className="text-left">
-                    <div className="text-sm text-gray-300">Download on the</div>
-                    <div className="text-lg font-medium">App Store</div>
-                  </div>
-                </RippleButton>
-                <RippleButton variant="secondary" className="bg-black text-white rounded-lg p-3 flex items-center gap-3 hover:bg-gray-800 transition-colors group">
-                  <Play className="w-6 h-6 transition-transform duration-300 group-hover:scale-110" />
-                  <div className="text-left">
-                    <div className="text-sm text-gray-300">GET IT ON</div>
-                    <div className="text-lg font-medium">Google Play</div>
-                  </div>
-                </RippleButton>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Footer Bottom */}
