@@ -51,6 +51,7 @@ const ProjectDetailPage = async ({ params }: PageProps) => {
         lead={project.description}
         body={project.service}
         info={{ client: project.client, service: project.category, location: project.location, year: project.year }}
+        liveUrl={project.liveUrl}
       />
       <ProjectChallengeServiceSection
         collageImage={project.images[1] || project.images[0]}
