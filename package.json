@@ -15,6 +15,7 @@
     "@sanity/icons": "^3.7.4",
     "@sanity/image-url": "^1.2.0",
     "@sanity/vision": "^4.10.2",
+    "@supabase/supabase-js": "^2.80.0",
     "html-react-parser": "^5.2.6",
     "luc": "^0.3.1",
     "lucide-react": "^0.544.0",

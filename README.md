@@ -227,15 +227,93 @@ moverse-portfolio/
 
 ## 🔐 Environment Variables
 
-Required environment variables for the application:
+Copy `env.example` to `.env.local` and provide values for the variables listed below:
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `NEXT_PUBLIC_SANITY_PROJECT_ID` | Your Sanity project ID | Yes |
-| `NEXT_PUBLIC_SANITY_DATASET` | Sanity dataset name (usually `production`) | Yes |
-| `SANITY_API_TOKEN` | Sanity API token for write access | Yes |
-| `RESEND_API_KEY` | Resend API key for email functionality | Yes |
-| `NEXT_PUBLIC_SITE_URL` | Your site URL (for production) | Optional |
+| Variable | Description | Required | Notes |
+|----------|-------------|----------|-------|
+| `SUPABASE_URL` | Supabase project URL | Yes | Available in Supabase project settings |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon key | Yes | Used by both client and server routes |
+| `WHATSAPP_TOKEN` | WhatsApp Cloud API access token | Yes | Refresh every 24h unless you have a permanent token |
+| `WHATSAPP_PHONE_NUMBER_ID` | Phone number ID used for API calls | Yes | From Meta Developer Console |
+| `WHATSAPP_BUSINESS_ACCOUNT_ID` | WhatsApp Business Account ID | Optional | Useful for Meta portal configuration |
+| `WHATSAPP_VERIFY_TOKEN` | Shared secret for webhook verification | Yes | Ensure this matches the Meta subscription |
+| `WHATSAPP_TEST_PHONE_NUMBER` | Test phone number provided by Meta | Optional | Used for local testing helpers |
+| `NEXT_PUBLIC_SANITY_PROJECT_ID` | Your Sanity project ID | Yes | Existing Sanity configuration |
+| `NEXT_PUBLIC_SANITY_DATASET` | Sanity dataset name | Yes | Typically `production` |
+| `SANITY_API_TOKEN` | Sanity API token for write access | Yes | Required for Sanity Studio mutations |
+| `RESEND_API_KEY` | Resend API key for email functionality | Yes | Existing email automation |
+| `NEXT_PUBLIC_SITE_URL` | The deployed site URL | Optional | Used in SEO and canonical tags |
+
+---
+
+## 💬 WhatsApp Cloud API Integration
+
+### Installed Packages
+
+- [`@supabase/supabase-js`](https://supabase.com/docs/reference/javascript/installing) – required for persisting contacts, conversations, and messages.
+
+### API Routes
+
+- `POST /api/sendMessage` – Sends outbound messages via the WhatsApp Cloud API and logs them in Supabase.  
+- `GET/POST /api/webhook` – Handles Meta verification and ingests inbound WhatsApp events into Supabase.
+
+Both routes include structured logging and guard clauses for common failure states.
+
+### Supabase Storage Model
+
+- `contacts`: Upserts contacts by `wa_id` (phone number) and stores display names when available.  
+- `conversations`: Ensures a single open WhatsApp conversation per contact (`channel = 'whatsapp'`).  
+- `messages`: Persists inbound/outbound message bodies, types, timestamps, and raw payloads for auditing.
+
+Adjust column names if your schema differs; the current implementation expects `wa_id`, `phone_number`, `profile_name`, `channel`, `status`, `last_message_at`, `conversation_id`, `direction`, `wa_message_id`, `message_type`, `sent_at`, and `raw_payload`.
+
+### WhatsApp Widget Usage
+
+```tsx
+// src/app/layout.tsx (example usage)
+import WhatsAppWidget from '@/components/WhatsAppWidget';
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body>
+        {children}
+        <WhatsAppWidget
+          phoneNumber="+15551853677"
+          defaultMessage="Hi Moverse! I'm interested in your services."
+        />
+      </body>
+    </html>
+  );
+}
+```
+
+### Deployment Checklist (Meta Developer Portal)
+
+1. Deploy to Vercel and obtain the production URL.  
+2. In Meta Developer Portal → `WhatsApp > Configuration`, set the webhook callback URL to `https://<your-domain>/api/webhook`.  
+3. Enter the same `WHATSAPP_VERIFY_TOKEN` configured in `.env`.  
+4. Subscribe to the `messages` and `message_template_status_update` events.  
+5. Replace the temporary access token with a permanent system user token when ready for production.
+
+### Local Testing
+
+1. Install and run `ngrok http 3000` (or equivalent tunneling tool).  
+2. Add the forwarded HTTPS URL as the webhook callback in Meta (append `/api/webhook`).  
+3. Start the Next.js dev server locally (`npm run dev`).  
+4. Trigger test messages from the Meta “Send Message” sandbox to confirm ingestion.  
+5. Use `curl` or Thunder Client to hit `POST http://localhost:3000/api/sendMessage` with:
+   ```json
+   { "to": "+15551853677", "message": "Test message from local dev 🌐" }
+   ```
+6. Monitor server logs in the terminal; Supabase entries should appear immediately.
+
+### Verification & Troubleshooting
+
+- Check the Vercel function logs or local terminal for `[webhook]` and `[sendMessage]` log prefixes.  
+- Validate Supabase inserts using the SQL editor or dashboard.  
+- Verify that the WhatsApp Cloud API responds with HTTP 200; failures include an `error` payload for debugging.  
+- Rotate the access token before it expires to avoid 401 errors during demos.
 
 ---
 
