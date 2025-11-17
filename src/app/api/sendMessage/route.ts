@@ -20,6 +20,33 @@ const WHATSAPP_API_BASE = 'https://graph.facebook.com/v20.0';
 const TOKEN_ENV_KEY = 'WHATSAPP_TOKEN';
 const PHONE_ID_ENV_KEY = 'WHATSAPP_PHONE_NUMBER_ID';
 
+/* ============================
+   CORS CONFIG (ENV + FALLBACK)
+   ============================ */
+const ALLOWED_ORIGIN =
+  process.env.CORS_ORIGIN || "http://localhost:3000";
+
+function corsHeaders() {
+  return {
+    "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  };
+}
+
+/* =======================
+   CORS PRE-FLIGHT HANDLER
+   ======================= */
+export async function OPTIONS() {
+  return new Response(null, {
+    status: 204,
+    headers: corsHeaders(),
+  });
+}
+
+/* ================
+   POST HANDLER
+   ================ */
 export async function POST(request: NextRequest) {
   const supabase = createSupabaseClient();
 
@@ -29,12 +56,18 @@ export async function POST(request: NextRequest) {
     body = (await request.json()) as SendMessageRequest;
   } catch (error) {
     console.error('[sendMessage][POST] Invalid JSON payload.', error);
-    return NextResponse.json({ error: 'Invalid JSON payload.' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Invalid JSON payload.' },
+      { status: 400, headers: corsHeaders() }
+    );
   }
 
   const validationError = validatePayload(body);
   if (validationError) {
-    return NextResponse.json({ error: validationError }, { status: 400 });
+    return NextResponse.json(
+      { error: validationError },
+      { status: 400, headers: corsHeaders() }
+    );
   }
 
   const token = process.env[TOKEN_ENV_KEY];
@@ -44,7 +77,7 @@ export async function POST(request: NextRequest) {
     console.error(`[sendMessage][POST] Missing ${TOKEN_ENV_KEY} or ${PHONE_ID_ENV_KEY}.`);
     return NextResponse.json(
       { error: 'WhatsApp API credentials are not configured.' },
-      { status: 500 },
+      { status: 500, headers: corsHeaders() }
     );
   }
 
@@ -62,16 +95,13 @@ export async function POST(request: NextRequest) {
     body: JSON.stringify(payload),
   });
 
-  const result = (await response.json()) as WhatsAppSendResponse;
+  const result = await response.json() as WhatsAppSendResponse;
 
   if (!response.ok) {
     console.error('[sendMessage][POST] WhatsApp API error.', { status: response.status, result });
     return NextResponse.json(
-      {
-        error: 'Failed to send WhatsApp message.',
-        details: result,
-      },
-      { status: response.status },
+      { error: 'Failed to send WhatsApp message.', details: result },
+      { status: response.status, headers: corsHeaders() }
     );
   }
 
@@ -84,7 +114,6 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('[sendMessage][POST] Failed to persist outbound message.', error);
-    // do not fail the request if persistence fails; the message was already sent.
   }
 
   return NextResponse.json(
@@ -92,9 +121,13 @@ export async function POST(request: NextRequest) {
       success: true,
       messageId: extractMessageId(result),
     },
-    { status: 200 },
+    { status: 200, headers: corsHeaders() }
   );
 }
+
+/* =============================
+   HELPERS (UNCHANGED)
+   ============================= */
 
 type WhatsAppSendResponse = {
   messaging_product?: string;
@@ -105,18 +138,10 @@ type WhatsAppSendResponse = {
 };
 
 function validatePayload(body: SendMessageRequest): string | null {
-  if (!body?.to) {
-    return 'Recipient phone number (to) is required.';
-  }
-
-  if (!body?.message) {
-    return 'Message content is required.';
-  }
-
-  if (body.message.length > 4096) {
+  if (!body?.to) return 'Recipient phone number (to) is required.';
+  if (!body?.message) return 'Message content is required.';
+  if (body.message.length > 4096)
     return 'Message content exceeds the 4096 character limit.';
-  }
-
   return null;
 }
 
@@ -160,9 +185,8 @@ async function persistOutboundMessage({
   const toNumber = recipientWaId;
 
   if (!fromNumber) {
-  console.error('[sendMessage][persist] Missing WHATSAPP_TEST_NUMBER in environment variables.');
-}
-
+    console.error('[sendMessage][persist] Missing WHATSAPP_TEST_NUMBER in environment variables.');
+  }
 
   await insertMessage(supabaseClient, {
     conversationId,
@@ -173,9 +197,6 @@ async function persistOutboundMessage({
     sentAt: new Date().toISOString(),
     rawPayload: responsePayload,
     fromNumber,
-    toNumber
+    toNumber,
   });
 }
-
-
-
