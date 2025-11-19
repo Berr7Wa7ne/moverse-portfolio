@@ -155,6 +155,7 @@ async function handleEntry(entry: WhatsAppEntry, supabaseClient: SupabaseClientI
         const contactId = await ensureContact(supabaseClient, {
           waId: message.from,
           profileName: contact?.profile?.name ?? null,
+          profilePictureUrl: null,
         });
         console.log('[webhook] ensureContact OK', { wa_id: message.from, contactId });
 

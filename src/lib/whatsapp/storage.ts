@@ -38,16 +38,18 @@ export async function ensureContact(
   {
     waId,
     profileName,
+    profilePictureUrl,
   }: {
     waId: string;
     profileName: string | null;
+    profilePictureUrl?: string | null;
   },
 ): Promise<string> {
   const phoneNumber = normalizePhoneNumber(waId);
 
   const { data: existingContact, error: fetchError } = await supabaseClient
     .from('contacts')
-    .select('id')
+    .select('id, profile_picture_url')
     .eq('wa_id', waId)
     .maybeSingle();
 
@@ -56,9 +58,25 @@ export async function ensureContact(
     throw fetchError;
   }
 
-  const existingContactRow = existingContact as Pick<ContactRow, 'id'> | null;
+  const existingContactRow = existingContact as
+    | Pick<ContactRow, 'id' | 'profile_picture_url'>
+    | null;
 
   if (existingContactRow?.id) {
+    if (profilePictureUrl && !existingContactRow.profile_picture_url) {
+      const { error: updateError } = await supabaseClient
+        .from('contacts')
+        .update({ profile_picture_url: profilePictureUrl })
+        .eq('id', existingContactRow.id);
+
+      if (updateError) {
+        console.error(
+          '[whatsapp][contacts] Failed to update contact picture.',
+          updateError,
+        );
+      }
+    }
+
     return existingContactRow.id;
   }
 
@@ -68,6 +86,7 @@ export async function ensureContact(
       wa_id: waId,
       phone_number: phoneNumber,
       profile_name: profileName,
+      profile_picture_url: profilePictureUrl ?? null,
     })
     .select('id')
     .maybeSingle();
