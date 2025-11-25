@@ -59,6 +59,24 @@ type WhatsAppMessage = {
     caption?: string;
     id?: string;
     mime_type?: string;
+    link?: string;
+  };
+  video?: {
+    caption?: string;
+    id?: string;
+    mime_type?: string;
+    link?: string;
+  };
+  audio?: {
+    id?: string;
+    mime_type?: string;
+    link?: string;
+  };
+  document?: {
+    caption?: string;
+    filename?: string;
+    mime_type?: string;
+    link?: string;
   };
   [key: string]: unknown;
 };
@@ -210,14 +228,17 @@ await insertMessage(supabaseClient, {
 }
 
 function extractMessageBody(message: WhatsAppMessage): string {
+  // Handle text messages
   if (message.text?.body) {
     return message.text.body;
   }
 
+  // Handle button replies
   if (message.interactive?.button_reply?.title) {
     return message.interactive.button_reply.title;
   }
 
+  // Handle list replies
   if (message.interactive?.list_reply?.title) {
     return `${message.interactive.list_reply.title}${
       message.interactive.list_reply.description
@@ -226,10 +247,28 @@ function extractMessageBody(message: WhatsAppMessage): string {
     }`;
   }
 
-  if (message.image?.caption) {
-    return message.image.caption;
+  // Handle media messages (image, video, audio, document)
+  const mediaTypes = ['image', 'video', 'audio', 'document'] as const;
+  
+  for (const mediaType of mediaTypes) {
+    const media = message[mediaType];
+    if (!media) continue;
+
+    const mediaUrl = media.link;
+    const caption = 'caption' in media ? media.caption : undefined;
+
+    if (caption && mediaUrl) {
+      return `${caption}\n${mediaUrl}`;
+    }
+    if (mediaUrl) {
+      return mediaUrl;
+    }
+    if (caption) {
+      return caption;
+    }
   }
 
+  // Fallback for unsupported message types
   return `[${message.type} message received]`;
 }
 
