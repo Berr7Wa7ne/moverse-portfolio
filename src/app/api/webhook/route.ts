@@ -258,6 +258,7 @@ function extractMessageBody(message: WhatsAppMessage): string {
     const caption = 'caption' in media ? media.caption : undefined;
 
     if (caption && mediaUrl) {
+      // Combine caption and media URL with newline
       return `${caption}\n${mediaUrl}`;
     }
     if (mediaUrl) {
