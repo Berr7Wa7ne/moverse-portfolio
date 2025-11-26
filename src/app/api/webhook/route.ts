@@ -206,12 +206,24 @@ async function insertInboundMessage(
   message: WhatsAppMessage,
   value: WhatsAppChangeValue,
 ) {
+    console.log('[webhook] Processing message:', JSON.stringify(message, null, 2));
+
   const body = extractMessageBody(message);
+  console.log('[webhook] Extracted message body:', body);
   const fromNumber = message.from;
   const toNumber =
   value?.metadata?.display_phone_number?.replace('+', '') ||
   process.env.WHATSAPP_TEST_NUMBER?.replace('+', '') ||
   '';
+
+    console.log('[webhook] Inserting message into database:', {
+    conversationId,
+    direction: 'incoming',
+    body,
+    messageType: message.type,
+    fromNumber,
+    toNumber
+  });
 
 
 await insertMessage(supabaseClient, {
@@ -225,26 +237,35 @@ await insertMessage(supabaseClient, {
   fromNumber,
   toNumber,
 });
+
+console.log('[webhook] Message inserted successfully');
 }
 
 function extractMessageBody(message: WhatsAppMessage): string {
+  console.log('[webhook] Extracting message body for type:', message.type);
+  
   // Handle text messages
   if (message.text?.body) {
+    console.log('[webhook] Found text message:', message.text.body);
     return message.text.body;
   }
 
   // Handle button replies
   if (message.interactive?.button_reply?.title) {
-    return message.interactive.button_reply.title;
+    const buttonText = message.interactive.button_reply.title;
+    console.log('[webhook] Found button reply:', buttonText);
+    return buttonText;
   }
 
   // Handle list replies
   if (message.interactive?.list_reply?.title) {
-    return `${message.interactive.list_reply.title}${
+    const listText = `${message.interactive.list_reply.title}${
       message.interactive.list_reply.description
         ? ` - ${message.interactive.list_reply.description}`
         : ''
     }`;
+    console.log('[webhook] Found list reply:', listText);
+    return listText;
   }
 
   // Handle media messages (image, video, audio, document)
@@ -254,22 +275,31 @@ function extractMessageBody(message: WhatsAppMessage): string {
     const media = message[mediaType];
     if (!media) continue;
 
+    console.log(`[webhook] Found ${mediaType} media:`, media);
+    
     const mediaUrl = media.link;
     const caption = 'caption' in media ? media.caption : undefined;
 
+    console.log(`[webhook] ${mediaType} details:`, { mediaUrl, caption });
+
     if (caption && mediaUrl) {
-      // Combine caption and media URL with newline
-      return `${caption}\n${mediaUrl}`;
+      const result = `${caption}\n${mediaUrl}`;
+      console.log(`[webhook] Combined caption and URL:`, result);
+      return result;
     }
     if (mediaUrl) {
+      console.log(`[webhook] Using media URL only:`, mediaUrl);
       return mediaUrl;
     }
     if (caption) {
+      console.log(`[webhook] Using caption only:`, caption);
       return caption;
     }
   }
 
   // Fallback for unsupported message types
-  return `[${message.type} message received]`;
+  const fallback = `[${message.type} message received]`;
+  console.log('[webhook] Using fallback message:', fallback);
+  return fallback;
 }
 
