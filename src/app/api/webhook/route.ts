@@ -9,12 +9,71 @@ import {
   type SupabaseClientInstance,
 } from '@/lib/whatsapp/storage';
 
-type WhatsAppEntry = {
+/* ============================================================
+   STRICT — WhatsApp MEDIA TYPES (FIXED)
+============================================================ */
+
+type WhatsAppMediaBase = {
+  id?: string;
+  mime_type?: string;
+  link?: string;
+};
+
+type WhatsAppMediaWithCaption = WhatsAppMediaBase & {
+  caption?: string;
+};
+
+type WhatsAppDocument = WhatsAppMediaWithCaption & {
+  filename?: string;
+};
+
+/* ============================================================
+   FIXED — WhatsAppMessage TYPE
+============================================================ */
+type WhatsAppMessage = {
+  from: string;
   id: string;
-  changes: Array<{
-    field: string;
-    value: WhatsAppChangeValue;
-  }>;
+  timestamp: string;
+  type: string;
+
+  text?: {
+    body: string;
+  };
+
+  interactive?: {
+    type: string;
+    list_reply?: {
+      id: string;
+      title: string;
+      description?: string;
+    };
+    button_reply?: {
+      id: string;
+      title: string;
+    };
+  };
+
+  image?: WhatsAppMediaWithCaption;
+  video?: WhatsAppMediaWithCaption;
+  audio?: WhatsAppMediaBase;
+  document?: WhatsAppDocument;
+
+  [key: string]: unknown;
+};
+
+type WhatsAppContact = {
+  profile?: {
+    name?: string;
+  };
+  wa_id: string;
+};
+
+type WhatsAppStatus = {
+  id: string;
+  status: string;
+  timestamp: string;
+  recipient_id: string;
+  [key: string]: unknown;
 };
 
 type WhatsAppChangeValue = {
@@ -28,76 +87,27 @@ type WhatsAppChangeValue = {
   statuses?: WhatsAppStatus[];
 };
 
-type WhatsAppContact = {
-  profile?: {
-    name?: string;
-  };
-  wa_id: string;
-};
-
-type WhatsAppMessage = {
-  from: string;
+type WhatsAppEntry = {
   id: string;
-  timestamp: string;
-  type: string;
-  text?: {
-    body: string;
-  };
-  interactive?: {
-    type: string;
-    list_reply?: {
-      id: string;
-      title: string;
-      description?: string;
-    };
-    button_reply?: {
-      id: string;
-      title: string;
-    };
-  };
-  image?: {
-    caption?: string;
-    id?: string;
-    mime_type?: string;
-    link?: string;
-  };
-  video?: {
-    caption?: string;
-    id?: string;
-    mime_type?: string;
-    link?: string;
-  };
-  audio?: {
-    id?: string;
-    mime_type?: string;
-    link?: string;
-  };
-  document?: {
-    caption?: string;
-    filename?: string;
-    mime_type?: string;
-    link?: string;
-  };
-  [key: string]: unknown;
-};
-
-type WhatsAppStatus = {
-  id: string;
-  status: string;
-  timestamp: string;
-  recipient_id: string;
-  [key: string]: unknown;
+  changes: Array<{
+    field: string;
+    value: WhatsAppChangeValue;
+  }>;
 };
 
 const VERIFY_TOKEN_ENV_KEY = 'WHATSAPP_VERIFY_TOKEN';
 
+/* ============================================================
+   GET — VERIFY WEBHOOK
+============================================================ */
 export async function GET(request: NextRequest) {
+  console.log('[webhook] Webhook called with method:', request.method);
   const verifyToken = process.env[VERIFY_TOKEN_ENV_KEY];
 
   if (!verifyToken) {
-    console.error(`[webhook][GET] Missing ${VERIFY_TOKEN_ENV_KEY} environment variable.`);
+    console.error(`[webhook][GET] Missing ${VERIFY_TOKEN_ENV_KEY}`);
     return NextResponse.json(
-      { error: 'Verification token is not configured.' },
+      { error: 'Verification token not configured.' },
       { status: 500 },
     );
   }
@@ -107,199 +117,149 @@ export async function GET(request: NextRequest) {
   const token = searchParams.get('hub.verify_token');
   const challenge = searchParams.get('hub.challenge');
 
-  console.log('[webhook][GET] Verification attempt', { mode, token, challenge });
-
   if (mode === 'subscribe' && token === verifyToken && challenge) {
     return new Response(challenge, { status: 200 });
   }
 
-  console.warn('[webhook][GET] Verification failed', { mode, token });
   return NextResponse.json({ error: 'Verification failed.' }, { status: 403 });
 }
 
+/* ============================================================
+   POST — PROCESS INBOUND MESSAGES
+============================================================ */
 export async function POST(request: NextRequest) {
   let payload: { entry?: WhatsAppEntry[] };
 
   try {
     payload = (await request.json()) as { entry?: WhatsAppEntry[] };
-  } catch (error) {
-    console.error('[webhook][POST] Invalid JSON payload.', error);
+  } catch {
     return NextResponse.json({ error: 'Invalid JSON payload.' }, { status: 400 });
   }
 
-  console.log('[webhook][POST] Incoming payload', JSON.stringify(payload, null, 2));
-
   if (!payload?.entry?.length) {
-    console.warn('[webhook][POST] No entry data present in payload.');
     return NextResponse.json({ success: true }, { status: 200 });
   }
 
   const supabase = createSupabaseClient();
 
   try {
-    console.log('[webhook][POST] Processing entries', { count: payload.entry.length });
     for (const entry of payload.entry) {
       await handleEntry(entry, supabase);
     }
-  } catch (error) {
-    console.error('[webhook][POST] Failed to persist data to Supabase.', error);
-    return NextResponse.json({ error: 'Failed to process webhook event.' }, { status: 500 });
+  } catch (err) {
+    console.error('[webhook][POST] Error processing entries:', err);
+    return NextResponse.json({ error: 'Processing failed.' }, { status: 500 });
   }
 
   return NextResponse.json({ success: true }, { status: 200 });
 }
 
-async function handleEntry(entry: WhatsAppEntry, supabaseClient: SupabaseClientInstance) {
+/* ============================================================
+   HANDLE ENTRY
+============================================================ */
+async function handleEntry(entry: WhatsAppEntry, supabase: SupabaseClientInstance) {
   for (const change of entry.changes) {
-    if (change.field !== 'messages') {
-      console.log('[webhook] Change skipped (unsupported field)', change.field);
-      continue;
-    }
+    if (change.field !== 'messages') continue;
 
     const { value } = change;
     const { messages = [], contacts = [] } = value;
 
-    if (!messages.length) {
-      console.log('[webhook] Change contained no messages.');
-      continue;
-    }
-
-    console.log('[webhook] Processing messages', { count: messages.length });
-
     for (const message of messages) {
       try {
-        const contact = contacts.find(({ wa_id }) => wa_id === message.from) ?? contacts[0];
+        const contact =
+          contacts.find((c) => c.wa_id === message.from) ?? contacts[0];
 
-        const contactId = await ensureContact(supabaseClient, {
+        const contactId = await ensureContact(supabase, {
           waId: message.from,
           profileName: contact?.profile?.name ?? null,
           profilePictureUrl: null,
         });
-        console.log('[webhook] ensureContact OK', { wa_id: message.from, contactId });
 
-        const conversationId = await ensureConversation(supabaseClient, {
-          contactId,
-        });
-        console.log('[webhook] ensureConversation OK', { conversationId, contactId });
+        const conversationId = await ensureConversation(supabase, { contactId });
 
-        await insertInboundMessage(supabaseClient, conversationId, message, value);
-        console.log('[webhook] insertMessage OK', {
-          conversationId,
-          waMessageId: message.id,
-          type: message.type,
-          timestamp: message.timestamp,
-        });
+        await insertInboundMessage(supabase, conversationId, message, value);
       } catch (err) {
-        console.error('[webhook] Error processing single message', {
-          from: message.from,
-          id: message.id,
-          type: message.type,
-        }, err);
+        console.error('[webhook] Error processing message:', message.id, err);
       }
     }
   }
 }
 
+/* ============================================================
+   INSERT INBOUND MESSAGE
+============================================================ */
 async function insertInboundMessage(
-  supabaseClient: SupabaseClientInstance,
+  supabase: SupabaseClientInstance,
   conversationId: string,
   message: WhatsAppMessage,
   value: WhatsAppChangeValue,
 ) {
-    console.log('[webhook] Processing message:', JSON.stringify(message, null, 2));
-
   const body = extractMessageBody(message);
-  console.log('[webhook] Extracted message body:', body);
+
   const fromNumber = message.from;
   const toNumber =
-  value?.metadata?.display_phone_number?.replace('+', '') ||
-  process.env.WHATSAPP_TEST_NUMBER?.replace('+', '') ||
-  '';
+    value.metadata?.display_phone_number?.replace('+', '') ?? '';
 
-    console.log('[webhook] Inserting message into database:', {
+  await insertMessage(supabase, {
     conversationId,
     direction: 'incoming',
     body,
-    messageType: message.type,
+    waMessageId: message.id,
+    messageType: message.type ?? null,
+    sentAt: new Date(Number(message.timestamp) * 1000).toISOString(),
+    rawPayload: message,
     fromNumber,
-    toNumber
+    toNumber,
   });
-
-
-await insertMessage(supabaseClient, {
-  conversationId,
-  direction: 'incoming',
-  body,
-  waMessageId: message.id,
-  messageType: message.type ?? null,
-  sentAt: new Date(Number(message.timestamp) * 1000).toISOString(),
-  rawPayload: message,
-  fromNumber,
-  toNumber,
-});
-
-console.log('[webhook] Message inserted successfully');
 }
 
+/* ============================================================
+   FIXED extractMessageBody — TYPE-SAFE MEDIA HANDLING
+============================================================ */
 function extractMessageBody(message: WhatsAppMessage): string {
-  console.log('[webhook] Extracting message body for type:', message.type);
-  
-  // Handle text messages
-  if (message.text?.body) {
-    console.log('[webhook] Found text message:', message.text.body);
+  console.log('[webhook] Extracting body for:', message.type);
+
+  // TEXT
+  if (message.type === 'text' && message.text?.body) {
     return message.text.body;
   }
 
-  // Handle button replies
+  // BUTTON REPLY
   if (message.interactive?.button_reply?.title) {
-    const buttonText = message.interactive.button_reply.title;
-    console.log('[webhook] Found button reply:', buttonText);
-    return buttonText;
+    return message.interactive.button_reply.title;
   }
 
-  // Handle list replies
+  // LIST REPLY
   if (message.interactive?.list_reply?.title) {
-    const listText = `${message.interactive.list_reply.title}${
-      message.interactive.list_reply.description
-        ? ` - ${message.interactive.list_reply.description}`
-        : ''
-    }`;
-    console.log('[webhook] Found list reply:', listText);
-    return listText;
+    const lr = message.interactive.list_reply;
+    return lr.description ? `${lr.title} - ${lr.description}` : lr.title;
   }
 
-  // Handle media messages (image, video, audio, document)
+  // MEDIA TYPES
   const mediaTypes = ['image', 'video', 'audio', 'document'] as const;
-  
-  for (const mediaType of mediaTypes) {
-    const media = message[mediaType];
-    if (!media) continue;
+  type MediaType = (typeof mediaTypes)[number];
 
-    console.log(`[webhook] Found ${mediaType} media:`, media);
-    
-    const mediaUrl = media.link;
-    const caption = 'caption' in media ? media.caption : undefined;
+  const getMedia = (t: MediaType) => message[t] ?? null;
 
-    console.log(`[webhook] ${mediaType} details:`, { mediaUrl, caption });
+  for (const type of mediaTypes) {
+    if (message.type === type) {
+      const media = getMedia(type);
+      if (!media) continue;
 
-    if (caption && mediaUrl) {
-      const result = `${caption}\n${mediaUrl}`;
-      console.log(`[webhook] Combined caption and URL:`, result);
-      return result;
-    }
-    if (mediaUrl) {
-      console.log(`[webhook] Using media URL only:`, mediaUrl);
-      return mediaUrl;
-    }
-    if (caption) {
-      console.log(`[webhook] Using caption only:`, caption);
-      return caption;
+      const mediaId = media.id;
+      const mediaUrl = media.link;
+      const caption = (media as WhatsAppMediaWithCaption).caption ?? '';
+
+      if (mediaUrl) return caption ? `${caption}\n${mediaUrl}` : mediaUrl;
+
+      if (mediaId) {
+        const url = `https://lookaside.fbsbx.com/whatsapp_business/${mediaId}`;
+        return caption ? `${caption}\n${url}` : url;
+      }
+
+      if (caption) return caption;
     }
   }
 
-  // Fallback for unsupported message types
-  const fallback = `[${message.type} message received]`;
-  console.log('[webhook] Using fallback message:', fallback);
-  return fallback;
+  return `[${message.type} message received]`;
 }
-
