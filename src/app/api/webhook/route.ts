@@ -217,49 +217,79 @@ async function insertInboundMessage(
    FIXED extractMessageBody — TYPE-SAFE MEDIA HANDLING
 ============================================================ */
 function extractMessageBody(message: WhatsAppMessage): string {
-  console.log('[webhook] Extracting body for:', message.type);
+  console.log('[webhook] Extracting body for type:', message.type);
+  console.log('[webhook] Full message payload:', JSON.stringify(message, null, 2));
 
   // TEXT
   if (message.type === 'text' && message.text?.body) {
+    console.log('[webhook] Processing text message:', message.text.body);
     return message.text.body;
   }
 
   // BUTTON REPLY
   if (message.interactive?.button_reply?.title) {
+    console.log('[webhook] Processing button reply:', message.interactive.button_reply.title);
     return message.interactive.button_reply.title;
   }
 
   // LIST REPLY
   if (message.interactive?.list_reply?.title) {
     const lr = message.interactive.list_reply;
-    return lr.description ? `${lr.title} - ${lr.description}` : lr.title;
+    const response = lr.description ? `${lr.title} - ${lr.description}` : lr.title;
+    console.log('[webhook] Processing list reply:', response);
+    return response;
   }
 
   // MEDIA TYPES
   const mediaTypes = ['image', 'video', 'audio', 'document'] as const;
   type MediaType = (typeof mediaTypes)[number];
 
-  const getMedia = (t: MediaType) => message[t] ?? null;
-
-  for (const type of mediaTypes) {
-    if (message.type === type) {
-      const media = getMedia(type);
-      if (!media) continue;
-
-      const mediaId = media.id;
-      const mediaUrl = media.link;
-      const caption = (media as WhatsAppMediaWithCaption).caption ?? '';
-
-      if (mediaUrl) return caption ? `${caption}\n${mediaUrl}` : mediaUrl;
-
-      if (mediaId) {
-        const url = `https://lookaside.fbsbx.com/whatsapp_business/${mediaId}`;
-        return caption ? `${caption}\n${url}` : url;
-      }
-
-      if (caption) return caption;
+  if (mediaTypes.includes(message.type as MediaType)) {
+    const mediaType = message.type as MediaType;
+    console.log(`[webhook] Processing ${mediaType} message`);
+    
+    const media = message[mediaType];
+    if (!media) {
+      console.log(`[webhook] No media found for type: ${mediaType}`);
+      return `[${mediaType} message - no media data]`;
     }
+
+    console.log(`[webhook] Media data:`, JSON.stringify(media, null, 2));
+    
+    const mediaId = media.id;
+    const mediaUrl = media.link;
+    const caption = (media as WhatsAppMediaWithCaption).caption || '';
+
+    console.log(`[webhook] Extracted media info:`, {
+      mediaId,
+      mediaUrl,
+      caption: caption || '(no caption)',
+      hasLink: !!mediaUrl,
+      hasId: !!mediaId
+    });
+
+    if (mediaUrl) {
+      const response = caption ? `${caption}\n${mediaUrl}` : mediaUrl;
+      console.log(`[webhook] Returning media with ${caption ? 'caption' : 'no caption'}:`, response);
+      return response;
+    }
+
+    if (mediaId) {
+      const url = `https://lookaside.fbsbx.com/whatsapp_business/${mediaId}`;
+      const response = caption ? `${caption}\n${url}` : url;
+      console.log(`[webhook] Constructed media URL from ID:`, response);
+      return response;
+    }
+
+    if (caption) {
+      console.log(`[webhook] No media URL or ID, returning caption only:`, caption);
+      return caption;
+    }
+
+    console.log(`[webhook] No usable media data found for ${mediaType}`);
+    return `[${mediaType} message - no usable data]`;
   }
 
+  console.log(`[webhook] Unhandled message type: ${message.type}`);
   return `[${message.type} message received]`;
 }
