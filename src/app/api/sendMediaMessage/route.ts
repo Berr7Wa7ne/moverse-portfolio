@@ -216,7 +216,9 @@ export async function POST(request: NextRequest) {
     await persistOutboundMediaMessage({
       supabaseClient: supabase,
       recipientWaId: recipient,
-      content: body.caption || body.mediaUrl,
+      content: body.caption 
+  ? `${body.caption}\n${body.mediaUrl}` 
+  : body.mediaUrl,
       responsePayload: result,
       messageType: body.type,
     });
