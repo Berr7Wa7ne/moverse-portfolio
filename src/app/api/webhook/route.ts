@@ -104,37 +104,120 @@ type WhatsAppEntry = {
 const VERIFY_TOKEN_ENV_KEY = 'WHATSAPP_VERIFY_TOKEN';
 
 /* ============================================================
-   HELPER: FETCH ACTUAL MEDIA URL FROM WHATSAPP
+   HELPER: DOWNLOAD AND STORE MEDIA PERMANENTLY
 ============================================================ */
-async function getMediaUrl(mediaId: string): Promise<string | null> {
+async function downloadAndStoreMedia(
+  mediaId: string,
+  mediaType: string,
+  supabase: SupabaseClientInstance
+): Promise<string | null> {
   const token = process.env[TOKEN_ENV_KEY];
   
   if (!token) {
-    console.error('[webhook] Missing WHATSAPP_TOKEN for media fetch');
+    console.error('[webhook] Missing WHATSAPP_TOKEN for media download');
     return null;
   }
 
   try {
-    // Step 1: Get media metadata
-    const response = await fetch(`${WHATSAPP_API_BASE}/${mediaId}`, {
+    // Step 1: Get media metadata (including authenticated URL)
+    console.log('[webhook] Fetching metadata for media ID:', mediaId);
+    const metadataResponse = await fetch(`${WHATSAPP_API_BASE}/${mediaId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
 
-    if (!response.ok) {
-      console.error('[webhook] Failed to fetch media metadata:', response.status);
+    if (!metadataResponse.ok) {
+      console.error('[webhook] Failed to fetch media metadata:', metadataResponse.status);
       return null;
     }
 
-    const data = await response.json() as { url?: string };
+    const metadata = await metadataResponse.json() as { 
+      url?: string; 
+      mime_type?: string;
+      sha256?: string;
+      file_size?: number;
+    };
+
+    if (!metadata.url) {
+      console.error('[webhook] No URL in media metadata');
+      return null;
+    }
+
+    console.log('[webhook] Media metadata:', { 
+      url: metadata.url.substring(0, 100) + '...', 
+      mime_type: metadata.mime_type,
+      file_size: metadata.file_size 
+    });
+
+    // Step 2: Download the actual media file
+    console.log('[webhook] Downloading media from WhatsApp...');
+    const mediaResponse = await fetch(metadata.url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!mediaResponse.ok) {
+      console.error('[webhook] Failed to download media:', mediaResponse.status);
+      return null;
+    }
+
+    const mediaBlob = await mediaResponse.blob();
+    console.log('[webhook] Media downloaded, size:', mediaBlob.size, 'bytes');
     
-    // Step 2: Return the actual downloadable URL
-    return data.url || null;
+    // Step 3: Generate a unique filename
+    const extension = metadata.mime_type?.split('/')[1] || getExtensionFromType(mediaType);
+    const timestamp = Date.now();
+    const filename = `whatsapp/${mediaType}/${timestamp}-${mediaId}.${extension}`;
+
+    console.log('[webhook] Uploading to Supabase Storage:', filename);
+
+    // Step 4: Upload to Supabase Storage
+    const { data, error } = await supabase.storage
+      .from('whatsapp-media')
+      .upload(filename, mediaBlob, {
+        contentType: metadata.mime_type,
+        cacheControl: '31536000',
+        upsert: false,
+      });
+
+    if (error) {
+      // If file already exists, get the existing URL
+      if (error.message.includes('already exists')) {
+        console.log('[webhook] Media already exists in storage:', filename);
+        const { data: publicUrlData } = supabase.storage
+          .from('whatsapp-media')
+          .getPublicUrl(filename);
+        return publicUrlData.publicUrl;
+      } else {
+        console.error('[webhook] Failed to upload to Supabase:', error);
+        return null;
+      }
+    }
+
+    // Step 5: Get public URL
+    const { data: publicUrlData } = supabase.storage
+      .from('whatsapp-media')
+      .getPublicUrl(filename);
+
+    console.log('[webhook] Media stored successfully:', publicUrlData.publicUrl);
+    return publicUrlData.publicUrl;
+
   } catch (error) {
-    console.error('[webhook] Error fetching media URL:', error);
+    console.error('[webhook] Error downloading and storing media:', error);
     return null;
   }
+}
+
+function getExtensionFromType(mediaType: string): string {
+  const extensions: Record<string, string> = {
+    image: 'jpg',
+    video: 'mp4',
+    audio: 'mp3',
+    document: 'pdf',
+  };
+  return extensions[mediaType] || 'bin';
 }
 
 /* ============================================================
@@ -234,7 +317,7 @@ async function insertInboundMessage(
   message: WhatsAppMessage,
   value: WhatsAppChangeValue,
 ) {
-  const body = await extractMessageBody(message);
+  const body = await extractMessageBody(message, supabase);
 
   const fromNumber = message.from;
   const toNumber =
@@ -254,11 +337,13 @@ async function insertInboundMessage(
 }
 
 /* ============================================================
-   FIXED extractMessageBody — FETCHES ACTUAL MEDIA URL
+   FIXED extractMessageBody — DOWNLOADS AND STORES MEDIA
 ============================================================ */
-async function extractMessageBody(message: WhatsAppMessage): Promise<string> {
+async function extractMessageBody(
+  message: WhatsAppMessage,
+  supabase: SupabaseClientInstance
+): Promise<string> {
   console.log('[webhook] Extracting body for type:', message.type);
-  console.log('[webhook] Full message payload:', JSON.stringify(message, null, 2));
 
   // TEXT
   if (message.type === 'text' && message.text?.body) {
@@ -294,26 +379,28 @@ async function extractMessageBody(message: WhatsAppMessage): Promise<string> {
       return `[${mediaType} message - no media data]`;
     }
 
-    console.log(`[webhook] Media data:`, JSON.stringify(media, null, 2));
-    
     const caption = (media as WhatsAppMediaWithCaption).caption || '';
     let mediaUrl: string | null = null;
 
-    // Try to get URL from direct link first (for outbound messages)
+    // For outbound messages (sent by agent), use direct link
     if (media.link) {
       mediaUrl = media.link;
-      console.log('[webhook] Using direct link:', mediaUrl);
+      console.log('[webhook] Using direct link for outbound message:', mediaUrl);
     } 
-    // Otherwise fetch from media ID (for inbound messages)
+    // For inbound messages (sent by customer), download and store
     else if (media.id) {
-      console.log('[webhook] Fetching media URL for ID:', media.id);
-      mediaUrl = await getMediaUrl(media.id);
-      console.log('[webhook] Retrieved media URL:', mediaUrl);
+      console.log('[webhook] Downloading and storing inbound media, ID:', media.id);
+      mediaUrl = await downloadAndStoreMedia(media.id, mediaType, supabase);
+      if (mediaUrl) {
+        console.log('[webhook] Successfully stored media at:', mediaUrl);
+      } else {
+        console.error('[webhook] Failed to store media');
+      }
     }
 
     if (mediaUrl) {
       const response = caption ? `${caption}\n${mediaUrl}` : mediaUrl;
-      console.log(`[webhook] Returning media with ${caption ? 'caption' : 'no caption'}:`, response);
+      console.log(`[webhook] Final message body with ${caption ? 'caption' : 'no caption'}`);
       return response;
     }
 
