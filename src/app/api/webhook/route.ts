@@ -10,6 +10,12 @@ import {
 } from '@/lib/whatsapp/storage';
 
 /* ============================================================
+   WHATSAPP API CONFIG
+============================================================ */
+const WHATSAPP_API_BASE = 'https://graph.facebook.com/v20.0';
+const TOKEN_ENV_KEY = 'WHATSAPP_TOKEN';
+
+/* ============================================================
    STRICT — WhatsApp MEDIA TYPES (FIXED)
 ============================================================ */
 
@@ -96,6 +102,40 @@ type WhatsAppEntry = {
 };
 
 const VERIFY_TOKEN_ENV_KEY = 'WHATSAPP_VERIFY_TOKEN';
+
+/* ============================================================
+   HELPER: FETCH ACTUAL MEDIA URL FROM WHATSAPP
+============================================================ */
+async function getMediaUrl(mediaId: string): Promise<string | null> {
+  const token = process.env[TOKEN_ENV_KEY];
+  
+  if (!token) {
+    console.error('[webhook] Missing WHATSAPP_TOKEN for media fetch');
+    return null;
+  }
+
+  try {
+    // Step 1: Get media metadata
+    const response = await fetch(`${WHATSAPP_API_BASE}/${mediaId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      console.error('[webhook] Failed to fetch media metadata:', response.status);
+      return null;
+    }
+
+    const data = await response.json() as { url?: string };
+    
+    // Step 2: Return the actual downloadable URL
+    return data.url || null;
+  } catch (error) {
+    console.error('[webhook] Error fetching media URL:', error);
+    return null;
+  }
+}
 
 /* ============================================================
    GET — VERIFY WEBHOOK
@@ -194,7 +234,7 @@ async function insertInboundMessage(
   message: WhatsAppMessage,
   value: WhatsAppChangeValue,
 ) {
-  const body = extractMessageBody(message);
+  const body = await extractMessageBody(message);
 
   const fromNumber = message.from;
   const toNumber =
@@ -214,9 +254,9 @@ async function insertInboundMessage(
 }
 
 /* ============================================================
-   FIXED extractMessageBody — TYPE-SAFE MEDIA HANDLING
+   FIXED extractMessageBody — FETCHES ACTUAL MEDIA URL
 ============================================================ */
-function extractMessageBody(message: WhatsAppMessage): string {
+async function extractMessageBody(message: WhatsAppMessage): Promise<string> {
   console.log('[webhook] Extracting body for type:', message.type);
   console.log('[webhook] Full message payload:', JSON.stringify(message, null, 2));
 
@@ -256,17 +296,20 @@ function extractMessageBody(message: WhatsAppMessage): string {
 
     console.log(`[webhook] Media data:`, JSON.stringify(media, null, 2));
     
-    const mediaId = media.id;
-    const mediaUrl = media.link;
     const caption = (media as WhatsAppMediaWithCaption).caption || '';
+    let mediaUrl: string | null = null;
 
-    console.log(`[webhook] Extracted media info:`, {
-      mediaId,
-      mediaUrl,
-      caption: caption || '(no caption)',
-      hasLink: !!mediaUrl,
-      hasId: !!mediaId
-    });
+    // Try to get URL from direct link first (for outbound messages)
+    if (media.link) {
+      mediaUrl = media.link;
+      console.log('[webhook] Using direct link:', mediaUrl);
+    } 
+    // Otherwise fetch from media ID (for inbound messages)
+    else if (media.id) {
+      console.log('[webhook] Fetching media URL for ID:', media.id);
+      mediaUrl = await getMediaUrl(media.id);
+      console.log('[webhook] Retrieved media URL:', mediaUrl);
+    }
 
     if (mediaUrl) {
       const response = caption ? `${caption}\n${mediaUrl}` : mediaUrl;
@@ -274,15 +317,8 @@ function extractMessageBody(message: WhatsAppMessage): string {
       return response;
     }
 
-    if (mediaId) {
-      const url = `https://lookaside.fbsbx.com/whatsapp_business/${mediaId}`;
-      const response = caption ? `${caption}\n${url}` : url;
-      console.log(`[webhook] Constructed media URL from ID:`, response);
-      return response;
-    }
-
     if (caption) {
-      console.log(`[webhook] No media URL or ID, returning caption only:`, caption);
+      console.log(`[webhook] No media URL available, returning caption only:`, caption);
       return caption;
     }
 
