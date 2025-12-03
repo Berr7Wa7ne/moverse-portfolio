@@ -2,39 +2,13 @@ import { createSupabaseClient } from '@/lib/supabaseClient';
 
 export type SupabaseClientInstance = ReturnType<typeof createSupabaseClient>;
 
-export type ContactRow = {
-  id: string;
-  wa_id: string;
-  phone_number: string;
-  profile_name?: string | null;
-  profile_picture_url?: string | null;
-  created_at?: string;
-};
-
-export type ConversationRow = {
-  id: string;
-  contact_id: string;
-  channel?: string | null;
-  status?: string | null;
-  last_message_at?: string | null;
-  created_at?: string;
-};
-
-export type MessageRow = {
-  id: string;
-  conversation_id: string;
-  direction: 'incoming' | 'outgoing';
-  body: string;
-  wa_message_id: string;
-  message_type?: string | null;
-  sent_at: string;
-  raw_payload: unknown;
-};
-
 export const WHATSAPP_CHANNEL = 'whatsapp';
 
+// ----------------------------
+// CONTACT
+// ----------------------------
 export async function ensureContact(
-  supabaseClient: SupabaseClientInstance,
+  supabase: SupabaseClientInstance,
   {
     waId,
     profileName,
@@ -47,40 +21,25 @@ export async function ensureContact(
 ): Promise<string> {
   const phoneNumber = normalizePhoneNumber(waId);
 
-  const { data: existingContact, error: fetchError } = await supabaseClient
+  const { data: contact, error: fetchError } = await supabase
     .from('contacts')
     .select('id, profile_picture_url')
     .eq('wa_id', waId)
     .maybeSingle();
 
-  if (fetchError) {
-    console.error('[whatsapp][contacts] Failed to fetch contact.', fetchError);
-    throw fetchError;
-  }
+  if (fetchError) throw fetchError;
 
-  const existingContactRow = existingContact as
-    | Pick<ContactRow, 'id' | 'profile_picture_url'>
-    | null;
-
-  if (existingContactRow?.id) {
-    if (profilePictureUrl && !existingContactRow.profile_picture_url) {
-      const { error: updateError } = await supabaseClient
+  if (contact?.id) {
+    if (profilePictureUrl && !contact.profile_picture_url) {
+      await supabase
         .from('contacts')
         .update({ profile_picture_url: profilePictureUrl })
-        .eq('id', existingContactRow.id);
-
-      if (updateError) {
-        console.error(
-          '[whatsapp][contacts] Failed to update contact picture.',
-          updateError,
-        );
-      }
+        .eq('id', contact.id);
     }
-
-    return existingContactRow.id;
+    return contact.id;
   }
 
-  const { data: insertedContact, error: insertError } = await supabaseClient
+  const { data: inserted, error: insertError } = await supabase
     .from('contacts')
     .insert({
       wa_id: waId,
@@ -91,43 +50,30 @@ export async function ensureContact(
     .select('id')
     .maybeSingle();
 
-  const insertedContactRow = insertedContact as Pick<ContactRow, 'id'> | null;
+  if (insertError || !inserted?.id) throw insertError ?? new Error('Failed to insert contact');
 
-  if (insertError || !insertedContactRow?.id) {
-    console.error('[whatsapp][contacts] Failed to insert contact.', insertError);
-    throw insertError ?? new Error('Unable to insert contact.');
-  }
-
-  return insertedContactRow.id;
+  return inserted.id;
 }
 
+// ----------------------------
+// CONVERSATION
+// ----------------------------
 export async function ensureConversation(
-  supabaseClient: SupabaseClientInstance,
-  {
-    contactId,
-  }: {
-    contactId: string;
-  },
+  supabase: SupabaseClientInstance,
+  { contactId }: { contactId: string },
 ): Promise<string> {
-  const { data: existingConversation, error: fetchError } = await supabaseClient
+  const { data: convo, error: fetchErr } = await supabase
     .from('conversations')
     .select('id')
     .eq('contact_id', contactId)
     .eq('channel', WHATSAPP_CHANNEL)
     .maybeSingle();
 
-  if (fetchError) {
-    console.error('[whatsapp][conversations] Failed to fetch conversation.', fetchError);
-    throw fetchError;
-  }
+  if (fetchErr) throw fetchErr;
 
-  const existingConversationRow = existingConversation as Pick<ConversationRow, 'id'> | null;
+  if (convo?.id) return convo.id;
 
-  if (existingConversationRow?.id) {
-    return existingConversationRow.id;
-  }
-
-  const { data: insertedConversation, error: insertError } = await supabaseClient
+  const { data: inserted, error: insertErr } = await supabase
     .from('conversations')
     .insert({
       contact_id: contactId,
@@ -138,44 +84,44 @@ export async function ensureConversation(
     .select('id')
     .maybeSingle();
 
-  const insertedConversationRow = insertedConversation as Pick<ConversationRow, 'id'> | null;
+  if (insertErr || !inserted?.id)
+    throw insertErr ?? new Error('Failed to create conversation');
 
-  if (insertError || !insertedConversationRow?.id) {
-    console.error('[whatsapp][conversations] Failed to insert conversation.', insertError);
-    throw insertError ?? new Error('Unable to insert conversation.');
-  }
-
-  return insertedConversationRow.id;
+  return inserted.id;
 }
 
+// ----------------------------
+// UPDATE TIMESTAMP + LAST MESSAGE TEXT
+// ----------------------------
 export async function logConversationActivity(
-  supabaseClient: SupabaseClientInstance,
+  supabase: SupabaseClientInstance,
   conversationId: string,
+  body: string | null,
+  caption: string | null,
 ) {
-  const { error: updateConversationError } = await supabaseClient
+  await supabase
     .from('conversations')
     .update({
       last_message_at: new Date().toISOString(),
+      last_message: body ?? caption ?? '',
+      last_message_caption: caption ?? null,
     })
     .eq('id', conversationId);
-
-  if (updateConversationError) {
-    console.error(
-      '[whatsapp][conversations] Failed to update conversation timestamp.',
-      updateConversationError,
-    );
-    throw updateConversationError;
-  }
 }
 
+// ----------------------------
+// INSERT MESSAGE — REFACTORED
+// ----------------------------
 export async function insertMessage(
-  supabaseClient: SupabaseClientInstance,
+  supabase: SupabaseClientInstance,
   {
     conversationId,
     direction,
-    body,
-    waMessageId,
+    text,
+    caption,
+    mediaUrl,
     messageType,
+    waMessageId,
     sentAt,
     rawPayload,
     fromNumber,
@@ -183,39 +129,48 @@ export async function insertMessage(
   }: {
     conversationId: string;
     direction: 'incoming' | 'outgoing';
-    body: string;
-    waMessageId: string;
+    text: string | null;
+    caption: string | null;
+    mediaUrl: string | null;
     messageType: string | null;
+    waMessageId: string;
     sentAt: string;
     rawPayload: unknown;
     fromNumber: string;
     toNumber: string;
   },
 ) {
-  const { error: insertError } = await supabaseClient
-    .from('messages')
-    .insert({
-      conversation_id: conversationId,
-      direction,
-      from_number: fromNumber,
-      to_number: toNumber,
-      message: body,
-      wa_message_id: waMessageId,
-      message_type: messageType,
-      sent_at: sentAt,
-      raw_payload: rawPayload,
-    });
+  const cleanBody = text ?? mediaUrl ?? '';
+  const resolvedCaption = caption ?? null;
 
-  if (insertError) {
-    console.error('[whatsapp][messages] Failed to insert message.', insertError);
-    throw insertError;
+  const { error: insertErr } = await supabase.from('messages').insert({
+    conversation_id: conversationId,
+    direction,
+    from_number: fromNumber,
+    to_number: toNumber,
+    body: cleanBody,
+    caption: resolvedCaption,
+    media_url: mediaUrl,
+    wa_message_id: waMessageId,
+    message_type: messageType,
+    sent_at: sentAt,
+    raw_payload: rawPayload,
+  });
+
+  if (insertErr) {
+    console.error('[whatsapp][messages] insert error:', insertErr);
+    throw insertErr;
   }
 
-  await logConversationActivity(supabaseClient, conversationId);
+  await logConversationActivity(
+    supabase,
+    conversationId,
+    cleanBody,
+    resolvedCaption,
+  );
 }
 
+// ----------------------------
 export function normalizePhoneNumber(waId: string): string {
   return waId.replace(/\D/g, '');
 }
-
-
