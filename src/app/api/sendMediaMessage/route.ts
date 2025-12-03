@@ -144,7 +144,7 @@ async function persistOutboundMediaMessage({
   await insertMessage(supabaseClient, {
     conversationId,
     direction: 'outgoing',
-    body: content,
+    message: content,
     waMessageId: extractMessageId(responsePayload),
     messageType,
     sentAt: new Date().toISOString(),

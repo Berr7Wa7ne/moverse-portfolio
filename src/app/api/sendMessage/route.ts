@@ -191,7 +191,7 @@ async function persistOutboundMessage({
   await insertMessage(supabaseClient, {
     conversationId,
     direction: 'outgoing',
-    body: content,
+    message: content,
     waMessageId: extractMessageId(responsePayload),
     messageType: 'text',
     sentAt: new Date().toISOString(),
