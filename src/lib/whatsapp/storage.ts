@@ -148,7 +148,7 @@ export async function insertMessage(
     direction,
     from_number: fromNumber,
     to_number: toNumber,
-    body: cleanBody,
+    message: cleanBody,
     caption: resolvedCaption,
     media_url: mediaUrl,
     wa_message_id: waMessageId,

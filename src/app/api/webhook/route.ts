@@ -212,7 +212,7 @@ async function insertInboundMessage(
     conversationId,
     direction: 'incoming',
     // keep legacy 'body' if your storage expects it — set to text only (or caption fallback)
-    body: extracted.text ?? extracted.caption ?? extracted.mediaUrl ?? '',
+    message: extracted.text ?? extracted.caption ?? extracted.mediaUrl ?? '',
     waMessageId: message.id,
     messageType: extracted.type ?? message.type ?? null,
     // new structured fields
@@ -236,8 +236,8 @@ async function extractIncomingMessage(message: any, supabase: SupabaseClientInst
   const type = message.type;
 
   // TEXT
-  if (type === 'text' && message.text?.body) {
-    return { type: 'text', text: message.text.body, mediaUrl: null, caption: null };
+  if (type === 'text' && message.text?.message) {
+    return { type: 'text', text: message.text.message, mediaUrl: null, caption: null };
   }
 
   // interactive replies
