@@ -23,8 +23,7 @@ const PHONE_ID_ENV_KEY = 'WHATSAPP_PHONE_NUMBER_ID';
 /* ============================
    CORS CONFIG (ENV + FALLBACK)
    ============================ */
-const ALLOWED_ORIGIN =
-  process.env.CORS_ORIGIN || "http://localhost:3000";
+const ALLOWED_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:3000";
 
 function corsHeaders() {
   return {
@@ -126,7 +125,7 @@ export async function POST(request: NextRequest) {
 }
 
 /* =============================
-   HELPERS (UNCHANGED)
+   HELPERS
    ============================= */
 
 type WhatsAppSendResponse = {
@@ -188,12 +187,15 @@ async function persistOutboundMessage({
     console.error('[sendMessage][persist] Missing WHATSAPP_TEST_NUMBER in environment variables.');
   }
 
+  // 🟢 FIX: Use correct parameter names matching insertMessage signature
   await insertMessage(supabaseClient, {
     conversationId,
     direction: 'outgoing',
-    message: content,
-    waMessageId: extractMessageId(responsePayload),
+    text: content,           // ✅ Correct: use 'text' not 'message'
+    caption: null,           // ✅ Text messages have no caption
+    mediaUrl: null,          // ✅ Text messages have no mediaUrl
     messageType: 'text',
+    waMessageId: extractMessageId(responsePayload),
     sentAt: new Date().toISOString(),
     rawPayload: responsePayload,
     fromNumber,

@@ -14,8 +14,7 @@ const WHATSAPP_API_BASE = 'https://graph.facebook.com/v20.0';
 const TOKEN_ENV_KEY = 'WHATSAPP_TOKEN';
 const PHONE_ID_ENV_KEY = 'WHATSAPP_PHONE_NUMBER_ID';
 
-const ALLOWED_ORIGIN =
-  process.env.CORS_ORIGIN || 'http://localhost:3000';
+const ALLOWED_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:3000';
 
 function corsHeaders() {
   return {
@@ -115,13 +114,15 @@ function extractMessageId(response: WhatsAppSendResponse): string {
 async function persistOutboundMediaMessage({
   supabaseClient,
   recipientWaId,
-  content,
+  mediaUrl,
+  caption,
   responsePayload,
   messageType,
 }: {
   supabaseClient: SupabaseClientInstance;
   recipientWaId: string;
-  content: string;
+  mediaUrl: string;
+  caption: string | null;
   responsePayload: WhatsAppSendResponse;
   messageType: string;
 }) {
@@ -141,12 +142,15 @@ async function persistOutboundMediaMessage({
     console.error('[sendMediaMessage][persist] Missing WHATSAPP_TEST_NUMBER in environment variables.');
   }
 
+  // 🟢 FIX: Use correct parameter names
   await insertMessage(supabaseClient, {
     conversationId,
     direction: 'outgoing',
-    message: content,
-    waMessageId: extractMessageId(responsePayload),
+    text: null,
+    caption: caption,
+    mediaUrl: mediaUrl,
     messageType,
+    waMessageId: extractMessageId(responsePayload),
     sentAt: new Date().toISOString(),
     rawPayload: responsePayload,
     fromNumber,
@@ -216,9 +220,8 @@ export async function POST(request: NextRequest) {
     await persistOutboundMediaMessage({
       supabaseClient: supabase,
       recipientWaId: recipient,
-      content: body.caption 
-  ? `${body.caption}\n${body.mediaUrl}` 
-  : body.mediaUrl,
+      mediaUrl: body.mediaUrl,
+      caption: body.caption ?? null,
       responsePayload: result,
       messageType: body.type,
     });

@@ -91,26 +91,28 @@ export async function ensureConversation(
 }
 
 // ----------------------------
-// UPDATE TIMESTAMP + LAST MESSAGE TEXT
+// UPDATE TIMESTAMP + LAST MESSAGE
 // ----------------------------
 export async function logConversationActivity(
   supabase: SupabaseClientInstance,
   conversationId: string,
-  body: string | null,
+  messageText: string | null,
+  messageType: string | null,
   caption: string | null,
 ) {
   await supabase
     .from('conversations')
     .update({
       last_message_at: new Date().toISOString(),
-      last_message: body ?? caption ?? '',
+      last_message: messageText ?? caption ?? '',
+      last_message_type: messageType ?? 'text',
       last_message_caption: caption ?? null,
     })
     .eq('id', conversationId);
 }
 
 // ----------------------------
-// INSERT MESSAGE — REFACTORED
+// INSERT MESSAGE — FIXED
 // ----------------------------
 export async function insertMessage(
   supabase: SupabaseClientInstance,
@@ -140,19 +142,22 @@ export async function insertMessage(
     toNumber: string;
   },
 ) {
-  const cleanBody = text ?? mediaUrl ?? '';
-  const resolvedCaption = caption ?? null;
+  // 🟢 Determine what goes in the 'message' column
+  // For media: store the mediaUrl
+  // For text: store the text
+  // Fallback: empty string
+  const messageContent = mediaUrl ?? text ?? caption ?? '';
 
   const { error: insertErr } = await supabase.from('messages').insert({
     conversation_id: conversationId,
     direction,
     from_number: fromNumber,
     to_number: toNumber,
-    message: cleanBody,
-    caption: resolvedCaption,
-    media_url: mediaUrl,
+    message: messageContent,           // 🟢 Main content (URL for media, text for text)
+    caption: caption,                  // 🟢 Caption for media messages
+    media_url: mediaUrl,               // 🟢 Media URL (if applicable)
     wa_message_id: waMessageId,
-    message_type: messageType,
+    message_type: messageType ?? 'text',
     sent_at: sentAt,
     raw_payload: rawPayload,
   });
@@ -162,11 +167,13 @@ export async function insertMessage(
     throw insertErr;
   }
 
+  // 🟢 Update conversation with message details
   await logConversationActivity(
     supabase,
     conversationId,
-    cleanBody,
-    resolvedCaption,
+    messageContent,
+    messageType,
+    caption,
   );
 }
 

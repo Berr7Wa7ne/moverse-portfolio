@@ -14,8 +14,6 @@ const WHATSAPP_API_BASE = 'https://graph.facebook.com/v20.0';
 const TOKEN_ENV_KEY = 'WHATSAPP_TOKEN';
 const VERIFY_TOKEN_ENV_KEY = 'WHATSAPP_VERIFY_TOKEN';
 
-/* types are omitted here for brevity — keep your types if you want */
-
 function getExtensionFromType(mediaType: string): string {
   const extensions: Record<string, string> = {
     image: 'jpg',
@@ -77,7 +75,7 @@ async function downloadAndStoreMedia(
     const timestamp = Date.now();
     const filename = `whatsapp/${mediaType}/${timestamp}-${mediaId}.${extension}`;
 
-    const { error: uploadError, data } = await supabase.storage
+    const { error: uploadError } = await supabase.storage
       .from('whatsapp-media')
       .upload(filename, blob, {
         contentType: metadata.mime_type,
@@ -88,9 +86,10 @@ async function downloadAndStoreMedia(
     if (uploadError) {
       // if file exists, return public url
       if (uploadError.message?.includes?.('already exists')) {
-        const { data: publicUrlData } = await supabase.storage
+        const { data: publicUrlData } = supabase.storage
           .from('whatsapp-media')
           .getPublicUrl(filename);
+        console.log('[webhook] File already exists, returning URL:', publicUrlData.publicUrl);
         return publicUrlData.publicUrl;
       } else {
         console.error('[webhook] Upload error:', uploadError);
@@ -102,6 +101,7 @@ async function downloadAndStoreMedia(
       .from('whatsapp-media')
       .getPublicUrl(filename);
 
+    console.log('[webhook] Media uploaded successfully:', publicUrlData.publicUrl);
     return publicUrlData.publicUrl;
   } catch (err) {
     console.error('[webhook] Error in downloadAndStoreMedia:', err);
@@ -191,10 +191,7 @@ async function handleEntry(entry: any, supabase: SupabaseClientInstance) {
 }
 
 /* ============================================================
-   insertInboundMessage
-   - uses extractIncomingMessage to return structured object:
-     { type, text, mediaUrl, caption }
-   - then calls insertMessage(...) with fields separated
+   insertInboundMessage - FIXED
    ============================================================ */
 async function insertInboundMessage(
   supabase: SupabaseClientInstance,
@@ -207,18 +204,17 @@ async function insertInboundMessage(
   const fromNumber = message.from;
   const toNumber = value?.metadata?.display_phone_number?.replace('+', '') ?? '';
 
-  // Map to your insertMessage payload — keep existing keys but add media_url + caption
+  console.log('[webhook] Extracted message:', extracted);
+
+  // 🟢 FIX: Use correct parameter names
   await insertMessage(supabase, {
     conversationId,
     direction: 'incoming',
-    // keep legacy 'body' if your storage expects it — set to text only (or caption fallback)
-    message: extracted.text ?? extracted.caption ?? extracted.mediaUrl ?? '',
+    text: extracted.text,
+    caption: extracted.caption,
+    mediaUrl: extracted.mediaUrl,
+    messageType: extracted.type ?? 'text',
     waMessageId: message.id,
-    messageType: extracted.type ?? message.type ?? null,
-    // new structured fields
-    text: extracted.text ?? null,
-    media_url: extracted.mediaUrl ?? null,
-    caption: extracted.caption ?? null,
     sentAt: new Date(Number(message.timestamp) * 1000).toISOString(),
     rawPayload: message,
     fromNumber,
@@ -227,67 +223,120 @@ async function insertInboundMessage(
 }
 
 /* ============================================================
-   extractIncomingMessage
-   - reads WhatsApp payload and returns a clean object:
-     { type, text, mediaUrl, caption }
-   - downloads inbound media and stores it in Supabase storage
+   extractIncomingMessage - FIXED & ENHANCED
    ============================================================ */
 async function extractIncomingMessage(message: any, supabase: SupabaseClientInstance) {
   const type = message.type;
 
-  // TEXT
-  if (type === 'text' && message.text?.message) {
-    return { type: 'text', text: message.text.message, mediaUrl: null, caption: null };
+  console.log('[webhook][extract] Processing message type:', type);
+
+  // TEXT - FIXED: Use message.text.body instead of message.text.message
+  if (type === 'text' && message.text?.body) {
+    return { 
+      type: 'text', 
+      text: message.text.body, 
+      mediaUrl: null, 
+      caption: null 
+    };
   }
 
   // interactive replies
   if (message.interactive?.button_reply?.title) {
-    return { type: 'interactive', text: message.interactive.button_reply.title, mediaUrl: null, caption: null };
+    return { 
+      type: 'interactive', 
+      text: message.interactive.button_reply.title, 
+      mediaUrl: null, 
+      caption: null 
+    };
   }
   if (message.interactive?.list_reply?.title) {
     const lr = message.interactive.list_reply;
     const text = lr.description ? `${lr.title} - ${lr.description}` : lr.title;
-    return { type: 'interactive', text, mediaUrl: null, caption: null };
+    return { 
+      type: 'interactive', 
+      text, 
+      mediaUrl: null, 
+      caption: null 
+    };
   }
 
   // media types
   const mediaTypes = ['image', 'video', 'audio', 'document'] as const;
-  if (mediaTypes.includes(type)) {
+  if (mediaTypes.includes(type as any)) {
     const media = message[type] ?? {};
     const caption = media?.caption ?? null;
 
+    console.log('[webhook][extract] Media message:', { 
+      type, 
+      hasId: !!media?.id, 
+      hasLink: !!media?.link,
+      caption 
+    });
+
     // If the payload includes a direct link (outbound or some cases)
     if (media?.link) {
+      console.log('[webhook][extract] Using direct link:', media.link);
       return { type, text: null, mediaUrl: media.link, caption };
     }
 
     // If only an id is provided (inbound), download and store
     if (media?.id) {
+      console.log('[webhook][extract] Downloading media with id:', media.id);
       const storedUrl = await downloadAndStoreMedia(media.id, type, supabase);
       if (storedUrl) {
+        console.log('[webhook][extract] Media stored successfully:', storedUrl);
         return { type, text: null, mediaUrl: storedUrl, caption };
       } else {
-        // fallback to caption if download failed
-        return { type, text: null, mediaUrl: null, caption: caption ?? `[${type} message - media unavailable]` };
+        console.error('[webhook][extract] Media download failed for id:', media.id);
+        return { 
+          type, 
+          text: `[${type} message - media download failed]`, 
+          mediaUrl: null, 
+          caption 
+        };
       }
     }
 
     // no media info
-    return { type, text: null, mediaUrl: null, caption: caption ?? `[${type} message]` };
+    console.warn('[webhook][extract] No media id or link found');
+    return { 
+      type, 
+      text: `[${type} message - no media info]`, 
+      mediaUrl: null, 
+      caption 
+    };
   }
 
-  // other types (location, contact, status) — store as textual fallback
+  // location
   if (type === 'location' && message.location) {
-    const lat = message.location.latitude, lon = message.location.longitude;
+    const lat = message.location.latitude;
+    const lon = message.location.longitude;
     const mapUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
-    return { type: 'location', text: null, mediaUrl: mapUrl, caption: message.location.name ?? null };
+    return { 
+      type: 'location', 
+      text: null, 
+      mediaUrl: mapUrl, 
+      caption: message.location.name ?? null 
+    };
   }
 
+  // contacts
   if (type === 'contacts' && message.contacts && message.contacts.length) {
     const contactText = JSON.stringify(message.contacts);
-    return { type: 'contact', text: contactText, mediaUrl: null, caption: null };
+    return { 
+      type: 'contact', 
+      text: contactText, 
+      mediaUrl: null, 
+      caption: null 
+    };
   }
 
   // default fallback
-  return { type: type ?? 'unknown', text: `[${type} message received]`, mediaUrl: null, caption: null };
+  console.warn('[webhook][extract] Unknown message type:', type);
+  return { 
+    type: type ?? 'unknown', 
+    text: `[${type || 'unknown'} message received]`, 
+    mediaUrl: null, 
+    caption: null 
+  };
 }
