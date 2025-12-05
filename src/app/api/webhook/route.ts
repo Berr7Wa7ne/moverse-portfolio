@@ -28,23 +28,30 @@ function getExtensionFromType(mediaType: string): string {
 async function downloadAndStoreMedia(
   mediaId: string,
   mediaType: string,
-  supabase: SupabaseClientInstance
-): Promise<string | null> {
+  supabase: SupabaseClientInstance,
+  originalFilename?: string,
+  originalMimeType?: string
+): Promise<{
+  url: string | null;
+  fileSize?: number;
+  mimeType?: string;
+  fileName?: string;
+}> {
   const token = process.env[TOKEN_ENV_KEY];
   if (!token) {
     console.error('[webhook] Missing WHATSAPP_TOKEN for media download');
-    return null;
+    return { url: null };
   }
 
   try {
-    // 1) Get media metadata (contains temporary url)
+    // 1) Get media metadata
     const metadataResp = await fetch(`${WHATSAPP_API_BASE}/${mediaId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
     if (!metadataResp.ok) {
       console.error('[webhook] Failed to fetch media metadata:', metadataResp.status);
-      return null;
+      return { url: null };
     }
 
     const metadata = (await metadataResp.json()) as {
@@ -55,7 +62,7 @@ async function downloadAndStoreMedia(
 
     if (!metadata.url) {
       console.error('[webhook] No URL in media metadata');
-      return null;
+      return { url: null };
     }
 
     // 2) Download binary
@@ -65,36 +72,54 @@ async function downloadAndStoreMedia(
 
     if (!mediaResp.ok) {
       console.error('[webhook] Failed to download media binary:', mediaResp.status);
-      return null;
+      return { url: null };
     }
 
     const blob = await mediaResp.blob();
+    const fileSize = blob.size;
+    const detectedMimeType = metadata.mime_type || originalMimeType;
 
-    // 3) Build filename and upload to Supabase storage
-    const extension = metadata.mime_type?.split('/')[1] || getExtensionFromType(mediaType);
+    // 3) Build filename with original name if available
+    const extension = detectedMimeType?.split('/')[1] || getExtensionFromType(mediaType);
     const timestamp = Date.now();
-    const filename = `whatsapp/${mediaType}/${timestamp}-${mediaId}.${extension}`;
+    
+    let filename: string;
+    let storedFileName: string | undefined;
+    
+    if (originalFilename) {
+      // Sanitize the original filename
+      const sanitized = originalFilename.replace(/[^a-zA-Z0-9_.-]/g, '_');
+      filename = `whatsapp/${mediaType}/${timestamp}-${sanitized}`;
+      storedFileName = originalFilename;
+    } else {
+      filename = `whatsapp/${mediaType}/${timestamp}-${mediaId}.${extension}`;
+      storedFileName = `${mediaId}.${extension}`;
+    }
 
+    // 4) Upload to storage
     const { error: uploadError } = await supabase.storage
       .from('whatsapp-media')
       .upload(filename, blob, {
-        contentType: metadata.mime_type,
+        contentType: detectedMimeType,
         cacheControl: '31536000',
         upsert: false,
       });
 
     if (uploadError) {
-      // if file exists, return public url
       if (uploadError.message?.includes?.('already exists')) {
         const { data: publicUrlData } = supabase.storage
           .from('whatsapp-media')
           .getPublicUrl(filename);
         console.log('[webhook] File already exists, returning URL:', publicUrlData.publicUrl);
-        return publicUrlData.publicUrl;
-      } else {
-        console.error('[webhook] Upload error:', uploadError);
-        return null;
+        return { 
+          url: publicUrlData.publicUrl,
+          fileSize,
+          mimeType: detectedMimeType,
+          fileName: storedFileName
+        };
       }
+      console.error('[webhook] Upload error:', uploadError);
+      return { url: null };
     }
 
     const { data: publicUrlData } = supabase.storage
@@ -102,10 +127,15 @@ async function downloadAndStoreMedia(
       .getPublicUrl(filename);
 
     console.log('[webhook] Media uploaded successfully:', publicUrlData.publicUrl);
-    return publicUrlData.publicUrl;
+    return { 
+      url: publicUrlData.publicUrl, 
+      fileSize,
+      mimeType: detectedMimeType,
+      fileName: storedFileName
+    };
   } catch (err) {
     console.error('[webhook] Error in downloadAndStoreMedia:', err);
-    return null;
+    return { url: null };
   }
 }
 
@@ -206,7 +236,6 @@ async function insertInboundMessage(
 
   console.log('[webhook] Extracted message:', extracted);
 
-  // 🟢 FIX: Use correct parameter names
   await insertMessage(supabase, {
     conversationId,
     direction: 'incoming',
@@ -219,6 +248,9 @@ async function insertInboundMessage(
     rawPayload: message,
     fromNumber,
     toNumber,
+    fileName: extracted.fileName,
+    fileSize: extracted.fileSize,
+    mimeType: extracted.mimeType,
   });
 }
 
@@ -230,7 +262,7 @@ async function extractIncomingMessage(message: any, supabase: SupabaseClientInst
 
   console.log('[webhook][extract] Processing message type:', type);
 
-  // TEXT - FIXED: Use message.text.body instead of message.text.message
+  // TEXT
   if (type === 'text' && message.text?.body) {
     return { 
       type: 'text', 
@@ -240,7 +272,7 @@ async function extractIncomingMessage(message: any, supabase: SupabaseClientInst
     };
   }
 
-  // interactive replies
+  // Interactive replies
   if (message.interactive?.button_reply?.title) {
     return { 
       type: 'interactive', 
@@ -249,6 +281,7 @@ async function extractIncomingMessage(message: any, supabase: SupabaseClientInst
       caption: null 
     };
   }
+  
   if (message.interactive?.list_reply?.title) {
     const lr = message.interactive.list_reply;
     const text = lr.description ? `${lr.title} - ${lr.description}` : lr.title;
@@ -260,32 +293,58 @@ async function extractIncomingMessage(message: any, supabase: SupabaseClientInst
     };
   }
 
-  // media types
+  // Media types - UPDATED
   const mediaTypes = ['image', 'video', 'audio', 'document'] as const;
   if (mediaTypes.includes(type as any)) {
     const media = message[type] ?? {};
     const caption = media?.caption ?? null;
+    const originalFileName = media?.filename || null;
+    const originalMimeType = media?.mime_type || null;
 
     console.log('[webhook][extract] Media message:', { 
       type, 
       hasId: !!media?.id, 
       hasLink: !!media?.link,
-      caption 
+      caption,
+      fileName: originalFileName,
+      mimeType: originalMimeType
     });
 
-    // If the payload includes a direct link (outbound or some cases)
+    // If the payload includes a direct link
     if (media?.link) {
       console.log('[webhook][extract] Using direct link:', media.link);
-      return { type, text: null, mediaUrl: media.link, caption };
+      return { 
+        type, 
+        text: null, 
+        mediaUrl: media.link, 
+        caption,
+        fileName: originalFileName,
+        mimeType: originalMimeType
+      };
     }
 
-    // If only an id is provided (inbound), download and store
+    // If only an id is provided, download and store
     if (media?.id) {
       console.log('[webhook][extract] Downloading media with id:', media.id);
-      const storedUrl = await downloadAndStoreMedia(media.id, type, supabase);
-      if (storedUrl) {
-        console.log('[webhook][extract] Media stored successfully:', storedUrl);
-        return { type, text: null, mediaUrl: storedUrl, caption };
+      const result = await downloadAndStoreMedia(
+        media.id, 
+        type, 
+        supabase,
+        originalFileName,
+        originalMimeType
+      );
+      
+      if (result.url) {
+        console.log('[webhook][extract] Media stored successfully:', result.url);
+        return { 
+          type, 
+          text: null, 
+          mediaUrl: result.url, 
+          caption,
+          fileName: result.fileName || originalFileName,
+          fileSize: result.fileSize,
+          mimeType: result.mimeType || originalMimeType
+        };
       } else {
         console.error('[webhook][extract] Media download failed for id:', media.id);
         return { 
@@ -297,7 +356,7 @@ async function extractIncomingMessage(message: any, supabase: SupabaseClientInst
       }
     }
 
-    // no media info
+    // No media info
     console.warn('[webhook][extract] No media id or link found');
     return { 
       type, 
@@ -307,7 +366,7 @@ async function extractIncomingMessage(message: any, supabase: SupabaseClientInst
     };
   }
 
-  // location
+  // Location
   if (type === 'location' && message.location) {
     const lat = message.location.latitude;
     const lon = message.location.longitude;
@@ -320,7 +379,7 @@ async function extractIncomingMessage(message: any, supabase: SupabaseClientInst
     };
   }
 
-  // contacts
+  // Contacts
   if (type === 'contacts' && message.contacts && message.contacts.length) {
     const contactText = JSON.stringify(message.contacts);
     return { 
@@ -331,7 +390,7 @@ async function extractIncomingMessage(message: any, supabase: SupabaseClientInst
     };
   }
 
-  // default fallback
+  // Default fallback
   console.warn('[webhook][extract] Unknown message type:', type);
   return { 
     type: type ?? 'unknown', 

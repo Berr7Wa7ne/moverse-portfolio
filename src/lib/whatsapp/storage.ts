@@ -128,6 +128,10 @@ export async function insertMessage(
     rawPayload,
     fromNumber,
     toNumber,
+    fileName = null,
+    fileSize = null,
+    mimeType = null,
+    thumbnailUrl = null,
   }: {
     conversationId: string;
     direction: 'incoming' | 'outgoing';
@@ -140,12 +144,13 @@ export async function insertMessage(
     rawPayload: unknown;
     fromNumber: string;
     toNumber: string;
+    fileName?: string | null;
+    fileSize?: number | null;
+    mimeType?: string | null;
+    thumbnailUrl?: string | null;
   },
 ) {
-  // 🟢 Determine what goes in the 'message' column
-  // For media: store the mediaUrl
-  // For text: store the text
-  // Fallback: empty string
+  // Determine what goes in the 'message' column
   const messageContent = mediaUrl ?? text ?? caption ?? '';
 
   const { error: insertErr } = await supabase.from('messages').insert({
@@ -153,13 +158,18 @@ export async function insertMessage(
     direction,
     from_number: fromNumber,
     to_number: toNumber,
-    message: messageContent,           // 🟢 Main content (URL for media, text for text)
-    caption: caption,                  // 🟢 Caption for media messages
-    media_url: mediaUrl,               // 🟢 Media URL (if applicable)
+    message: messageContent,
+    caption: caption,
+    media_url: mediaUrl,
     wa_message_id: waMessageId,
     message_type: messageType ?? 'text',
     sent_at: sentAt,
     raw_payload: rawPayload,
+    // New metadata fields
+    file_name: fileName,
+    file_size: fileSize,
+    mime_type: mimeType,
+    thumbnail_url: thumbnailUrl,
   });
 
   if (insertErr) {
@@ -167,7 +177,6 @@ export async function insertMessage(
     throw insertErr;
   }
 
-  // 🟢 Update conversation with message details
   await logConversationActivity(
     supabase,
     conversationId,
