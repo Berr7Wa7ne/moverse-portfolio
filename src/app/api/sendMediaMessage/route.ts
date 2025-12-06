@@ -1,3 +1,5 @@
+// sendMediaMessage/route.ts - FIXED VERSION
+
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
@@ -31,11 +33,15 @@ export async function OPTIONS() {
   });
 }
 
+// 🟢 ENHANCED: Added fileName, fileSize, mimeType
 type SendMediaMessageRequest = {
   to: string;
   type: 'image' | 'video' | 'audio' | 'document';
   mediaUrl: string;
   caption?: string;
+  fileName?: string;      // 🟢 NEW
+  fileSize?: number;      // 🟢 NEW
+  mimeType?: string;      // 🟢 NEW
 };
 
 type WhatsAppSendResponse = {
@@ -57,7 +63,7 @@ function validateMediaPayload(body: SendMediaMessageRequest): string | null {
 }
 
 function buildMediaPayload(body: SendMediaMessageRequest & { recipient: string }) {
-  const { recipient, type, mediaUrl, caption } = body;
+  const { recipient, type, mediaUrl, caption, fileName } = body;
 
   const base: Record<string, unknown> = {
     messaging_product: 'whatsapp',
@@ -100,6 +106,8 @@ function buildMediaPayload(body: SendMediaMessageRequest & { recipient: string }
       document: {
         link: mediaUrl,
         ...(caption ? { caption } : {}),
+        // 🟢 IMPORTANT: WhatsApp supports filename in document messages
+        ...(fileName ? { filename: fileName } : {}),
       },
     };
   }
@@ -111,6 +119,7 @@ function extractMessageId(response: WhatsAppSendResponse): string {
   return response.messages?.[0]?.id ?? crypto.randomUUID();
 }
 
+// 🟢 ENHANCED: Added fileName, fileSize, mimeType parameters
 async function persistOutboundMediaMessage({
   supabaseClient,
   recipientWaId,
@@ -118,6 +127,9 @@ async function persistOutboundMediaMessage({
   caption,
   responsePayload,
   messageType,
+  fileName,
+  fileSize,
+  mimeType,
 }: {
   supabaseClient: SupabaseClientInstance;
   recipientWaId: string;
@@ -125,6 +137,9 @@ async function persistOutboundMediaMessage({
   caption: string | null;
   responsePayload: WhatsAppSendResponse;
   messageType: string;
+  fileName?: string | null;    // 🟢 NEW
+  fileSize?: number | null;    // 🟢 NEW
+  mimeType?: string | null;    // 🟢 NEW
 }) {
   const contactId = await ensureContact(supabaseClient, {
     waId: recipientWaId,
@@ -142,7 +157,7 @@ async function persistOutboundMediaMessage({
     console.error('[sendMediaMessage][persist] Missing WHATSAPP_TEST_NUMBER in environment variables.');
   }
 
-  // 🟢 FIX: Use correct parameter names
+  // 🟢 ENHANCED: Now includes fileName, fileSize, mimeType
   await insertMessage(supabaseClient, {
     conversationId,
     direction: 'outgoing',
@@ -155,6 +170,9 @@ async function persistOutboundMediaMessage({
     rawPayload: responsePayload,
     fromNumber,
     toNumber,
+    fileName: fileName || null,      // 🟢 NEW
+    fileSize: fileSize || null,      // 🟢 NEW
+    mimeType: mimeType || null,      // 🟢 NEW
   });
 }
 
@@ -217,6 +235,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    // 🟢 ENHANCED: Now passes fileName, fileSize, mimeType to persistence
     await persistOutboundMediaMessage({
       supabaseClient: supabase,
       recipientWaId: recipient,
@@ -224,6 +243,9 @@ export async function POST(request: NextRequest) {
       caption: body.caption ?? null,
       responsePayload: result,
       messageType: body.type,
+      fileName: body.fileName || null,     // 🟢 NEW
+      fileSize: body.fileSize || null,     // 🟢 NEW
+      mimeType: body.mimeType || null,     // 🟢 NEW
     });
   } catch (error) {
     console.error('[sendMediaMessage][POST] Failed to persist outbound media message.', error);
