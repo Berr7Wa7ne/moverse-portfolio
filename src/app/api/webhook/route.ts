@@ -262,7 +262,10 @@ async function extractIncomingMessage(message: any, supabase: SupabaseClientInst
   const type = message.type;
 
   console.log('[webhook][extract] Processing message type:', type);
-  console.log('[webhook][extract] Full message object:', JSON.stringify(message, null, 2));
+  
+  // 🔍 CRITICAL DEBUG - Log the ENTIRE message object
+  console.log('[webhook][extract] FULL MESSAGE OBJECT:');
+  console.log(JSON.stringify(message, null, 2));
 
   // TEXT
   if (type === 'text' && message.text?.body) {
@@ -295,23 +298,47 @@ async function extractIncomingMessage(message: any, supabase: SupabaseClientInst
     };
   }
 
-  // Media types - FIXED FILENAME EXTRACTION
+  // Media types - ENHANCED DEBUG
   const mediaTypes = ['image', 'video', 'audio', 'document'] as const;
   if (mediaTypes.includes(type as any)) {
     const media = message[type] ?? {};
     const caption = media?.caption ?? null;
     
-    // 🔥 FIX: Proper filename extraction from WhatsApp webhook
-    // WhatsApp sends filename in media.filename (NOT media.file_name)
-    const originalFileName = media?.filename || null;
-    const originalMimeType = media?.mime_type || null;
+    // 🔍 CRITICAL DEBUG - Log the ENTIRE media object
+    console.log('[webhook][extract] FULL MEDIA OBJECT:');
+    console.log(JSON.stringify(media, null, 2));
+    
+    // Try EVERY possible filename field
+    const possibleFilenames = {
+      'media.filename': media?.filename,
+      'media.file_name': media?.file_name,
+      'media.fileName': media?.fileName,
+      'message.document.filename': message.document?.filename,
+      'message.video.filename': message.video?.filename,
+      'message.audio.filename': message.audio?.filename,
+      'message.image.filename': message.image?.filename,
+    };
+    
+    console.log('[webhook][extract] ALL POSSIBLE FILENAME FIELDS:');
+    console.log(JSON.stringify(possibleFilenames, null, 2));
+    
+    // Use the first non-null filename we find
+    const originalFileName = 
+      media?.filename || 
+      media?.file_name || 
+      media?.fileName ||
+      message[type]?.filename ||
+      null;
+    
+    const originalMimeType = media?.mime_type || media?.mimeType || null;
 
+    console.log('[webhook][extract] SELECTED FILENAME:', originalFileName);
     console.log('[webhook][extract] Media message:', { 
       type, 
       hasId: !!media?.id, 
       hasLink: !!media?.link,
       caption,
-      fileName: originalFileName,      // This should now show the real filename
+      fileName: originalFileName,
       mimeType: originalMimeType
     });
 
@@ -331,7 +358,7 @@ async function extractIncomingMessage(message: any, supabase: SupabaseClientInst
     // If only an id is provided, download and store
     if (media?.id) {
       console.log('[webhook][extract] Downloading media with id:', media.id);
-      console.log('[webhook][extract] Original filename:', originalFileName);
+      console.log('[webhook][extract] Will use filename:', originalFileName);
       
       const result = await downloadAndStoreMedia(
         media.id, 
@@ -343,14 +370,13 @@ async function extractIncomingMessage(message: any, supabase: SupabaseClientInst
       
       if (result.url) {
         console.log('[webhook][extract] Media stored successfully:', result.url);
-        console.log('[webhook][extract] Stored filename:', result.fileName);
+        console.log('[webhook][extract] Result filename:', result.fileName);
         
         return { 
           type, 
           text: null, 
           mediaUrl: result.url, 
           caption,
-          // Use the original filename from WhatsApp, fallback to stored filename
           fileName: originalFileName || result.fileName,
           fileSize: result.fileSize,
           mimeType: result.mimeType || originalMimeType
