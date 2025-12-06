@@ -1,4 +1,4 @@
-// sendMediaMessage/route.ts - FIXED VERSION
+// sendMediaMessage/route.ts - UPDATED to accept either 'to' or 'chatRoomId'
 
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
@@ -33,15 +33,16 @@ export async function OPTIONS() {
   });
 }
 
-// 🟢 ENHANCED: Added fileName, fileSize, mimeType
+// 🟢 ENHANCED: Accept either 'to' (phone) or 'chatRoomId' (conversation)
 type SendMediaMessageRequest = {
-  to: string;
+  to?: string;                // Phone number (optional if chatRoomId is provided)
+  chatRoomId?: string;        // 🟢 NEW - Conversation ID (optional if to is provided)
   type: 'image' | 'video' | 'audio' | 'document';
   mediaUrl: string;
   caption?: string;
-  fileName?: string;      // 🟢 NEW
-  fileSize?: number;      // 🟢 NEW
-  mimeType?: string;      // 🟢 NEW
+  fileName?: string;
+  fileSize?: number;
+  mimeType?: string;
 };
 
 type WhatsAppSendResponse = {
@@ -53,7 +54,10 @@ type WhatsAppSendResponse = {
 };
 
 function validateMediaPayload(body: SendMediaMessageRequest): string | null {
-  if (!body?.to) return 'Recipient phone number (to) is required.';
+  // 🟢 CHANGED: Accept either 'to' or 'chatRoomId'
+  if (!body?.to && !body?.chatRoomId) {
+    return 'Either recipient phone number (to) or conversation ID (chatRoomId) is required.';
+  }
   if (!body?.type) return 'Media type is required.';
   if (!body?.mediaUrl) return 'mediaUrl is required.';
   if (!['image', 'video', 'audio', 'document'].includes(body.type)) {
@@ -106,7 +110,6 @@ function buildMediaPayload(body: SendMediaMessageRequest & { recipient: string }
       document: {
         link: mediaUrl,
         ...(caption ? { caption } : {}),
-        // 🟢 IMPORTANT: WhatsApp supports filename in document messages
         ...(fileName ? { filename: fileName } : {}),
       },
     };
@@ -119,10 +122,10 @@ function extractMessageId(response: WhatsAppSendResponse): string {
   return response.messages?.[0]?.id ?? crypto.randomUUID();
 }
 
-// 🟢 ENHANCED: Added fileName, fileSize, mimeType parameters
 async function persistOutboundMediaMessage({
   supabaseClient,
   recipientWaId,
+  conversationId,
   mediaUrl,
   caption,
   responsePayload,
@@ -133,23 +136,15 @@ async function persistOutboundMediaMessage({
 }: {
   supabaseClient: SupabaseClientInstance;
   recipientWaId: string;
+  conversationId: string;
   mediaUrl: string;
   caption: string | null;
   responsePayload: WhatsAppSendResponse;
   messageType: string;
-  fileName?: string | null;    // 🟢 NEW
-  fileSize?: number | null;    // 🟢 NEW
-  mimeType?: string | null;    // 🟢 NEW
+  fileName?: string | null;
+  fileSize?: number | null;
+  mimeType?: string | null;
 }) {
-  const contactId = await ensureContact(supabaseClient, {
-    waId: recipientWaId,
-    profileName: null,
-  });
-
-  const conversationId = await ensureConversation(supabaseClient, {
-    contactId,
-  });
-
   const fromNumber = process.env.WHATSAPP_TEST_NUMBER?.replace('+', '') ?? '';
   const toNumber = recipientWaId;
 
@@ -157,7 +152,6 @@ async function persistOutboundMediaMessage({
     console.error('[sendMediaMessage][persist] Missing WHATSAPP_TEST_NUMBER in environment variables.');
   }
 
-  // 🟢 ENHANCED: Now includes fileName, fileSize, mimeType
   await insertMessage(supabaseClient, {
     conversationId,
     direction: 'outgoing',
@@ -170,9 +164,9 @@ async function persistOutboundMediaMessage({
     rawPayload: responsePayload,
     fromNumber,
     toNumber,
-    fileName: fileName || null,      // 🟢 NEW
-    fileSize: fileSize || null,      // 🟢 NEW
-    mimeType: mimeType || null,      // 🟢 NEW
+    fileName: fileName || null,
+    fileSize: fileSize || null,
+    mimeType: mimeType || null,
   });
 }
 
@@ -210,10 +204,73 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const recipient = normalizePhoneNumber(body.to);
+  // 🟢 NEW: If chatRoomId is provided, lookup the phone number
+  let recipient: string;
+  let conversationId: string;
+
+  if (body.chatRoomId) {
+    console.log('[sendMediaMessage][POST] Looking up conversation:', body.chatRoomId);
+    
+    const { data: conv, error: convErr } = await supabase
+      .from('conversations')
+      .select('id, contact_id, contacts:contact_id(phone_number)')
+      .eq('id', body.chatRoomId)
+      .maybeSingle();
+
+    if (convErr || !conv) {
+      console.error('[sendMediaMessage][POST] Conversation lookup failed:', convErr);
+      return NextResponse.json(
+        { error: 'Conversation not found', details: convErr },
+        { status: 404, headers: corsHeaders() },
+      );
+    }
+
+    const phoneNumber = conv.contacts?.phone_number;
+    if (!phoneNumber) {
+      console.error('[sendMediaMessage][POST] Contact phone number missing');
+      return NextResponse.json(
+        { error: 'Contact phone number is missing' },
+        { status: 404, headers: corsHeaders() },
+      );
+    }
+
+    recipient = normalizePhoneNumber(phoneNumber);
+    conversationId = conv.id;
+    
+    console.log('[sendMediaMessage][POST] Found recipient:', recipient);
+  } else {
+    // Use the provided phone number
+    recipient = normalizePhoneNumber(body.to!);
+    
+    // Lookup or create conversation for this phone number
+    const { data: contact } = await supabase
+      .from('contacts')
+      .select('id')
+      .eq('phone_number', recipient)
+      .maybeSingle();
+
+    if (contact) {
+      const { data: conv } = await supabase
+        .from('conversations')
+        .select('id')
+        .eq('contact_id', contact.id)
+        .maybeSingle();
+
+      conversationId = conv?.id || '';
+    } else {
+      conversationId = '';
+    }
+  }
+
   const payload = buildMediaPayload({ ...body, recipient });
 
-  console.log('[sendMediaMessage][POST] Outgoing payload', payload);
+  console.log('[sendMediaMessage][POST] Outgoing payload', {
+    ...payload,
+    document: payload.document ? {
+      ...payload.document,
+      link: '...'
+    } : undefined
+  });
 
   const response = await fetch(`${WHATSAPP_API_BASE}/${phoneNumberId}/messages`, {
     method: 'POST',
@@ -234,21 +291,24 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  try {
-    // 🟢 ENHANCED: Now passes fileName, fileSize, mimeType to persistence
-    await persistOutboundMediaMessage({
-      supabaseClient: supabase,
-      recipientWaId: recipient,
-      mediaUrl: body.mediaUrl,
-      caption: body.caption ?? null,
-      responsePayload: result,
-      messageType: body.type,
-      fileName: body.fileName || null,     // 🟢 NEW
-      fileSize: body.fileSize || null,     // 🟢 NEW
-      mimeType: body.mimeType || null,     // 🟢 NEW
-    });
-  } catch (error) {
-    console.error('[sendMediaMessage][POST] Failed to persist outbound media message.', error);
+  // Persist to database if we have a conversationId
+  if (conversationId) {
+    try {
+      await persistOutboundMediaMessage({
+        supabaseClient: supabase,
+        recipientWaId: recipient,
+        conversationId: conversationId,
+        mediaUrl: body.mediaUrl,
+        caption: body.caption ?? null,
+        responsePayload: result,
+        messageType: body.type,
+        fileName: body.fileName || null,
+        fileSize: body.fileSize || null,
+        mimeType: body.mimeType || null,
+      });
+    } catch (error) {
+      console.error('[sendMediaMessage][POST] Failed to persist outbound media message.', error);
+    }
   }
 
   return NextResponse.json(
