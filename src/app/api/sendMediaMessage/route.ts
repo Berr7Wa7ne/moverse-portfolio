@@ -1,4 +1,4 @@
-// sendMediaMessage/route.ts - UPDATED to accept either 'to' or 'chatRoomId'
+// sendMediaMessage/route.ts - FIXED Supabase query syntax
 
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
@@ -33,10 +33,9 @@ export async function OPTIONS() {
   });
 }
 
-// 🟢 ENHANCED: Accept either 'to' (phone) or 'chatRoomId' (conversation)
 type SendMediaMessageRequest = {
-  to?: string;                // Phone number (optional if chatRoomId is provided)
-  chatRoomId?: string;        // 🟢 NEW - Conversation ID (optional if to is provided)
+  to?: string;
+  chatRoomId?: string;
   type: 'image' | 'video' | 'audio' | 'document';
   mediaUrl: string;
   caption?: string;
@@ -54,7 +53,6 @@ type WhatsAppSendResponse = {
 };
 
 function validateMediaPayload(body: SendMediaMessageRequest): string | null {
-  // 🟢 CHANGED: Accept either 'to' or 'chatRoomId'
   if (!body?.to && !body?.chatRoomId) {
     return 'Either recipient phone number (to) or conversation ID (chatRoomId) is required.';
   }
@@ -204,18 +202,24 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // 🟢 NEW: If chatRoomId is provided, lookup the phone number
   let recipient: string;
   let conversationId: string;
 
   if (body.chatRoomId) {
     console.log('[sendMediaMessage][POST] Looking up conversation:', body.chatRoomId);
     
+    // 🟢 FIXED: Proper Supabase join syntax
     const { data: conv, error: convErr } = await supabase
       .from('conversations')
-      .select('id, contact_id, contacts:contact_id(phone_number)')
+      .select(`
+        id,
+        contact_id,
+        contacts!inner (
+          phone_number
+        )
+      `)
       .eq('id', body.chatRoomId)
-      .maybeSingle();
+      .single();
 
     if (convErr || !conv) {
       console.error('[sendMediaMessage][POST] Conversation lookup failed:', convErr);
@@ -225,7 +229,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const phoneNumber = conv.contacts?.phone_number;
+    // 🟢 FIXED: Access the joined contact data correctly
+    const phoneNumber = (conv.contacts as any)?.phone_number;
     if (!phoneNumber) {
       console.error('[sendMediaMessage][POST] Contact phone number missing');
       return NextResponse.json(
@@ -291,7 +296,6 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Persist to database if we have a conversationId
   if (conversationId) {
     try {
       await persistOutboundMediaMessage({
