@@ -1,19 +1,26 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { fetchBlogPostBySlugFromCMS } from '@/lib/cms/sanity';
-import { NextRequest } from 'next/server';
 
 export const revalidate = 300;
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  context: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const post = await fetchBlogPostBySlugFromCMS(params.slug);
-    console.log('[blog detail API] Source: Sanity CMS', { slug: params.slug, found: !!post });
+    const { slug } = await context.params;
+
+    const post = await fetchBlogPostBySlugFromCMS(slug);
+
+    console.log('[blog detail API] Source: Sanity CMS', {
+      slug,
+      found: !!post,
+    });
+
     if (!post) {
       return NextResponse.json({ error: 'Not found' }, { status: 404 });
     }
+
     return NextResponse.json({ post });
   } catch (error) {
     console.error('Error fetching blog post:', error);
