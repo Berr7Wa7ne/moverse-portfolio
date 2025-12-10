@@ -19,25 +19,26 @@ import ScrollToSectionClient from '@/components/util/ScrollToSectionClient';
 export default function Home() {
   return (
     <SplashScreenWrapper>
-      <div className="min-h-screen">
-      <TopBar />
-      <Header />
-      <main>
-        <ScrollToSectionClient />
-        <HeroSection />
-        <TransformingIdeasSection />
-        <ServicesSection />
-        <WorkProcessSection />
-        <TrustSection />
-        <ShowcaseSection />
-        <QuoteFormSection />
-        <TestimonialsSection />
-        <TeamSection />
-        <BlogSection />
-        <FAQSection />
-        <NewsletterSection />
-      </main>
-      <Footer />
+      <div className="min-h-screen relative overflow-x-hidden">
+        <div className="fixed top-0 right-0 bottom-0 w-0.5 bg-red-500 z-50"></div>
+        <TopBar />
+        <Header />
+        <main>
+          <ScrollToSectionClient />
+          <HeroSection />
+          <TransformingIdeasSection />
+          <ServicesSection />
+          <WorkProcessSection />
+          <TrustSection />
+          <ShowcaseSection />
+          <QuoteFormSection />
+          <TestimonialsSection />
+          <TeamSection />
+          <BlogSection />
+          <FAQSection />
+          <NewsletterSection />
+        </main>
+        <Footer />
       </div>
     </SplashScreenWrapper>
   );
