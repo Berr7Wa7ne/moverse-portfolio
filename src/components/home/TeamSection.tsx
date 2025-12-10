@@ -48,7 +48,7 @@ const TeamSection: React.FC = () => {
   ];
 
   return (
-    <section className="section-padding bg-white">
+    <section className="pb-5 pt-10 md:py-20 lg:py-24 bg-white">
       <div className="container">
         <ScrollReveal>
           <div className="flex justify-between items-start mb-4">
@@ -58,19 +58,19 @@ const TeamSection: React.FC = () => {
             </p>
           </div>
 
-          <div className="text-start mb-16">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--primary-blue)] leading-tight">
+          <div className="text-start mb-8 sm:mb-12 md:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--primary-blue)] leading-tight">
               Meet Our <span className="text-[var(--accent-blue)]">Expert team</span>
             </h2>
           </div>
         </ScrollReveal>
 
         <div className="flex justify-center">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-20">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 lg:gap-20">
             {teamMembers.map((member, index) => (
               <div key={index} className="group">
                 {/* Profile Image Container with Social Icons */}
-                <div className="relative w-96 h-96 mx-auto mb-14">
+                <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 mx-auto mb-8 sm:mb-14">
                   {/* Main circular profile image with much wider white border and shadow */}
                   <Link href={`/team/${member.slug}`} className="block">
                     <div className="relative w-full h-full aspect-square rounded-full bg-white p-12 shadow-2xl group-hover:shadow-3xl group-hover:shadow-[var(--accent-blue)]/20 transition-all duration-300">
@@ -93,7 +93,7 @@ const TeamSection: React.FC = () => {
   rel="noopener noreferrer"
   aria-label={socialLinks[0].name}
   className="absolute w-10 h-10 rounded-full bg-[var(--accent-blue)] hover:bg-[var(--primary-blue)] transition-all duration-300 shadow-md hover:shadow-lg hover:shadow-[var(--accent-blue)]/30 hover:scale-110 flex items-center justify-center group-hover:translate-x-1 pointer-events-auto"
-  style={{ top: '-80px', right: '12px' }} // ⬅️ Increased from -60px to -80px
+  style={{ top: '-80px', right: '12px' }} // 
 >
   <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" className="w-4 h-4 text-white">
     <path d={socialLinks[0].svgPath} />
@@ -121,7 +121,7 @@ const TeamSection: React.FC = () => {
   rel="noopener noreferrer"
   aria-label={socialLinks[2].name}
   className="absolute w-10 h-10 rounded-full bg-[var(--accent-blue)] hover:bg-[var(--primary-blue)] transition-all duration-300 shadow-md hover:shadow-lg hover:shadow-[var(--accent-blue)]/30 hover:scale-110 flex items-center justify-center group-hover:translate-x-1 pointer-events-auto"
-  style={{ top: '80px', right: '12px', transitionDelay: '100ms' }} // ⬅️ Increased from 60px to 80px
+  style={{ top: '80px', right: '12px', transitionDelay: '100ms' }} // 
 >
   <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" className="w-4 h-4 text-white">
     <path d={socialLinks[2].svgPath} />
@@ -133,10 +133,10 @@ const TeamSection: React.FC = () => {
 
                 {/* Name and Title */}
                 <Link href={`/team/${member.slug}`} className="block text-center">
-                  <h3 className="text-2xl font-bold text-black mb-1 group-hover:text-[var(--primary-blue)] transition-colors duration-300">
+                  <h3 className="text-xl sm:text-2xl font-bold text-black mb-1 group-hover:text-[var(--primary-blue)] transition-colors duration-300">
                     {member.name}
                   </h3>
-                  <p className="text-xl text-[var(--accent-blue)]">
+                  <p className="text-lg sm:text-xl text-[var(--accent-blue)]">
                     {member.title}
                   </p>
                 </Link>

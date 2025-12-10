@@ -8,27 +8,27 @@ const ServicesSection: React.FC = () => {
   const services = getFeaturedServices();
 
   return (
-    <section className="section-padding bg-white">
+    <section className="py-12 md:py-20 lg:pt-24 bg-white">
       <div className="container">
         {/* Section Header */}
         <ScrollReveal>
-          <div className="flex justify-between items-center mb-16 mr-20">
-            <div>
-              <p className="text-[16px] text-gray-500 tracking-wider flex items-center gap-3">
-                <span className="block w-20 h-[2px] bg-gray-500"></span>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-12 md:mb-16">
+            <div className="mb-4 sm:mb-0">
+              <p className="text-sm sm:text-[16px] text-gray-500 tracking-wider flex items-center gap-2 sm:gap-3">
+                <span className="hidden sm:block w-12 sm:w-20 h-[2px] bg-gray-500"></span>
                 Our Services
               </p>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--primary-blue)] leading-tight mb-6">
-                <span className="block">Services we provide to</span>
-                <span className="block text-[var(--accent-blue)]">
-                  Elevate Your Business
-                </span>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--primary-blue)] leading-tight mb-2">
+                Our <span className="text-[var(--accent-blue)]">Services</span>
               </h2>
+              <p className="text-sm sm:text-base text-gray-600">
+                Services we provide to help your business grow
+              </p>
             </div>
 
-            <Link href="/services" className="btn-primary inline-flex items-center gap-2 hover:gap-3 transition-all">
-              <span>View All Services</span>
-              <ArrowRight className="w-5 h-5" />
+            <Link href="/services" className="inline-flex items-center gap-2 text-sm sm:text-base text-[var(--primary-blue)] hover:text-[var(--accent-blue)] transition-colors group">
+              <span className="font-medium">View all services</span>
+              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
         </ScrollReveal>

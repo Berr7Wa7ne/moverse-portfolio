@@ -35,14 +35,14 @@ const TrustSection: React.FC = () => {
         <div className="container">
           {/* Section Header */}
           <ScrollReveal>
-          <div className='flex items-center justify-between mb-5'>
-            <p className="text-[16px] text-gray-50 tracking-wider flex items-center gap-3">
-              <span className="block w-20 h-[2px] bg-gray-50"></span>
+          <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-5'>
+            <p className="text-sm sm:text-[16px] text-gray-50 tracking-wider flex items-center gap-3">
+              <span className="hidden sm:block w-12 sm:w-20 h-[2px] bg-gray-50"></span>
               Why Choose Us
             </p>
-            <Link href="/contact" className="btn-primary inline-flex items-center gap-2 hover:gap-3 transition-all">
+            <Link href="/contact" className="btn-primary text-sm sm:text-base inline-flex items-center gap-2 hover:gap-3 transition-all w-full sm:w-auto justify-center">
               <span>Get a Quote</span>
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </Link>
           </div>
           </ScrollReveal>
@@ -51,7 +51,7 @@ const TrustSection: React.FC = () => {
             {/* Left Content */}
             <div className="text-white space-y-8">
               <div className="space-y-4">
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
                   Why Trust Us For Your{' '}
                   <span className="text-[var(--accent-blue)]">IT Needs?</span>
                 </h2>
@@ -68,7 +68,7 @@ const TrustSection: React.FC = () => {
             </div>
 
             {/* Right Content - Features Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               {features.map((feature, index) => {
                 const Icon = feature.icon;
                 return (

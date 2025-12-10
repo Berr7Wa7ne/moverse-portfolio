@@ -44,7 +44,7 @@ const NewsletterSection: React.FC = () => {
   };
 
   return (
-    <section className="section-padding bg-white">
+    <section className="py-12 md:py-20 lg:py-24 bg-white">
       <ScrollReveal>
         <div className="container">
           <div className="text-center max-w-4xl mx-auto">
