@@ -26,24 +26,24 @@ const socialLinks = [
 const TeamSection: React.FC = () => {
   const teamMembers = [
     {
-      name: 'Jasso',
-      title: 'Chief Executive Officer',
-      image: '/jasso.jpg',
-      slug: 'jasso',
+      name: 'Emmanuel Akinwolemiwa',
+      title: 'Web Developer & Digital Strategist',
+      image: '/emma-passport-.jpg',
+      slug: 'emma',
     },
     {
       name: 'Magdalene',
       title: 'Lead UI/UX Designer',
       image:
-        '/Magdalene.jpg',
+        '/Magdalene-.jpg',
       slug: 'magdalene-garba',
     },
     {
-      name: 'Sly Madueke',
+      name: 'Uke Cosmas',
       title: 'Senior Full-Stack Developer',
       image:
-        '/Sly.jpg',
-      slug: 'sly-madueke',
+        '/profile-.jpg',
+      slug: 'uke-cosmas',
     },
   ];
 
@@ -78,7 +78,12 @@ const TeamSection: React.FC = () => {
                         <img
                           src={member.image}
                           alt={member.name}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                          className="
+                            w-full h-full
+                            object-cover
+                            object-[50%_20%]
+                            transition-transform duration-300
+                          "
                         />
                       </div>
                     </div>

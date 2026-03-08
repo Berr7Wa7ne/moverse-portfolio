@@ -17,28 +17,28 @@ const TeamDetailPage: React.FC = () => {
 
   // Team member data - in a real app, this would come from an API or CMS
   const teamMembers = {
-    'jasso': {
-      name: 'Jasso',
-      position: 'Chief Executive Officer',
-      email: 'jasso@company.com',
-      phone: '+0123-458-789',
-      experience: '8+ Years of Experience',
-      bio: 'Jasso is a visionary leader with over 8 years of experience in the technology industry. She has a proven track record of driving innovation and leading teams to deliver exceptional results. Her expertise in strategic planning and business development has been instrumental in our company\'s growth.',
+    'emma': {
+      name: 'Emmanuel Akinwolemiwa',
+      position: 'Web Developer & Digital Strategist',
+      email: 'Email: emma@moverse.com',
+      phone: '+2348141515437',
+      experience: '6+ Years of Experience',
+      bio: 'Emmanuel Akinwolemiwa is a versatile digital professional with strong expertise in web development, graphic design, SEO, and digital marketing. He has hands-on experience managing and optimizing websites, creating compelling visual and social media content, and implementing SEO strategies to improve online visibility and audience engagement. Emmanuel has worked with organizations such as The News Chronicle and Space Stylist, where he contributed to brand growth through effective digital solutions. He is a proactive, detail-oriented professional who thrives in dynamic environments and is passionate about using technology and creativity to deliver impactful results.',
       skills: [
         { name: 'Communication', percentage: 85 },
-        { name: 'Leading', percentage: 95 },
+        { name: 'Digital Marketing', percentage: 95 },
         { name: 'Time management', percentage: 80 },
-        { name: 'Client response', percentage: 80 },
-        { name: 'Networking', percentage: 95 },
+        { name: 'Website design', percentage: 80 },
+        { name: 'Video Editing', percentage: 95 },
         { name: 'Adaptibility', percentage: 85 }
       ],
       social: {
-        facebook: '#',
+        facebook: 'https://www.facebook.com/share/1DVYzrMpNG/',
         twitter: '#',
-        instagram: '#',
+        instagram: 'https://www.instagram.com/emmaweb_47?igsh=MXI3dnRpanVreHdsMA==',
         linkedin: '#'
       },
-      image: '/jasso.jpg'
+      image: '/emma-passport.jpg'
     },
     'magdalene-garba': {
       name: 'Magdalene',
@@ -63,28 +63,28 @@ const TeamDetailPage: React.FC = () => {
       },
       image: '/Magdalene.jpg'
     },
-    'sly-madueke': {
-      name: 'Sly Madueke',
+    'uke-cosmas': {
+      name: 'Uke Cosmas',
       position: 'Senior Full-Stack Developer',
-      email: 'sly@company.com',
-      phone: '+0123-458-791',
-      experience: '7+ Years of Experience',
-      bio: 'Sly is a full-stack developer with expertise in modern web technologies. He has built scalable applications for startups and enterprise clients, with a focus on performance and security.',
+      email: 'ahakiricosmas@gmail.com',
+      phone: '+2348108962585',
+      experience: '5+ Years of Experience',
+      bio: 'Uke Cosmas is a results-driven Full Stack Software Engineer who thrives at the intersection of clean code, thoughtful design, and real-world impact. With over 5 years of hands-on experience, he builds scalable, user-focused web applications using React, Next.js, Node.js, and modern databases. Beyond traditional web development, Uke brings a strong interest in AI and data-driven solutions, having contributed to intelligent systems in the fin-tech space. He is passionate about turning complex problems into elegant digital experiences and continuously evolving his craft to create products that deliver measurable value.',
       skills: [
         { name: 'React/Next.js', percentage: 95 },
         { name: 'Node.js', percentage: 90 },
-        { name: 'Python', percentage: 85 },
-        { name: 'Database Design', percentage: 88 },
+        { name: 'Python', percentage: 75 },
+        { name: 'Database Design', percentage: 90 },
         { name: 'Cloud Architecture', percentage: 82 },
         { name: 'DevOps', percentage: 75 }
       ],
       social: {
         facebook: '#',
-        twitter: '#',
+        twitter: 'https://x.com/CosyBerry18490',
         instagram: '#',
-        linkedin: '#'
+        linkedin: 'https://www.linkedin.com/in/ahakiri-uke-444619351/'
       },
-      image: '/Sly.jpg'
+      image: '/profile.jpg'
     },
     'emily-rodriguez': {
       name: 'Emily Rodriguez',

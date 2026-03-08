@@ -22,7 +22,7 @@ export const MemberProfile: React.FC<MemberProfileProps> = ({ name, position, bi
 			<div className="container">
 				<div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
 					<div className="relative">
-						<img src={image} alt={name} className="w-full h-96 lg:h-[500px] object-cover rounded-2xl shadow-lg" />
+						<img src={image} alt={name} className="w-full h-96 lg:h-[500px] object-cover object-[50%_15%] rounded-2xl" />
 					</div>
 					<div>
 						<h2 className="text-3xl md:text-4xl font-bold text-[var(--primary-blue)] mb-6">{name}</h2>
