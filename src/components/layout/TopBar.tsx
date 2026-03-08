@@ -24,8 +24,8 @@ const TopBar: React.FC = () => {
       <div className="container flex justify-between items-center text-sm">
         {/* Contact Info */}
         <div className="flex items-center gap-6">
-          <span>1-800-234-5678</span>
-          <span>info@company.com</span>
+          <span>+234-810-896-2585</span>
+          <span>info@moversetechnologies.com</span>
         </div>
 
         {/* Social Media Icons */}
