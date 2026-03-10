@@ -27,6 +27,29 @@ jobs:
 
       - name: Build Next.js app
         run: npm run build
+        env:
+          SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
+          SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
+          SANITY_API_VERSION: ${{ secrets.SANITY_API_VERSION }}
+          USE_CMS: ${{ secrets.USE_CMS }}
+          NEXT_PUBLIC_USE_CMS: ${{ secrets.NEXT_PUBLIC_USE_CMS }}
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+          NEXT_PUBLIC_SANITY_API_VERSION: ${{ secrets.NEXT_PUBLIC_SANITY_API_VERSION }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          COMPANY_EMAIL: ${{ secrets.COMPANY_EMAIL }}
+          WHATSAPP_TOKEN: ${{ secrets.WHATSAPP_TOKEN }}
+          WHATSAPP_PHONE_NUMBER_ID: ${{ secrets.WHATSAPP_PHONE_NUMBER_ID }}
+          WHATSAPP_BUSINESS_ACCOUNT_ID: ${{ secrets.WHATSAPP_BUSINESS_ACCOUNT_ID }}
+          WHATSAPP_TEST_NUMBER: ${{ secrets.WHATSAPP_TEST_NUMBER }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          NEXT_PUBLIC_CRISP_WEBSITE_ID: ${{ secrets.NEXT_PUBLIC_CRISP_WEBSITE_ID }}
+          NEXT_PUBLIC_WHATSAPP_PHONE: ${{ secrets.NEXT_PUBLIC_WHATSAPP_PHONE }}
+          WHATSAPP_VERIFY_TOKEN: ${{ secrets.WHATSAPP_VERIFY_TOKEN }}
+          NEXT_PUBLIC_WHATSAPP_DEFAULT_MESSAGE: ${{ secrets.NEXT_PUBLIC_WHATSAPP_DEFAULT_MESSAGE }}
+          CORS_ORIGIN: ${{ secrets.CORS_ORIGIN }}
 
       - name: Commit and push built .next folder
         run: |
