@@ -55,7 +55,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./.next/
-          server-dir: /home/moverseh/moversehaste/.next/
+          server-dir: .next/
           dangerous-clean-slate: false
 
       - name: Deploy public folder via FTP
@@ -65,9 +65,9 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./public/
-          server-dir: /home/moverseh/moversehaste/public/
+          server-dir: public/
           dangerous-clean-slate: false
-
+          
       - name: Trigger cPanel restart via API
         run: |
           curl -s "https://s4.whitelabelclouds.com:2083/execute/VersionControl/deploy" \
