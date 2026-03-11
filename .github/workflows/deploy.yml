@@ -65,7 +65,10 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./.next/
           server-dir: .next/
-          dangerous-clean-slate: false
+          dangerous-clean-slate: true
+          exclude: |
+            **/cache/**
+          log-level: verbose
 
       - name: Deploy public folder via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
