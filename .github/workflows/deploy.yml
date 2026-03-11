@@ -54,6 +54,7 @@ jobs:
           host: ${{ secrets.CPANEL_HOST }}
           username: ${{ secrets.CPANEL_USER }}
           key: ${{ secrets.CPANEL_SSH_KEY }}
+          port: ${{ secrets.CPANEL_PORT }}
           script: |
             cd /home/moverseh/moversehaste
             source /home/moverseh/nodevenv/moversehaste/20/bin/activate
