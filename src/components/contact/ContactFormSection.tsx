@@ -229,7 +229,7 @@ const ContactFormSection: React.FC = () => {
                 <h3 className="text-lg font-bold mb-4">Address</h3>
                 <div className="space-y-2 text-white/80">
                   <p>No. 3 Thunder Close</p>
-                  <p>Jikwoyi Phase I Extension - Abuja</p>
+                  <p>Jikwoyi Phase 1 Extension - Abuja</p>
                   <p>Nigeria</p>
                 </div>
               </div>
