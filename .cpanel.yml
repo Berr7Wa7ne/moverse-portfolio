@@ -1,9 +1,4 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/moverseh/moversehaste
-    - /bin/cp -R .next $DEPLOYPATH
-    - /bin/cp -R public $DEPLOYPATH
-    - /bin/cp package.json $DEPLOYPATH
-    - /bin/cp next.config.js $DEPLOYPATH
-    - cd $DEPLOYPATH && source /home/moverseh/nodevenv/moversehaste/20/bin/activate && npm install --production
+    - echo "Deployment handled by GitHub Actions"

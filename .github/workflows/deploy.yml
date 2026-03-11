@@ -12,9 +12,6 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GH_TOKEN }}
-          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -51,10 +48,15 @@ jobs:
           NEXT_PUBLIC_WHATSAPP_DEFAULT_MESSAGE: ${{ secrets.NEXT_PUBLIC_WHATSAPP_DEFAULT_MESSAGE }}
           CORS_ORIGIN: ${{ secrets.CORS_ORIGIN }}
 
-      - name: Commit and push built .next folder
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add .next -f
-          git diff --staged --quiet || git commit -m "chore: update build output [skip ci]"
-          git push origin main
+      - name: Deploy to cPanel via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.CPANEL_HOST }}
+          username: ${{ secrets.CPANEL_USER }}
+          key: ${{ secrets.CPANEL_SSH_KEY }}
+          script: |
+            cd /home/moverseh/moversehaste
+            source /home/moverseh/nodevenv/moversehaste/20/bin/activate
+            git pull origin main
+            npm install --production
+            pm2 restart moversehaste || pm2 start npm --name moversehaste -- start
