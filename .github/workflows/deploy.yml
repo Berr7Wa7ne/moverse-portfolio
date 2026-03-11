@@ -55,7 +55,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./.next/
-          server-dir: /moversehaste/.next/
+          server-dir: /home/moverseh/moversehaste/.next/
           dangerous-clean-slate: false
 
       - name: Deploy public folder via FTP
@@ -65,7 +65,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./public/
-          server-dir: /moversehaste/public/
+          server-dir: /home/moverseh/moversehaste/public/
           dangerous-clean-slate: false
 
       - name: Trigger cPanel restart via API
