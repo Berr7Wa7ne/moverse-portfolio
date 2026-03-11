@@ -76,15 +76,15 @@ const Footer: React.FC = () => {
               <div className="space-y-3 text-lg text-white/80">
                 <a href="tel:002-828-232" className="flex items-center gap-3 hover:text-white transition-colors duration-300 group">
                   <Phone className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
-                  <span className="group-hover:scale-105 transition-transform duration-300">002-828-232</span>
+                  <span className="group-hover:scale-105 transition-transform duration-300">+234-810-896-2585</span>
                 </a>
                 <a href="mailto:chasman937@gmail.com" className="flex items-center gap-3 hover:text-white transition-colors duration-300 group">
                   <Mail className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
-                  <span className="group-hover:scale-105 transition-transform duration-300">chasman937@gmail.com</span>
+                  <span className="group-hover:scale-105 transition-transform duration-300">moversetechnologies@gmail.com</span>
                 </a>
                 <div className="flex items-center gap-3 hover:text-white transition-colors duration-300 group">
                   <MapPin className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
-                  <span className="group-hover:scale-105 transition-transform duration-300">775 Rolling Green Rd</span>
+                  <span className="group-hover:scale-105 transition-transform duration-300">No. 3 Thunder Close Jikwoyi - Abuja</span>
                 </div>
               </div>
             </div>
