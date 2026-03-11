@@ -48,6 +48,15 @@ jobs:
           NEXT_PUBLIC_WHATSAPP_DEFAULT_MESSAGE: ${{ secrets.NEXT_PUBLIC_WHATSAPP_DEFAULT_MESSAGE }}
           CORS_ORIGIN: ${{ secrets.CORS_ORIGIN }}
 
+      - name: Check .next exists
+        run: |
+          echo "Listing .next folder:"
+          ls -la .next/
+          echo "Listing .next/static:"
+          ls -la .next/static/ || echo "No static folder"
+          echo "Listing .next/server:"
+          ls -la .next/server/ || echo "No server folder"
+
       - name: Deploy .next folder via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -67,7 +76,7 @@ jobs:
           local-dir: ./public/
           server-dir: public/
           dangerous-clean-slate: false
-          
+
       - name: Trigger cPanel restart via API
         run: |
           curl -s "https://s4.whitelabelclouds.com:2083/execute/VersionControl/deploy" \
