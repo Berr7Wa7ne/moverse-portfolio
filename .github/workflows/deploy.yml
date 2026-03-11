@@ -57,6 +57,16 @@ jobs:
           echo "Listing .next/server:"
           ls -la .next/server/ || echo "No server folder"
 
+      - name: Deploy standalone server via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./.next/standalone/
+          server-dir: moversehaste/
+          dangerous-clean-slate: false
+
       - name: Deploy .next folder via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -64,11 +74,11 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./.next/
-          server-dir: /home/moverseh/moversehaste/.next/   # ← absolute path
+          server-dir: moversehaste/.next/
           dangerous-clean-slate: true
           exclude: |
             **/cache/**
-          log-level: verbose
+            **/standalone/**
 
       - name: Deploy public folder via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -77,7 +87,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./public/
-          server-dir: /home/moverseh/moversehaste/public/  # ← absolute path
+          server-dir: moversehaste/public/
           dangerous-clean-slate: false
 
       - name: Trigger cPanel restart via API
