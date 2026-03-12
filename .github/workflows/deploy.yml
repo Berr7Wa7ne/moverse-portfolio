@@ -48,16 +48,12 @@ jobs:
           NEXT_PUBLIC_WHATSAPP_DEFAULT_MESSAGE: ${{ secrets.NEXT_PUBLIC_WHATSAPP_DEFAULT_MESSAGE }}
           CORS_ORIGIN: ${{ secrets.CORS_ORIGIN }}
 
-      - name: Check .next exists
+      - name: Check standalone output
         run: |
-          echo "Listing .next folder:"
-          ls -la .next/
-          echo "Listing .next/static:"
-          ls -la .next/static/ || echo "No static folder"
-          echo "Listing .next/server:"
-          ls -la .next/server/ || echo "No server folder"
           echo "Listing .next/standalone:"
-          ls -la .next/standalone/ || echo "No standalone folder"
+          ls -la .next/standalone/
+          echo "Listing .next/standalone/.next (if exists):"
+          ls -la .next/standalone/.next/ || echo "No .next inside standalone"
 
       - name: Deploy standalone server via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -65,7 +61,7 @@ jobs:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./.next/standalone/
+          local-dir: ./.next/standalone/moversehaste/
           server-dir: moversehaste/
           dangerous-clean-slate: false
 
