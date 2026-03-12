@@ -56,6 +56,8 @@ jobs:
           ls -la .next/static/ || echo "No static folder"
           echo "Listing .next/server:"
           ls -la .next/server/ || echo "No server folder"
+          echo "Listing .next/standalone:"
+          ls -la .next/standalone/ || echo "No standalone folder"
 
       - name: Deploy standalone server via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -79,6 +81,7 @@ jobs:
           exclude: |
             **/cache/**
             **/standalone/**
+          log-level: verbose
 
       - name: Deploy public folder via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -90,8 +93,8 @@ jobs:
           server-dir: moversehaste/public/
           dangerous-clean-slate: false
 
-      - name: Trigger cPanel restart via API
+      - name: Restart Node.js app via cPanel API
         run: |
-          curl -s "https://s4.whitelabelclouds.com:2083/execute/VersionControl/deploy" \
+          curl -s "https://s4.whitelabelclouds.com:2083/execute/NodeJS/restart_app" \
             -H "Authorization: cpanel ${{ secrets.CPANEL_USER }}:${{ secrets.CPANEL_API_TOKEN }}" \
-            -d "repository_root=/home/moverseh/moversehaste"
+            -d "domain=moversehaste.com"
