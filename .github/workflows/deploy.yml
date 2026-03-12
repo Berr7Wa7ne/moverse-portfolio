@@ -61,23 +61,19 @@ jobs:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./.next/standalone/moversehaste/
+          local-dir: ./.next/standalone/
           server-dir: moversehaste/
           dangerous-clean-slate: false
 
-      - name: Deploy .next folder via FTP
+      - name: Deploy .next static assets via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./.next/
-          server-dir: moversehaste/.next/
+          local-dir: ./.next/static/
+          server-dir: moversehaste/.next/static/
           dangerous-clean-slate: true
-          exclude: |
-            **/cache/**
-            **/standalone/**
-          log-level: verbose
 
       - name: Deploy public folder via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
