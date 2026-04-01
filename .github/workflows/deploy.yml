@@ -55,6 +55,11 @@ jobs:
           echo "Listing .next/standalone/.next (if exists):"
           ls -la .next/standalone/.next/ || echo "No .next inside standalone"
 
+      - name: Prepare Passenger restart trigger
+        run: |
+          mkdir -p .next/standalone/tmp
+          date > .next/standalone/tmp/restart.txt
+
       - name: Deploy standalone server via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -85,8 +90,6 @@ jobs:
           server-dir: moversehaste/public/
           dangerous-clean-slate: false
 
-      - name: Restart Node.js app via cPanel API
+      - name: Verify site responds after Passenger restart
         run: |
-          curl -s "https://s4.whitelabelclouds.com:2083/execute/NodeJS/restart_app" \
-            -H "Authorization: cpanel ${{ secrets.CPANEL_USER }}:${{ secrets.CPANEL_API_TOKEN }}" \
-            -d "domain=moversehaste.com"
+          curl --fail --silent --show-error --retry 6 --retry-delay 5 https://moversehaste.com > /dev/null
