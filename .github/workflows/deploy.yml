@@ -67,8 +67,8 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./.next/standalone/
-          server-dir: moversehaste/
-          dangerous-clean-slate: false
+          server-dir: ./
+          dangerous-clean-slate: true
 
       - name: Deploy .next static assets via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -77,7 +77,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./.next/static/
-          server-dir: moversehaste/.next/static/
+          server-dir: ./.next/static/
           dangerous-clean-slate: true
 
       - name: Deploy public folder via FTP
@@ -87,8 +87,8 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./public/
-          server-dir: moversehaste/public/
-          dangerous-clean-slate: false
+          server-dir: ./public/
+          dangerous-clean-slate: true
 
       - name: Verify site responds after Passenger restart
         run: |
