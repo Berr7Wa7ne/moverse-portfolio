@@ -20,37 +20,27 @@ const socialLinks = [
 
 const TopBar: React.FC = () => {
   return (
-    <div className="hidden md:block bg-[var(--primary-blue)] text-white py-2 mb-0">
+    <div className="bg-[var(--primary-blue)] text-white py-2 mb-2 md:mb-0">
       <div className="container flex justify-between items-center text-sm">
         {/* Contact Info */}
         <div className="flex items-center gap-6">
-          <a
-            href="tel:+2348108962585"
-            className="text-base font-semibold tracking-[0.02em] hover:text-white/80 transition-colors"
-          >
-            +234-810-896-2585
-          </a>
-          <a
-            href="mailto:info@moversetechnologies.com"
-            className="text-base text-white/85 hover:text-white transition-colors"
-          >
-            info@moversetechnologies.com
-          </a>
+          <span>+234-810-896-2585</span>
+          <span>info@moversetechnologies.com</span>
         </div>
 
         {/* Social Media Icons */}
-        <div className="flex items-center justify-end gap-3">
+        <div className="flex items-center gap-3">
           {socialLinks.map((link, index) => (
             <a
               key={index}
               href={link.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-9 h-9 bg-white/15 rounded-full flex items-center justify-center hover:bg-white/30 transition"
+              className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition"
               aria-label={link.name}
             >
               <svg
-                className="w-4 h-4"
+                className="w-3 h-3"
                 fill="currentColor"
                 viewBox="0 0 24 24"
               >
