@@ -55,7 +55,7 @@ const BlogHeroSection: React.FC = () => {
               transitionDelay: '0.2s',
             }}
           >
-            Home / Blog / Fresh insights from Moverse
+            Home / Blog
           </p>
         </div>
       </div>

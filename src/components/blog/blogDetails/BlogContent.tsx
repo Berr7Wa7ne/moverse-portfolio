@@ -47,6 +47,8 @@ const BlogContent: React.FC<BlogContentProps> = ({
   relatedPosts,
   categories = [],
 }) => {
+  const stripHtml = (value: string) => value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+
   // Extract first two paragraphs (Portable Text aware with HTML fallback)
   const isPortable = Array.isArray(content);
   const extractLeadParagraphsFromPT = (blocks: any[]) => {
@@ -64,12 +66,9 @@ const BlogContent: React.FC<BlogContentProps> = ({
   };
 
   const extractLeadParagraphsFromHTML = (htmlContent: string) => {
-    if (typeof window === "undefined") return { lead: "", second: "" };
-    const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = htmlContent;
-    const paragraphs = tempDiv.querySelectorAll("p");
-    const lead = paragraphs[0]?.textContent || "";
-    const second = paragraphs[1]?.textContent || "";
+    const paragraphs = htmlContent.match(/<p\b[^>]*>([\s\S]*?)<\/p>/gi) || [];
+    const lead = paragraphs[0] ? stripHtml(paragraphs[0]) : "";
+    const second = paragraphs[1] ? stripHtml(paragraphs[1]) : "";
     return { lead, second };
   };
 
@@ -82,15 +81,14 @@ const BlogContent: React.FC<BlogContentProps> = ({
   const remainingHtml = !isPortable
     ? (() => {
         const htmlContent = typeof content === "string" ? content : "";
-        if (typeof window === "undefined") return htmlContent;
-        const tempDiv = document.createElement("div");
-        tempDiv.innerHTML = htmlContent;
-        const paragraphs = tempDiv.querySelectorAll("p");
-        if (paragraphs.length > 2) {
-          paragraphs[0]?.remove();
-          paragraphs[1]?.remove();
-        }
-        return tempDiv.innerHTML;
+        let removed = 0;
+        return htmlContent.replace(/<p\b[^>]*>[\s\S]*?<\/p>/gi, (match) => {
+          if (removed < 2) {
+            removed += 1;
+            return "";
+          }
+          return match;
+        });
       })()
     : null;
 
