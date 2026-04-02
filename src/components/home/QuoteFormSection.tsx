@@ -228,18 +228,18 @@ const QuoteFormSection: React.FC = () => {
               <div>
                 <h3 className="text-lg font-bold mb-4">Address</h3>
                 <div className="space-y-2 text-white/80">
-                  <p>123 Business Street</p>
-                  <p>Tech City, TC 12345</p>
-                  <p>United States</p>
+                  <p>No. 3 Thunder Close</p>
+                  <p>Jikwoyi Phase 1 Extension - Abuja</p>
+                  <p>Nigeria</p>
                 </div>
               </div>
 
               <div>
                 <h3 className="text-lg font-bold mb-4">Contact</h3>
                 <div className="space-y-2 text-white/80">
-                  <p>Phone: 1-800-234-5678</p>
-                  <p>Email: info@company.com</p>
-                  <p>Website: www.company.com</p>
+                  <p>Phone: 234-810-896-2585</p>
+                  <p>Email: info@moversetechnologies.com</p>
+                  <p>Website: www.moversehaste.com</p>
                 </div>
               </div>
 
