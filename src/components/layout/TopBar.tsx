@@ -20,7 +20,7 @@ const socialLinks = [
 
 const TopBar: React.FC = () => {
   return (
-    <div className="bg-[var(--primary-blue)] text-white py-2 mb-2 md:mb-0">
+    <div className="hidden md:block bg-[var(--primary-blue)] text-white py-2 mb-0">
       <div className="container flex justify-between items-center text-sm">
         {/* Contact Info */}
         <div className="flex items-center gap-6">
