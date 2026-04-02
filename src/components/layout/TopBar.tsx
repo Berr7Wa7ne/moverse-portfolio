@@ -20,27 +20,37 @@ const socialLinks = [
 
 const TopBar: React.FC = () => {
   return (
-    <div className="bg-[var(--primary-blue)] text-white py-2 mb-2 md:mb-0">
-      <div className="container flex justify-between items-center text-sm">
+    <div className="bg-[var(--primary-blue)] text-white py-3 md:py-2 mb-2 md:mb-0">
+      <div className="container flex flex-col gap-3 md:flex-row md:justify-between md:items-center text-sm">
         {/* Contact Info */}
-        <div className="flex items-center gap-6">
-          <span>+234-810-896-2585</span>
-          <span>info@moversetechnologies.com</span>
+        <div className="flex flex-col items-center gap-2 text-center md:flex-row md:items-center md:text-left md:gap-6">
+          <a
+            href="tel:+2348108962585"
+            className="text-base font-semibold tracking-[0.02em] hover:text-white/80 transition-colors"
+          >
+            +234-810-896-2585
+          </a>
+          <a
+            href="mailto:info@moversetechnologies.com"
+            className="text-sm md:text-base text-white/85 break-all hover:text-white transition-colors"
+          >
+            info@moversetechnologies.com
+          </a>
         </div>
 
         {/* Social Media Icons */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center justify-center gap-3 md:justify-end">
           {socialLinks.map((link, index) => (
             <a
               key={index}
               href={link.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition"
+              className="w-9 h-9 bg-white/15 rounded-full flex items-center justify-center hover:bg-white/30 transition"
               aria-label={link.name}
             >
               <svg
-                className="w-3 h-3"
+                className="w-4 h-4"
                 fill="currentColor"
                 viewBox="0 0 24 24"
               >
@@ -55,4 +65,3 @@ const TopBar: React.FC = () => {
 };
 
 export default TopBar;
-
