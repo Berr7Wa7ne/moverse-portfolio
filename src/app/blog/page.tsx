@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import TopBar from '@/components/layout/TopBar';
 import Header from '@/components/layout/Header';
 import BlogHeroSection from '@/components/blog/BlogHeroSection';
@@ -14,7 +15,9 @@ export default function BlogPage() {
       <main>
         <ScrollToSectionClient />
         <BlogHeroSection />
-        <BlogShowcaseSection />
+        <Suspense fallback={null}>
+          <BlogShowcaseSection />
+        </Suspense>
         <NewsletterSection />
       </main>
       <Footer />
