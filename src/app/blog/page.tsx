@@ -6,8 +6,6 @@ import NewsletterSection from '@/components/home/NewsletterSection';
 import Footer from '@/components/layout/Footer';
 import ScrollToSectionClient from '@/components/util/ScrollToSectionClient';
 
-export const dynamic = 'force-dynamic';
-
 export default function BlogPage() {
   return (
     <div className="min-h-screen">

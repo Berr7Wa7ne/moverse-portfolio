@@ -76,7 +76,7 @@ const Header: React.FC = () => {
                   className={`text-2xl font-medium transition-all duration-300 relative group
                     ${
                       isActive
-                        ? 'text-[var(--accent-red)] underline underline-offset-8 decoration-[3px] decoration-[var(--accent-blue)]'
+                        ? 'text-[var(--accent-blue)] underline underline-offset-8 decoration-[3px] decoration-[var(--accent-blue)]'
                         : 'text-[var(--gray-700)] hover:text-[var(--accent-blue)] hover:scale-105'
                     }`}
                 >
