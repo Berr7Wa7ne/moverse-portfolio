@@ -20,10 +20,10 @@ const socialLinks = [
 
 const TopBar: React.FC = () => {
   return (
-    <div className="bg-[var(--primary-blue)] text-white py-3 md:py-2 mb-2 md:mb-0">
-      <div className="container flex flex-col gap-3 md:flex-row md:justify-between md:items-center text-sm">
+    <div className="hidden md:block bg-[var(--primary-blue)] text-white py-2 mb-0">
+      <div className="container flex justify-between items-center text-sm">
         {/* Contact Info */}
-        <div className="flex flex-col items-center gap-2 text-center md:flex-row md:items-center md:text-left md:gap-6">
+        <div className="flex items-center gap-6">
           <a
             href="tel:+2348108962585"
             className="text-base font-semibold tracking-[0.02em] hover:text-white/80 transition-colors"
@@ -32,14 +32,14 @@ const TopBar: React.FC = () => {
           </a>
           <a
             href="mailto:info@moversetechnologies.com"
-            className="text-sm md:text-base text-white/85 break-all hover:text-white transition-colors"
+            className="text-base text-white/85 hover:text-white transition-colors"
           >
             info@moversetechnologies.com
           </a>
         </div>
 
         {/* Social Media Icons */}
-        <div className="flex items-center justify-center gap-3 md:justify-end">
+        <div className="flex items-center justify-end gap-3">
           {socialLinks.map((link, index) => (
             <a
               key={index}
